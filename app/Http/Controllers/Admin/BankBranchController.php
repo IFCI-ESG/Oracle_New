@@ -31,7 +31,7 @@ class BankBranchController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $branch_details = DB::table('admin_users')
+        $branch_details = DB::table('users')
                             ->where('created_by', $user->id)
                             ->orderby('id')->get();
 
@@ -41,23 +41,23 @@ class BankBranchController extends Controller
     // Create method for bulk upload
      public function create()
     {
-        $branchDetails = DB::table('admin_users_temp')
-          ->select('admin_users_temp.*')
-          ->where('admin_users_temp.created_by', '=', Auth::user()->id)
+        $branchDetails = DB::table('users_temp')
+          ->select('users_temp.*')
+          ->where('users_temp.created_by', '=', Auth::user()->id)
           ->where(function ($query) {
-            $query->where('admin_users_temp.status', '=', '')
-                  ->orWhereNull('admin_users_temp.status')
-                  ->orWhere('admin_users_temp.status', '!=', 'S');
+            $query->where('users_temp.status', '=', '')
+                  ->orWhereNull('users_temp.status')
+                  ->orWhere('users_temp.status', '!=', 'S');
          })
           ->get();
 
-          $duplicatemobileCount = DB::table('admin_users_temp')
+          $duplicatemobileCount = DB::table('users_temp')
             ->select('mobile')
             ->groupBy('mobile')
             ->havingRaw('count(mobile) > 1')
             ->count();
   
-          $duplicateIfscCount = DB::table('admin_users_temp')
+          $duplicateIfscCount = DB::table('users_temp')
             ->select('ifsc_code')
             ->groupBy('ifsc_code')
             ->havingRaw('count(ifsc_code) > 1')
@@ -70,7 +70,7 @@ class BankBranchController extends Controller
     public function deleteAllBranchRecords() {
         $userId = Auth::user()->id;
         try {
-          DB::table('admin_users_temp')
+          DB::table('users_temp')
            ->where('created_by', $userId)  
            ->delete();
           return response()->json(['success' => true, 'message' => 'All records deleted successfully']);
@@ -82,9 +82,9 @@ class BankBranchController extends Controller
 
     public function deleteBranchTempRow($id) {
      
-        $row = DB::table('admin_users_temp')->where('id', $id)->first();
+        $row = DB::table('users_temp')->where('id', $id)->first();
         if ($row) {
-          DB::table('admin_users_temp')->where('id', $id)->delete();
+          DB::table('users_temp')->where('id', $id)->delete();
           return response()->json(true);  
          }
         return response()->json(false); 
@@ -93,7 +93,7 @@ class BankBranchController extends Controller
      public function updateBranch(Request $request) {
    
         $request->validate([
-            'id' => 'required|exists:admin_users_temp,id',
+            'id' => 'required|exists:users_temp,id',
             'name' => 'required',
             'email' => 'required',
             'ifsc_code' => 'required',
@@ -103,7 +103,7 @@ class BankBranchController extends Controller
             'mobile' => 'required',
         ]);
     
-        $existingMobile = DB::table('admin_users_temp')
+        $existingMobile = DB::table('users_temp')
             ->where('mobile', $request->mobile)
             ->where('id', '!=', $request->id)
             ->exists();
@@ -113,7 +113,7 @@ class BankBranchController extends Controller
         }
     
        
-         $existingIfsc = DB::table('admin_users_temp')
+         $existingIfsc = DB::table('users_temp')
             ->where('ifsc_code', $request->ifsc_code)
             ->where('id', '!=', $request->id)
             ->exists();
@@ -135,7 +135,7 @@ class BankBranchController extends Controller
             return response()->json(['success' => false, 'message' => 'IFSC Code Does not belong to your Bank! Please use Valid IFSC Code']);
         }
      
-        $updated = DB::table('admin_users_temp')
+        $updated = DB::table('users_temp')
             ->where('id', $request->id)
             ->update([
                 'name' => $request->name,
@@ -159,7 +159,7 @@ class BankBranchController extends Controller
     public function FinalSubmitBranchRecords(Request $request) {
         $userId =  Auth::user()->id;
         try {
-           DB::table('admin_users_temp')
+           DB::table('users_temp')
               ->where('created_by', $userId)
               ->update(['status' => 'S']); 
            return response()->json(['success' => true, 'message' => 'All records updated Successfully!']);
@@ -236,7 +236,7 @@ class BankBranchController extends Controller
     //             return redirect()->back()->withErrors($validator);
     //         }
  
-    //         DB::table('admin_users_temp')->insert([
+    //         DB::table('users_temp')->insert([
     //                     'name' => trim($value['BranchName']),
     //                     'email' =>trim($value['Email']),
     //                     'contact_person' =>trim( $value['ContactPerson']),
@@ -346,7 +346,7 @@ class BankBranchController extends Controller
                 }
     
                 // Insert valid data into the database
-                DB::table('admin_users_temp')->insert([
+                DB::table('users_temp')->insert([
                     'name' => 'NA',
                     'email' => trim($value['Email']),
                     'contact_person' => trim($value['ContactPerson']),
@@ -394,7 +394,7 @@ class BankBranchController extends Controller
             'contact_person' => 'required|string',
             'designation' => 'nullable|string',
             'mobile' => 'required|digits:10',
-           'ifsc_code' => 'required|string|max:11|unique:admin_users,ifsc_code',
+           'ifsc_code' => 'required|string|max:11|unique:users,ifsc_code',
             'pincode' => 'required|digits:6',
         ]);
 
@@ -690,7 +690,7 @@ class BankBranchController extends Controller
             }
 
             // Fetch records from the temporary table
-            $records = DB::table('admin_users_temp')
+            $records = DB::table('users_temp')
                 ->where('status', 'S')
                 ->orderBy('id', 'ASC')
                 ->take($bank_create_limit)
@@ -700,7 +700,7 @@ class BankBranchController extends Controller
 
             // Check if no records were found
             if ($records->isEmpty()) {
-                Log::info('No records found in admin_users_temp table.');
+                Log::info('No records found in users_temp table.');
                 return 'No records to process.';
             }
 
@@ -714,7 +714,7 @@ class BankBranchController extends Controller
                      $randomString = $this->generateRandomString(5);
 
                     // Insert into the final table
-                    $insertedId = DB::table('admin_users')->insertGetId([
+                    $insertedId = DB::table('users')->insertGetId([
                         'name'     => trim($value['name']),
                         'email'        => trim($value['email']),
                         'password' => '$2y$10$vTj1GhEjFcL0duMu1AqmGebo48zWZoxIuG8ThKXNfEDw7ltrUobTC',    // India@1234
@@ -736,8 +736,8 @@ class BankBranchController extends Controller
                     $data_role = array('role_id' => 3, 'model_type' => 'App\AdminUser', 'model_id' => $insertedId);
                     DB::table('model_has_roles')->insert($data_role);
 
-                    $branch = DB::table('admin_users')->where('id', $insertedId)->first();
-                    $bank = DB::table('admin_users')->where('id', $branch->created_by)->first();
+                    $branch = DB::table('users')->where('id', $insertedId)->first();
+                    $bank = DB::table('users')->where('id', $branch->created_by)->first();
                         // dd($branch,$bank);
 
                     // $data = array('name'=>$branch->name, 'unique_id'=>$branch->email, 'password'=>$randomString, 'bank_name'=>$bank->name);
@@ -750,7 +750,7 @@ class BankBranchController extends Controller
                     // });
 
                     // Delete the record from the temp table after processing
-                    DB::table('admin_users_temp')->where('id', $value['id'])->delete();
+                    DB::table('users_temp')->where('id', $value['id'])->delete();
 
                     // Commit the transaction
                     DB::commit();
@@ -760,9 +760,9 @@ class BankBranchController extends Controller
                     DB::rollBack();
 
                     // Delete the record from the temp table after processing
-                    DB::table('admin_users_temp')->where('id', $value['id'])->delete();
+                    DB::table('users_temp')->where('id', $value['id'])->delete();
 
-                    DB::table('admin_users_junk')->insert([
+                    DB::table('users_junk')->insert([
                         'name'     => trim($value['name']),
                         'email'        => trim($value['email']),
                         'contact_person'=> trim($value['contact_person']),
@@ -780,7 +780,7 @@ class BankBranchController extends Controller
             }
 
             // Log success after processing all records
-            Log::info('Successfully processed and inserted records from admin_users_temp.');
+            Log::info('Successfully processed and inserted records from users_temp.');
 
             return 'Process completed successfully.';
 
@@ -801,7 +801,7 @@ class BankBranchController extends Controller
         }
 
        
-        $records = DB::table('admin_users_temp')
+        $records = DB::table('users_temp')
             ->where('status', 'S')
             ->orderBy('id', 'ASC')
             ->take($bank_create_limit)
@@ -809,7 +809,7 @@ class BankBranchController extends Controller
 
        
         if ($records->isEmpty()) {
-            Log::info('No records found in admin_users_temp table.');
+            Log::info('No records found in users_temp table.');
             return 'No records to process.';
         }
 
@@ -838,7 +838,7 @@ class BankBranchController extends Controller
                     throw new \Exception('Incomplete data from Razorpay API for IFSC Code: ' . $ifscCode);
                 }
 
-               $insertedId = DB::table('admin_users')->insertGetId([
+               $insertedId = DB::table('users')->insertGetId([
                     'name'          => trim($data['BRANCH']),
                     'email'         => trim($value['email']),
                     'password'      => '$2y$10$vTj1GhEjFcL0duMu1AqmGebo48zWZoxIuG8ThKXNfEDw7ltrUobTC', 
@@ -864,7 +864,7 @@ class BankBranchController extends Controller
                 DB::table('model_has_roles')->insert($data_role);
 
                 // Delete the record from the temp table after processing
-                DB::table('admin_users_temp')->where('id', $value['id'])->delete();
+                DB::table('users_temp')->where('id', $value['id'])->delete();
 
                 // Commit the transaction
                 DB::commit();
@@ -874,10 +874,10 @@ class BankBranchController extends Controller
                 DB::rollBack();
 
                 // Delete the record from the temp table after processing
-                DB::table('admin_users_temp')->where('id', $value['id'])->delete();
+                DB::table('users_temp')->where('id', $value['id'])->delete();
 
                 // Insert the failed record into junk table
-                DB::table('admin_users_junk')->insert([
+                DB::table('users_junk')->insert([
                     'name'          => trim($value['name']),
                     'email'         => trim($value['email']),
                     'contact_person'=> trim($value['contact_person']),
@@ -895,7 +895,7 @@ class BankBranchController extends Controller
         }
 
         // Log success after processing all records
-        Log::info('Successfully processed and inserted records from admin_users_temp.');
+        Log::info('Successfully processed and inserted records from users_temp.');
 
         return 'Process completed successfully.';
 

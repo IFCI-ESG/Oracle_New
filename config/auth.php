@@ -43,7 +43,7 @@ return [
 
         'admin' => [
             'driver' => 'session',
-            'provider' => 'admin_users',
+            'provider' => 'users',
         ],
 
         'api' => [
@@ -77,7 +77,7 @@ return [
             'model' => App\Models\User::class,
         ],
 
-        'admin_users' => [
+        'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\AdminUser::class, // Admin user model
         ],
@@ -106,8 +106,8 @@ return [
             'throttle' => 60,
         ],
 
-        'admin_users' => [
-            'provider' => 'admin_users',
+        'users' => [
+            'provider' => 'users',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,

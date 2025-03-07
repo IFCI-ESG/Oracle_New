@@ -307,9 +307,9 @@ class UserController extends Controller
 
         $bank_esd = DB::table('bank_esd_details')->where('bank_user_id', $user->id)->first();
 
-        //$bank_branch = DB::table('admin_users')->where('created_by', $user->id) ->pluck('id');
+        //$bank_branch = DB::table('users')->where('created_by', $user->id) ->pluck('id');
 
-        $bank_branch = DB::table('admin_users')->where(function ($query) {
+        $bank_branch = DB::table('users')->where(function ($query) {
                $query->where('id', auth()->user()->id)
                   ->orWhere('created_by', auth()->user()->id);
                })->pluck('id');
@@ -370,7 +370,7 @@ class UserController extends Controller
         $sector = DB::table('sector_master')->get();
         $zone = DB::table('tbl_zone_master')->get();
         $fys = DB::table('fy_masters')->orderby('id','Desc')->get();
-        $ifsc_codes = DB::table('admin_users')
+        $ifsc_codes = DB::table('users')
              ->where(function ($query) {
           $query->where('id', auth()->user()->id)
               ->orWhere('created_by', auth()->user()->id);
@@ -386,7 +386,7 @@ class UserController extends Controller
 
     public function getBranchDetails(Request $request) {
       $ifsc_code = $request->input('ifsc_code');
-      $branch = DB::table('admin_users')
+      $branch = DB::table('users')
         ->where('ifsc_code', $ifsc_code)
         ->where(function ($query) {
             $query->where('id', auth()->user()->id)
@@ -917,7 +917,7 @@ class UserController extends Controller
 
         $type = DB::table('comp_type_master')->where('status',1)->orderby('id')->get();
 
-        $ifsc_codes = DB::table('admin_users')
+        $ifsc_codes = DB::table('users')
              ->where(function ($query) {
           $query->where('id', auth()->user()->id)
               ->orWhere('created_by', auth()->user()->id);
@@ -1155,7 +1155,7 @@ class UserController extends Controller
             DB::transaction(function () use ($newuser,$request,$panExists)
             {
                 if (Auth::user()->hasRole('Admin')){
-                $adminUser = DB::table('admin_users')
+                $adminUser = DB::table('users')
                                     ->where('ifsc_code', $request->ifsc_code)
                                     ->first();
                 $adminUserId = $adminUser->id;
@@ -1246,7 +1246,7 @@ class UserController extends Controller
 
         $class_type = DB::table('class_type_master')->where('loan_type','C')->where('status',1)->orderby('id')->get();
 
-        $adminUser = DB::table('admin_users')
+        $adminUser = DB::table('users')
         ->where('id', $user->created_by)
         ->first(['name', 'full_address','ifsc_code']);
 
@@ -1737,8 +1737,8 @@ class UserController extends Controller
     public function checkIFSCCode($ifscCode)
     {
         try {
-            // Query the admin_users table to check if the IFSC code exists
-            $user = DB::table('admin_users')->where('ifsc_code', $ifscCode)->first();
+            // Query the users table to check if the IFSC code exists
+            $user = DB::table('users')->where('ifsc_code', $ifscCode)->first();
 
             if ($user) {
                 // If user exists, return both 'exists' and 'branch_name'

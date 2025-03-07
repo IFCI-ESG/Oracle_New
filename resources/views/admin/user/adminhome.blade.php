@@ -45,8 +45,8 @@
                                                 <div class="user-profile-sec">
                                                     <img src="{{ asset('images/company_image.png') }}" class="img-radius img-thumbnail rounded bg-white" alt="User-Profile-Image" height="150">
                                                 </div>
-                                                @if (isset($admin_users))
-                                                    <h4 class="profile-username text-center">{{ $admin_users->name }}</h4>
+                                                @if (isset($users))
+                                                    <h4 class="profile-username text-center">{{ $users->name }}</h4>
                                                 @else
                                                     <h3 class="profile-username text-center">{{ $user->name }}</h3>
                                                     <p class="text-muted text-center">PAN- {{ $user->pan }}</p>
@@ -58,14 +58,14 @@
                                         <div class="col-sm-8">
                                             <div class="card-block d-flex flex-column">
                                                
-                                                @if (isset($admin_users))
+                                                @if (isset($users))
                                                     <!-- Admin User Details -->
                                                     <div class="row justify-content-center">
                                                             <div class="col-sm-4 border">
                                                                 <h4 class="mb-2 h4">PAN</h4>
                                                             </div>
                                                             <div class="col-sm-6 border">
-                                                                <h3 class="mb-2 h4">{{ $admin_users->pan ? $admin_users->pan : 'NA' }}</h3>
+                                                                <h3 class="mb-2 h4">{{ $users->pan ? $users->pan : 'NA' }}</h3>
                                                             </div>
                                                         </div>
 
@@ -74,7 +74,7 @@
                                                                 <h4 class="mb-2 h4">Contact Person</h4>
                                                             </div>
                                                             <div class="col-sm-6 border">
-                                                                <h3 class="mb-2 h4">{{ $admin_users->contact_person ? $admin_users->contact_person : 'NA' }}</h3>
+                                                                <h3 class="mb-2 h4">{{ $users->contact_person ? $users->contact_person : 'NA' }}</h3>
                                                             </div>
                                                         </div>
                                                         
@@ -83,7 +83,7 @@
                                                                 <h4 class="mb-2 h4">Designation</h4>
                                                             </div>
                                                             <div class="col-sm-6 border">
-                                                                <h3 class="mb-2 h4">{{ $admin_users->designation ? $admin_users->designation : 'NA' }}</h3>
+                                                                <h3 class="mb-2 h4">{{ $users->designation ? $users->designation : 'NA' }}</h3>
                                                             </div>
                                                         </div>
 
@@ -92,7 +92,7 @@
                                                                 <h4 class="mb-2 h4">IFSC Code</h4>
                                                             </div>
                                                             <div class="col-sm-6 border">
-                                                                <h3 class="mb-2 h4">{{ $admin_users->ifsc_code ? $admin_users->ifsc_code : 'NA' }}</h3>
+                                                                <h3 class="mb-2 h4">{{ $users->ifsc_code ? $users->ifsc_code : 'NA' }}</h3>
                                                             </div>
                                                         </div>
 
@@ -101,7 +101,7 @@
                                                                 <h4 class="mb-2 h4">Email</h4>
                                                             </div>
                                                             <div class="col-sm-6 border">
-                                                                <h3 class="mb-2 h4">{{ $admin_users->email ? $admin_users->email : 'NA' }}</h3>
+                                                                <h3 class="mb-2 h4">{{ $users->email ? $users->email : 'NA' }}</h3>
                                                             </div>
                                                         </div>
 
@@ -110,7 +110,7 @@
                                                                 <h4 class="mb-2 h4">Mobile</h4>
                                                             </div>
                                                             <div class="col-sm-6 border">
-                                                                <h3 class="mb-2 h4">{{ $admin_users->mobile ? $admin_users->mobile : 'NA' }}</h3>
+                                                                <h3 class="mb-2 h4">{{ $users->mobile ? $users->mobile : 'NA' }}</h3>
                                                             </div>
                                                         </div>
  
@@ -119,8 +119,8 @@
     
                                             <!-- Edit Profile Button -->
                                             <div class="text-center mt-4">
-                                            @if (isset($admin_users))
-                                            <button class="btn btn-primary" data-toggle="modal" data-target="#editProfileModal" onclick="setEditId({{ $admin_users->id }})">   
+                                            @if (isset($users))
+                                            <button class="btn btn-primary" data-toggle="modal" data-target="#editProfileModal" onclick="setEditId({{ $users->id }})">   
                                                 <span class="menu-icon"><i class="fa fa-edit"></i></span> Edit Profile
                                              </button>
                                             @endif
@@ -148,36 +148,36 @@
                 <div class="modal-body">
                 <form id="editForm" method="POST" action="{{ route('admin.user.dataupdate') }}">
                      @csrf
-                 <input type="hidden" name="id" id="editId" value="{{ isset($admin_users) ? $admin_users->id : '' }}">
+                 <input type="hidden" name="id" id="editId" value="{{ isset($users) ? $users->id : '' }}">
                         <div class="row">
                             <div class="col-md-12 mb-3">
                                 <label for="name" style="color:black;">Name</label>
-                                <input type="text" name="name" class="form-control" id="name" value="{{ isset($admin_users) ? $admin_users->name : 'NA' }}" required readonly>
+                                <input type="text" name="name" class="form-control" id="name" value="{{ isset($users) ? $users->name : 'NA' }}" required readonly>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-12 mb-3">
                                 <label for="email" style="color:black;">Email</label>
-                                <input type="email" name="email" class="form-control" id="email" value="{{ isset($admin_users) ? $admin_users->email : 'NA'}}" required>
+                                <input type="email" name="email" class="form-control" id="email" value="{{ isset($users) ? $users->email : 'NA'}}" required>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="mobile" style="color:black;">Mobile</label>
-                                <input type="text" name="mobile" class="form-control" id="mobile" value="{{ isset($admin_users) ? $admin_users->mobile : 'NA' }}" required>
+                                <input type="text" name="mobile" class="form-control" id="mobile" value="{{ isset($users) ? $users->mobile : 'NA' }}" required>
                             </div>
 
                            @if  (Auth::user()->hasRole('Admin'))
                             <div class="col-md-6 mb-3">
                                 <label for="pan" style="color:black;">PAN</label>
-                                <input type="text" name="pan" class="form-control" id="pan" value="{{ isset($admin_users) ? $admin_users->pan : 'NA' }}" required>
+                                <input type="text" name="pan" class="form-control" id="pan" value="{{ isset($users) ? $users->pan : 'NA' }}" required>
                             </div>
                             @else 
                             <div class="col-md-6 mb-3">
                                 <label for="pan" style="color:black;">PAN</label>
-                                <input type="text" name="pan" class="form-control" id="pan" value="{{ isset($admin_users) ? $admin_users->pan : 'NA' }}">
+                                <input type="text" name="pan" class="form-control" id="pan" value="{{ isset($users) ? $users->pan : 'NA' }}">
                             </div>
                             @endif
                          </div>
@@ -188,18 +188,18 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="contact_person" style="color:black;">Contact Person</label>
-                                <input type="text" name="contact_person" class="form-control" id="contact_person" value="{{ isset($admin_users) ? $admin_users->contact_person : 'NA' }}" required>
+                                <input type="text" name="contact_person" class="form-control" id="contact_person" value="{{ isset($users) ? $users->contact_person : 'NA' }}" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="designation" style="color:black;">Designation</label>
-                                <input type="text" name="designation" class="form-control" id="designation" value="{{ isset($admin_users) ? $admin_users->designation : 'NA' }}" required>
+                                <input type="text" name="designation" class="form-control" id="designation" value="{{ isset($users) ? $users->designation : 'NA' }}" required>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-12 mb-3">
                                 <label for="ifsc_code" style="color:black;">IFSC Code</label>
-                                <input type="text" name="ifsc_code" class="form-control" id="mobile" value="{{ isset($admin_users) ? $admin_users->ifsc_code : 'NA' }}" required>
+                                <input type="text" name="ifsc_code" class="form-control" id="mobile" value="{{ isset($users) ? $users->ifsc_code : 'NA' }}" required>
                             </div>
                             
                         </div>

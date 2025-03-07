@@ -30,11 +30,11 @@ class CompanyBulkUploadController extends Controller
         $userId = Auth::user()->id;
         
         if (Auth::user()->hasRole('Admin')) {
-          $ifscCodes = DB::table('admin_users')
+          $ifscCodes = DB::table('users')
            ->where('created_by', $userId)
            ->pluck('ifsc_code');
         } else if (Auth::user()->hasRole('SubAdmin')){
-            $ifscCodes = DB::table('admin_users')
+            $ifscCodes = DB::table('users')
             ->where('id', $userId)
             ->pluck('ifsc_code');
         }
@@ -277,7 +277,7 @@ public function deleteCorp($file)
 
                   // IfscCode validation - check if IFSC code is valid and belongs to the user's bank
                   if (Auth::user()->hasRole('Admin')) {
-                  $ifscCodeExists = DB::table('admin_users')
+                  $ifscCodeExists = DB::table('users')
                   ->where('ifsc_code', '=', $value['IfscCode'])
                   ->where('created_by', '=', Auth()->user()->id)
                   ->exists(); 
@@ -352,7 +352,7 @@ public function deleteCorp($file)
         foreach ($arraydata as $key => $value) {
 
             if (Auth::user()->hasRole('Admin')) {
-                  $branch = DB::table('admin_users')
+                  $branch = DB::table('users')
                                     ->where('ifsc_code', $value['IfscCode'])
                                     ->first();
                   DB::table('users_details_temp')->insert([
@@ -375,7 +375,7 @@ public function deleteCorp($file)
                         ]);
                 
                 } else if (Auth::user()->hasRole('SubAdmin')) {
-                     $branch_ifscCode = DB::table('admin_users')
+                     $branch_ifscCode = DB::table('users')
                       ->where('id', Auth()->user()->id)
                       ->value('ifsc_code');
                      
@@ -642,7 +642,7 @@ public function deleteCorp($file)
                             // If user exists, insert into BankFinancialDetails
                             $fincial = new BankFinancialDetails;
                          
-                              $adminUser = DB::table('admin_users')->where('ifsc_code', $value->ifsc_code)->first();
+                              $adminUser = DB::table('users')->where('ifsc_code', $value->ifsc_code)->first();
                               $adminUserId_mapped_ifsc = $adminUser->id;
                            
                             $fincial->fy_id = $value->fy_id;
@@ -662,7 +662,7 @@ public function deleteCorp($file)
                             DB::table('users_details_temp')->where('id', $value->id)->delete();
                         } else {
                            
-                            $adminUser = DB::table('admin_users')->where('ifsc_code', $value->ifsc_code)->first();
+                            $adminUser = DB::table('users')->where('ifsc_code', $value->ifsc_code)->first();
                             $adminUserId_mapped_ifsc = $adminUser->id;
                             $randomString = 'Password@1234';
                             

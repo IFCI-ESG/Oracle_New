@@ -33,7 +33,7 @@ class UserController extends Controller
         $user = Auth::user();
 
         $bank_details = DB::table('bank_financial_details as bfd')
-                                ->join('admin_users as u','u.id','bfd.bank_id')
+                                ->join('users as u','u.id','bfd.bank_id')
                                 ->join('class_type_master as ctm','ctm.id','bfd.class_type_id')
                                 ->where('com_id', $user->id)
                                 ->distinct('bank_id')
@@ -50,7 +50,7 @@ class UserController extends Controller
         $user = Auth::user();
 
         $bank_details = DB::table('bank_financial_details as bfd')
-                                ->join('admin_users as u','u.id','bfd.bank_id')
+                                ->join('users as u','u.id','bfd.bank_id')
                                 ->join('class_type_master as ctm','ctm.id','bfd.class_type_id')
                                 ->where('com_id', $user->id)
                                 ->distinct('bank_id')
@@ -67,7 +67,7 @@ class UserController extends Controller
         $user = Auth::user();
 
         $bank_details = DB::table('bank_financial_details as bfd')
-                                ->join('admin_users as u','u.id','bfd.bank_id')
+                                ->join('users as u','u.id','bfd.bank_id')
                                 ->join('class_type_master as ctm','ctm.id','bfd.class_type_id')
                                 ->where('com_id', $user->id)
                                 ->distinct('bank_id')
@@ -84,15 +84,15 @@ class UserController extends Controller
         $user = Auth::user();
 
         $bank_details = DB::table('bank_financial_details as bfd')
-                                ->join('admin_users as au', 'au.id', '=', 'bfd.bank_id') // Join branches (admin_users table represents branches)
-                                ->join('admin_users as bank', 'bank.id', '=', 'au.created_by') // Get bank details using created_by column
+                                ->join('users as au', 'au.id', '=', 'bfd.bank_id') // Join branches (users table represents branches)
+                                ->join('users as bank', 'bank.id', '=', 'au.created_by') // Get bank details using created_by column
                                 ->join('class_type_master as ctm', 'ctm.id', '=', 'bfd.class_type_id') // Join loan types
                                 ->where('bfd.com_id', $user->id) // Filter by the user ID
                                 ->select([
                                     'au.id as branch_id',
                                     'ctm.id as class_type_id',
-                                    'bank.name as bank_name',      // Bank name from admin_users
-                                    'au.name as branch_name',      // Branch name from admin_users
+                                    'bank.name as bank_name',      // Bank name from users
+                                    'au.name as branch_name',      // Branch name from users
                                     'ctm.name as loan_type' // Count loans for the same branch and type
                                 ])
                                 ->groupBy('ctm.id','au.id','bank.name', 'au.name', 'ctm.name') // Group by bank, branch, and loan type
@@ -114,7 +114,7 @@ class UserController extends Controller
         $user = Auth::user();
 
         $bank_details = DB::table('bank_financial_details as bfd')
-                                ->join('admin_users as au','au.id','bfd.bank_id')
+                                ->join('users as au','au.id','bfd.bank_id')
                                 ->join('class_type_master as ctm','ctm.id','bfd.class_type_id')
                                 ->where('bfd.com_id', $user->id)
                                 ->where('bfd.bank_id', $branch_id)
@@ -143,7 +143,7 @@ class UserController extends Controller
           if($user->password_changed == 1){
 
           $request->validate([
-              'email' => 'required|email|unique:admin_users,email,' . auth()->user()->id,
+              'email' => 'required|email|unique:users,email,' . auth()->user()->id,
               'image' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
           ]);
       }
@@ -392,7 +392,7 @@ class UserController extends Controller
                                 ->get(['dqv.*','dqm.name']);
 
         $bank_details = DB::table('bank_financial_details as bfd')
-                                ->join('admin_users as au','au.id','bfd.bank_id')
+                                ->join('users as au','au.id','bfd.bank_id')
                                 ->join('class_type_master as ctm','ctm.id','bfd.class_type_id')
                                 ->where('bfd.com_id', $user->id)
                                 ->where('bfd.bank_id', $branch_id)
@@ -634,7 +634,7 @@ class UserController extends Controller
 
 
         $bank_details = DB::table('bank_financial_details as bfd')
-                                ->join('admin_users as u','u.id','bfd.bank_id')
+                                ->join('users as u','u.id','bfd.bank_id')
                                 ->join('class_type_master as ctm','ctm.id','bfd.class_type_id')
                                 ->where('bfd.com_id', $com_id)
                                 ->where('bfd.bank_id', $bank_id)
@@ -740,7 +740,7 @@ class UserController extends Controller
                                 ->get(['dqv.*','dqm.name']);
 
         $bank_details = DB::table('bank_financial_details as bfd')
-                                ->join('admin_users as u','u.id','bfd.bank_id')
+                                ->join('users as u','u.id','bfd.bank_id')
                                 ->join('class_type_master as ctm','ctm.id','bfd.class_type_id')
                                 ->where('bfd.com_id', $user->id)
                                 ->where('bfd.bank_id', $branch_id)

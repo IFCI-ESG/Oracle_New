@@ -20,10 +20,10 @@ class BankController extends Controller
     public function adminhome() {
         
         $user = Auth::User();
-        $admin_users = DB::table('admin_users')
-         ->where('admin_users.id',$user->id)
-         ->first(['admin_users.*']);
-         return view('admin.user.adminhome',compact('user','admin_users'));
+        $users = DB::table('users')
+         ->where('users.id',$user->id)
+         ->first(['users.*']);
+         return view('admin.user.adminhome',compact('user','users'));
     }
 
     public function dataupdate(Request $request)
@@ -93,7 +93,7 @@ class BankController extends Controller
 
         if($user->password_changed == 1) {
            $request->validate([
-            'email' => 'required|email|unique:admin_users,email,' . auth()->user()->id,
+            'email' => 'required|email|unique:users,email,' . auth()->user()->id,
             'image' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
            ]);
         }
@@ -196,7 +196,7 @@ class BankController extends Controller
     {
 
         $user = Auth::user();
-        $bank_details = DB::table('admin_users')
+        $bank_details = DB::table('users')
             ->where('created_by', $user->id)
             ->orderby('id')->get();
 
@@ -217,7 +217,7 @@ class BankController extends Controller
         // dd($request);
         $validator = Validator::make($request->all(), [
             
-            'ifsc_code' => 'required|string|regex:/^[A-Z]{4}0[A-Z0-9]{6}$/|unique:admin_users,ifsc_code',
+            'ifsc_code' => 'required|string|regex:/^[A-Z]{4}0[A-Z0-9]{6}$/|unique:users,ifsc_code',
             'bank_name'      => 'required|string|regex:/^[a-zA-Z\s]+$/',
             'micr_code'            => 'required|string',
             'state'            => 'required|string',

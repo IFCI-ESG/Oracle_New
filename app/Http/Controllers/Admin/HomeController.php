@@ -27,8 +27,8 @@ class HomeController extends Controller
         //dd($arr_financial_year['sort_year']);
         $user = Auth::user();
 
-        $user_details = DB::table('admin_users')
-                                ->join('model_has_roles as mhr','mhr.model_id','admin_users.id')
+        $user_details = DB::table('users')
+                                ->join('model_has_roles as mhr','mhr.model_id','users.id')
                                 ->where('mhr.role_id',2)
                                 // ->whereRaw('is_normal_user(id)=1')
                                 ->where('created_by',$user->id)
