@@ -1,0 +1,98 @@
+.main-body
+{
+    background-image: url("../images/login.jpg");
+    padding-top: 50px;
+    padding-bottom: 100px;
+    background-size: cover;
+
+}
+
+
+.card {
+
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+
+.card-header h3 {
+    color: white;
+}
+
+
+.input-group-prepend span {
+    width: 50px;
+    background-color: #FFC312;
+    color: black;
+    border: 0 !important;
+}
+
+
+
+.remember {
+    color: white;
+}
+
+.remember input {
+    width: 20px;
+    height: 20px;
+    margin-left: 15px;
+    margin-right: 5px;
+}
+
+.login_btn {
+    color: black;
+    background-color: #FFC312;
+    width: 100px;
+}
+
+.login_btn:hover {
+    color: black;
+    background-color: white;
+}
+
+.links {
+    color: white;
+}
+
+
+.login-box {
+    margin-top: 30px;
+}
+
+
+
+
+.instr-card-header
+{
+    padding:    5px;
+    text-align: left;
+    color:  white;
+    font-size: 16px;
+
+}
+
+
+.instr-card-body
+{
+    padding:    0px;
+    text-align: left;
+    color:  white;
+    font-size: 12px;
+
+}
+
+.instr-card-body ul li
+{
+    background: transparent;
+    padding:    0px 0px 0px 15px;
+    text-align: left;
+    color:  white;
+    font-size: 12px;
+
+}
+
+
+ul
+{
+    line-height: 2.0em;
+}

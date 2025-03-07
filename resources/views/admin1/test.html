@@ -1,0 +1,262 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- mobile responsive meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="csrf-token" content="7p9acqeLJn0FYm7dDHvcUR9UPAguQnzCxbM2sv9u">
+
+    <title>Carbon Footprint</title>
+
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+
+
+</head>
+
+<body class="hold-transition sidebar-collapse layout-top-nav">
+    <div class="wrapper" id="app">
+
+        <!-- Navbar -->
+
+
+        <nav class="main-header navbar navbar-expand-md navbar-light navbar-white p-3"
+                    style="box-shadow: 0 4px 8px 0 rgba(182, 233, 152, 0.474), 0 6px 20px 0 rgba(182, 233, 152, 0.474);">
+            <div class="container">
+              <a href="#" class="navbar-brand"><i class="fa-solid fa-circle-u"></i>
+                <img src="../../dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+                <span class="brand-text font-weight-light">Admin</span>
+              </a>
+
+              <button class="navbar-toggler order-1" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+
+              <div class="collapse navbar-collapse order-3" id="navbarCollapse">
+                <!-- Left navbar links -->
+                <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="http://localhost:8000/admin/home" class="nav-link">Dashboard</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="http://localhost:8000/admin/user" class="nav-link">Add User</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="http://localhost:8000/admin/powerbi" class="nav-link">Power Bi</a>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Right navbar links -->
+              <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+                <!-- Messages Dropdown Menu -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link" data-toggle="dropdown" href="#">
+                        <i class="fas fa-comments"></i>
+                        <span class="badge badge-danger navbar-badge">3</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <a href="#" class="dropdown-item">
+                            <!-- Message Start -->
+                            <div class="media">
+                            <img src="../../dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+                            <div class="media-body">
+                                <h3 class="dropdown-item-title">
+                                Brad Diesel
+                                <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+                                </h3>
+                                <p class="text-sm">Call me whenever you can...</p>
+                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                            </div>
+                            </div>
+                            <!-- Message End -->
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item">
+                            <!-- Message Start -->
+                            <div class="media">
+                            <img src="../../dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                            <div class="media-body">
+                                <h3 class="dropdown-item-title">
+                                John Pierce
+                                <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
+                                </h3>
+                                <p class="text-sm">I got your message bro</p>
+                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                            </div>
+                            </div>
+                            <!-- Message End -->
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item">
+                            <!-- Message Start -->
+                            <div class="media">
+                            <img src="../../dist/img/user3-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                            <div class="media-body">
+                                <h3 class="dropdown-item-title">
+                                Nora Silvester
+                                <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
+                                </h3>
+                                <p class="text-sm">The subject goes here</p>
+                                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                            </div>
+                            </div>
+                            <!-- Message End -->
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" data-toggle="dropdown" href="#">
+                        <i class="far fa-bell"></i>
+                        <span class="badge badge-warning navbar-badge">15</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <span class="dropdown-header">15 Notifications</span>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item">
+                          <i class="fas fa-envelope mr-2"></i> 4 new messages
+                          <span class="float-right text-muted text-sm">3 mins</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item">
+                          <i class="fas fa-users mr-2"></i> 8 friend requests
+                          <span class="float-right text-muted text-sm">12 hours</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item">
+                          <i class="fas fa-file mr-2"></i> 3 new reports
+                          <span class="float-right text-muted text-sm">2 days</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" data-toggle="dropdown" href="#" data-toggle="tooltip" data-placement="bottom" title="Profile">
+                        <i class="fa fa-user" style="color:rgb(69, 69, 163)"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <a href="#" class="dropdown-item">
+                        <!-- Message Start -->
+                        <div class="media">
+
+                            <i class="fa fa-user img-size-50 mr-3 img-circle"></i>
+                            <div class="media-body">
+                            <h3 class="dropdown-item-title">
+                                Bank
+                                <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+                            </h3>
+                            </div>
+                        </div>
+                        <!-- Message End -->
+                        </a>
+                        <div class="dropdown-divider"></div>
+                    </div>
+                </li>
+                <!-- Notifications Dropdown Menu -->
+                <li class="nav-item dropdown">
+                                            <a href="http://localhost:8000/logout" data-toggle="tooltip" data-placement="bottom" title="Logout"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <i class="fa fa-power-off" style="color:rgb(195, 61, 61)"></i>
+                        </a>
+                        <form id="logout-form" action="http://localhost:8000/logout" method="POST"
+                            style="display: none;">
+                            <input type="hidden" name="_token" value="7p9acqeLJn0FYm7dDHvcUR9UPAguQnzCxbM2sv9u">                        </form>
+
+                </li>
+              </ul>
+            </div>
+        </nav>
+        <!-- Main Sidebar Container -->
+
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Main content -->
+            <div class="content">
+                <div class="container-fluid pt-2">
+
+
+            <div class="col-md-12 h-100 d-inline-block"  >
+                <div id="reportContainer"  >
+
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+                    </div>
+            </div>
+        </div>
+
+        <!-- Main Footer -->
+        <footer class="main-footer text-sm">
+            <!-- To the right -->
+            <div class="float-right d-none d-sm-inline">
+                Carbon Footprint Portal
+            </div>
+            <!-- Default to the left -->
+            <strong>Copyright &copy; 2023 <a href="https://www.ifciltd.com">IFCI Ltd.</a></strong> All Rights
+            Reserved.
+        </footer>
+
+    </div>
+
+      <!-- Scripts-->
+      <script src="../../plugins/jquery/jquery.min.js"></script>
+      <!-- Bootstrap 4 -->
+      <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+      <!-- AdminLTE App -->
+      <script src="../../dist/js/adminlte.min.js"></script>
+
+        <!-- Scripts-->
+    <script src="http://localhost:8000/js/app.js"></script>
+    <script src="http://localhost:8000/js/jsvalidation.min.js"></script>
+
+
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.22.2/powerbi.js"> </script>
+    <script>
+        // Replace {embedUrl} and {accessToken} with the appropriate values for your report
+        models = window['powerbi-client'].models;
+
+        // Get a reference to the report container
+        var reportContainer = document.getElementById('reportContainer');
+        var permissions = models.Permissions.All;
+        // Embed the report
+        var report = powerbi.embed(reportContainer, {
+            type: 'report',
+            accessToken: 'H4sIAAAAAAAEACVWxc7Gim58l7NNpTBVuoswM2cXZqYvqfru_Y-6ty3PeOSZ__nHzt5xycp__vsfzYB95WVhrnc6nOvXr1xbOmj62KO7nM-pxfPnkmXh32jHBIiyJN6xtzqEGWsWyz6ygTzTYMpmzJIAbeVyOiQ9FU4B-pc7NJ77Cyt2Ep2y4AqA_oi07b5FXyzMXNftp-cvRRgpjN_yd0n09TTVQ7qKMQVeA6ahZ0LXaGAzP2ibf6Wcv2hqBlnFxWnmPDBKpQShxSjn_40bIUjpWMdfEY3jDHZGXa30Zi7NnWgftfoVsP1JvOGKB11Rw5fzDIorqhakV9pIkgygxQtnGhd9DctIkEPMSk7SCuHc-RxE7XHVakuTLGeLKGRLg7YuW4Z9Ov2wEk8w7CC9CJ-_G4QTczAFMCUIyBRBJMU9Ax-QZzebQop5ekmOFC5FKx6mDZ-phDmQ4p2u7toL57sDYvK6m9uHsnvcYmMqWsLn4AAiMnpFvnbupA6RqaJiW-Z3LJBJMyDZN5dV8mykMr_MvPNcIuhhnZ7sZ15ktDkQ20b0AZGr4a1M3TuTdhWnOtubmvwtHaMMVoXCakXAUcrxHAIQcRGNYTKEDzaa_zal9BxU9kP2n3ymimm_5BFfhUnBwwylQktdsKybC9Lb-fCxiP4o-n0rDhAw7NA9bZLjT7FzYDUJYlUztuzzL43S7WM2wxCikkEGzt4nBPTI7ii8y0X3xmqNLUWZgtG7EYPgqaT5mFwf2nLAlapim9VE21NVqr8jaTCAeU0BJdGtTYgbxunDvinxf7dUcwZND2XHUQn0ip9nJMcQbP3IRGUskZk7D8xybOCXbWievFsycvZuLbwF5XbdpNsX4EB66SLY1A5xQp1BERpLh-8jWrnVqTQbkzdV7yfiZ8dmUUyM20e0HanFABQqJrN95l8gBYbJ2o-DxHc2Y1-p_eAEq2HxPuidonELoYOjWFLkBnjcVaOGjm4CVfQjZfnpbgURnLKBo9tIYZV6gR8BgGQL4uKlhLBMw39SltNqfH8i8hy8BvYU2JblpORVg139UUffRUs6II1_IjKG6Knb5I3u-JuzR2kfsUwFxYYYOeqtD3DOixyTT8J9HLWhO5fa3_v3B9xnQ7OS_gD7LL40kZ2hiIIYN8OiibLmKIuvksL1MFkDQk903oZFxBZhWpWiOOUw3kZFWxGFN2aCgakLZV2_AuBfaLeyTq2nQqHWuwySZ6eIzUrHO8V4NgdWB9BO4L-VZ95hlfRJVbw_E6THVthnDPcCVjLJQ2uYs9r6fdPLdHCIl6gp5fl5cbf-BJUy0osRhqY6ZrtRtfiZffiItUOmdFGGL4AXJFHBDES9qF--R5mYhscfjICvKGT12Q6ykrLiWCFCpXJKNx_MirU_WT6wVLhx44bZuGXIvJb3MoOtkA34KKlLN4r2vQPXYUkkdpRzX4lWLRlwnLtr88zx2PAyuz9hU7Rh28iODF9WDwyZEpkcN7bi6iYMmmMggBYPBfU4rVimh_gDkRAQpp9wnlEtb9YOxBcK9Hb4QkJAkWWkSWZiK9RQLh0f_Ig-v4krp4fWUniXTY1iuVNofTZSAhQwSrUkvIDrbrmNwU5q3FF-lhng9kXEL1hv4k0SbrDnZ0zeXr32blsu--VNYagjJOM2pt3t9hWBWABT8kHDipRDJDB9J__WjkFJ_tI5pacEfSUSVGYI7zxnmPtxPfnwqI9J0zPoQ9tjbC_WpPZuUJHwdbcrxV6sDmWWEzGaitIivw4iZkjtYTzHtNo9MJH7KK7CrsfahbEjurre-E7TTA67_CNPjnQTUT7aMRPA2ETo-FBw4StbIULe5TdM3NUBeoNGNFyhXIW1KEEoxokdtHoq8tAUsCFnlwb7a1ablb_Nw4pLu6QsN82k4T1gXqZKX-z_dYTQj_5MUFYs1wh1kt5_h0L-jot4GT1oWRTrYQJZMiE-SPI8jL11Jr8oVP9FhZQP4rPybo5SCjTJ_NUKXuE1e3-eseqEhR8grj1YYtSAa63tCp-VIGO3-wMcBpXxCkJ-S52Oa-iM_Bbr79sCYdYZBlbl7jFCqgstdHxFqj5livW92ZmNPEe29ikmbFLa1IgtmkFr9lZ-D1_uSM1GyUbebiqpQqVXrKpOE7FVoFn7lMNvgBbqXuahjeIPeL4okgxWjmQt2ongdckz5DjbTBcq2k61r2s67Tib7dakOgdw7LpUfrNSkDMlZ1SKDN9bnqQGAjyhR008EcaK6EUJ_YeWsKaW5ct6LzV3NV1gyiTstpTtSK5l84nnzSROWhA7d0UvgoAkCDnDfSf0Ia9A5ZMfd5eIvJRule4qlfrttawBGHquq1WO0tV9MAfoFN5NYBQ4YiGICdpaEvwCsBVxlB4Eiwx3ABg5xtwr9W-UR9eZPlaGYOUSNwEMpNds7oXrwXG091csqr1nvzpSiXKHi0oXIYKYKWUiFufCAoYH-BlPEfSeJMt8F8usMYlkJqiB2eQBIJcea9NVkvNDXzovsdS22s9bsQJXjwFKj7TFkD4u4IwW4B1U50a5EoFRpT84AOpNmcR-3tSJfhvAmu9CAMUmawvfGY3cG7o5QBOTKsgSeeBpFkItAn5IRi37O4DVK01IRf5Il947BUVvw-YNnB7mzz__9Q-3v-u5aNX7FwcF1cFletOfyA0G1lPi0ewuwcFb1HVsqK8lgviNFah6x3KfccAWO_aDCsJh8YzK4xGvKbDQyLj0zLqSNx9umSVf_XJOiDbOdiUSub_caU2po_-ALvlp2y60tjjPZqJQRU-yE_H4GJ-51-_LYkcd1ERYstbYCiButYDSc41-tdpJbBrO4lKc5BkQyptxUpbJItyp_YJfY1LvzsG_RuRVysn71TsYxJW_kFGQ2JpCXXfPtOsFl8Kwi40UAtTaNEf30iesHBCcV2G9uPht22c6DK0514d8jvLTE9i7K-ldgwitKEgbStyEOo9I23KnO1VXw3V83vmh0PBly5QhO26nhMuH781__vMvze_aVrsS_rFsLZ9PykbSxOeZcO79x9zp_n-V1zVzdl579VeWhGGLLFZccRzfeK1sFk3sBXh6_8XrRNUZVSMbxlFjuZf-TLXfcCEIdGf2_eulbogvlubcH0l6e6jtj2Emd2g3ua0xb2dpQ_8-khyhbpm7VbcMH2d1l3q4qIPSkdqINZ36_YFVQCL7sB09roVkwrexzxiYppH6FiMfAkDx7ge_0csvhRPgRej8yXRjs7Qq795VtcB6bPhLUHiRnE4F4mqtDP4tW38HLA9oAEJg1xWEMbB7IQSKYuHIZiL5O5P6pl5EmOymiXhSCGcV7n0VBG09nS61eXH6jOP2GROgFNpBviCfoPRFsc8xW6caJEBef4ptQWTfUQKrxn51l6KU5I6agPxL8__-H6nQ3T8CDQAA.eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLUlORElBLUNFTlRSQUwtQS1QUklNQVJZLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0IiwiZXhwIjoxNzEyMjI0MjUxLCJhbGxvd0FjY2Vzc092ZXJQdWJsaWNJbnRlcm5ldCI6dHJ1ZX0=',
+            embedUrl: 'https://app.powerbi.com/reportEmbed?reportId=f83e840f-775c-45e4-aa13-44ef00a88893&amp;groupId=c21ff94e-1642-40ad-90a0-bdff6451faf6&amp;w=2&amp;config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly9XQUJJLUlORElBLUNFTlRSQUwtQS1QUklNQVJZLXJlZGlyZWN0LmFuYWx5c2lzLndpbmRvd3MubmV0IiwiZW1iZWRGZWF0dXJlcyI6eyJ1c2FnZU1ldHJpY3NWTmV4dCI6dHJ1ZSwiZGlzYWJsZUFuZ3VsYXJKU0Jvb3RzdHJhcFJlcG9ydEVtYmVkIjp0cnVlfX0%3d',
+            permissions: permissions,
+            tokenType: models.TokenType.Embed,
+            settings: {
+                filterPaneEnabled: false,
+                navContentPaneEnabled: true
+            }
+        });
+
+    </script>
+    </body>
+
+</html>
