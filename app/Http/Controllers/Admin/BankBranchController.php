@@ -56,13 +56,13 @@ class BankBranchController extends Controller
             ->groupBy('mobile')
             ->havingRaw('count(mobile) > 1')
             ->count();
-  
+
           $duplicateIfscCount = DB::table('users_temp')
             ->select('ifsc_code')
             ->groupBy('ifsc_code')
             ->havingRaw('count(ifsc_code) > 1')
             ->count();
-        
+
           return view('admin.bank_branch.create_bulk',  compact('branchDetails','duplicatemobileCount','duplicateIfscCount'));
     }
 
@@ -71,27 +71,27 @@ class BankBranchController extends Controller
         $userId = Auth::user()->id;
         try {
           DB::table('users_temp')
-           ->where('created_by', $userId)  
+           ->where('created_by', $userId)
            ->delete();
           return response()->json(['success' => true, 'message' => 'All records deleted successfully']);
         } catch (\Exception $e) {
           return response()->json(['success' => false, 'message' => 'Error deleting records: ' . $e->getMessage()]);
         }
-    
+
     }
 
     public function deleteBranchTempRow($id) {
-     
+
         $row = DB::table('users_temp')->where('id', $id)->first();
         if ($row) {
           DB::table('users_temp')->where('id', $id)->delete();
-          return response()->json(true);  
+          return response()->json(true);
          }
-        return response()->json(false); 
+        return response()->json(false);
     }
 
      public function updateBranch(Request $request) {
-   
+
         $request->validate([
             'id' => 'required|exists:users_temp,id',
             'name' => 'required',
@@ -102,22 +102,22 @@ class BankBranchController extends Controller
             'designation' => 'required',
             'mobile' => 'required',
         ]);
-    
+
         $existingMobile = DB::table('users_temp')
             ->where('mobile', $request->mobile)
             ->where('id', '!=', $request->id)
             ->exists();
-    
+
         if ($existingMobile) {
             return response()->json(['success' => false, 'message' => 'Mobile number already exists']);
         }
-    
-       
+
+
          $existingIfsc = DB::table('users_temp')
             ->where('ifsc_code', $request->ifsc_code)
             ->where('id', '!=', $request->id)
             ->exists();
-    
+
         if ($existingIfsc) {
             return response()->json(['success' => false, 'message' => 'IFSC Code already exists']);
         }
@@ -134,7 +134,7 @@ class BankBranchController extends Controller
         if (isset($data['BANKCODE']) && $data['BANKCODE'] !== $userBankCode) {
             return response()->json(['success' => false, 'message' => 'IFSC Code Does not belong to your Bank! Please use Valid IFSC Code']);
         }
-     
+
         $updated = DB::table('users_temp')
             ->where('id', $request->id)
             ->update([
@@ -142,13 +142,13 @@ class BankBranchController extends Controller
                 'email' => $request->email,
                 'ifsc_code' => $request->ifsc_code,
                 'pincode' => $request->pincode,
-                'contact_person' => $request->contact_person, 
+                'contact_person' => $request->contact_person,
                 'designation' =>$request->designation,
                 'mobile' => $request->mobile,
-                
-    
+
+
             ]);
-    
+
         if ($updated) {
             return response()->json(['success' => true, 'message' => 'Record updated successfully']);
         } else {
@@ -161,12 +161,12 @@ class BankBranchController extends Controller
         try {
            DB::table('users_temp')
               ->where('created_by', $userId)
-              ->update(['status' => 'S']); 
+              ->update(['status' => 'S']);
            return response()->json(['success' => true, 'message' => 'All records updated Successfully!']);
        } catch (\Exception $e) {
            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
        }
-    } 
+    }
 
     // Add method for adding a single branch
     public function add()
@@ -235,7 +235,7 @@ class BankBranchController extends Controller
     //             $validator->errors()->add('customError', 'Invalid PinCode or empty field! . Please check  row no:- '.$i);
     //             return redirect()->back()->withErrors($validator);
     //         }
- 
+
     //         DB::table('users_temp')->insert([
     //                     'name' => trim($value['BranchName']),
     //                     'email' =>trim($value['Email']),
@@ -264,87 +264,87 @@ class BankBranchController extends Controller
         $rules = [
             'file' => 'required|file|mimes:csv,txt|max:20480'
         ];
-    
+
         $validator = Validator::make($request->only('file'), $rules);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-    
+
         $file = $request->file('file');
         $name = time() . '-' . $file->getClientOriginalName();
-    
+
         $arraydata = $this->csvToArray($file);
         $i = 1;
-    
-       
+
+
         DB::beginTransaction();
-    
+
         try {
             foreach ($arraydata as $key => $value) {
                 $i = $i + 1;
-    
-             
+
+
                 if ((!isset($value['Email'])) ||  (!isset($value['ContactPerson'])) ||  (!isset($value['Designation'])) ||  (!isset($value['Mobile'])) ||  (!isset($value['IfscCode'])) ||  (!isset($value['PinCode']))) {
                     $validator->errors()->add('customError', 'The column names "Email", "ContactPerson", "Designation", "Mobile", "IfscCode" and "PinCode" should appear in the first row of the CSV.');
                     return redirect()->back()->withErrors($validator);
                 }
-    
-                 
+
+
                 // Validate Email
                 if (empty(trim($value['Email'])) || !filter_var($value['Email'], FILTER_VALIDATE_EMAIL)) {
                     $validator->errors()->add('customError', "Invalid email or empty field. Please check row no:- " . $i);
                     return redirect()->back()->withErrors($validator);
                 }
-    
+
                 // Validate ContactPerson
                 if (empty(trim($value['ContactPerson']))) {
                     $validator->errors()->add('customError', 'Column "ContactPerson" cannot be null. Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
-    
+
                 // Validate Designation
                 if (empty(trim($value['Designation']))) {
                     $validator->errors()->add('customError', 'Column "Designation" cannot be null. Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
-    
+
                 // Validate Mobile
                 $pattern = "/^[6789]\d{9}$/";
                 if (empty($value['Mobile']) || !preg_match($pattern, $value['Mobile'])) {
                     $validator->errors()->add('customError', 'Invalid Mobile No or empty field!. Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
-    
+
                 // Validate PinCode
                 if (empty($value['PinCode']) || !preg_match("/^\d{5}|\d{6}$/", $value['PinCode'])) {
                     $validator->errors()->add('customError', 'Invalid PinCode or empty field! Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
-    
+
                 // Validate IFSC Code
                 if (empty($value['IfscCode'])) {
                     $validator->errors()->add('customError', 'Column "IfscCode" cannot be null!. Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
-    
+
                 // Fetch IFSC code data
                 $ifscCode = $value['IfscCode'];
                 $userBankCode = Auth::user()->bank_code;
                 $response = Http::get("https://ifsc.razorpay.com/{$ifscCode}");
-    
+
                 if ($response->failed()) {
                     $validator->errors()->add('customError', 'Invalid IFSC Code or not found. Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
-    
+
                 $data = $response->json();
-    
+
                 // Check if the IFSC code belongs to the user's bank
                 if (isset($data['BANKCODE']) && $data['BANKCODE'] !== $userBankCode) {
                     $validator->errors()->add('customError', 'IFSC Code does not belong to your bank. Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
-    
+
                 // Insert valid data into the database
                 DB::table('users_temp')->insert([
                     'name' => 'NA',
@@ -359,26 +359,26 @@ class BankBranchController extends Controller
                     'updated_at' => carbon::now(),
                 ]);
             }
-    
+
             // Commit the transaction if everything is valid
             DB::commit();
-    
+
             return redirect()->back()->with('success', 'Your file has been uploaded successfully! Please verify the branch data before final submission.');
-    
+
         } catch (\Exception $e) {
             // Rollback the transaction if an error occurs
             DB::rollBack();
-    
+
             // Log the error for debugging purposes
             \Log::error("Error during bulk store: " . $e->getMessage());
-    
+
             // Return the error to the user
             return redirect()->back()->withErrors(['customError' => 'An error occurred while processing the file. Please try again.']);
         }
     }
-    
-    
-    
+
+
+
     // method to store single branch
     public function store(Request $request)
     {
@@ -472,12 +472,12 @@ class BankBranchController extends Controller
     }
 
     public function getPincodeDetails(Request $request) {
-        
+
         $pincode = $request->input('pincode');
         $stateDistrict_details = DB::table('pincodes')
           ->where('pincode', $pincode)
           ->first();
-  
+
           if ($stateDistrict_details) {
             return response()->json([
               'state' => $stateDistrict_details->state,
@@ -571,8 +571,8 @@ class BankBranchController extends Controller
             $user->isactive = 'Y';
             $user->status   = 'S';
             $user->password_changed   = 0;  //First Login
-            $user->password=Hash::make($randomString);
-            // $user->password = '$2y$10$vTj1GhEjFcL0duMu1AqmGebo48zWZoxIuG8ThKXNfEDw7ltrUobTC'; // India@1234
+            //$user->password=Hash::make($randomString);
+             $user->password = '$2y$12$xTJrkHbaDKr7FvpU2xri.eM781kY1dna7XAGFbFkQMpMLQ1ZytU/C'; // India@1234
 
             $user->save();
 
@@ -717,7 +717,7 @@ class BankBranchController extends Controller
                     $insertedId = DB::table('users')->insertGetId([
                         'name'     => trim($value['name']),
                         'email'        => trim($value['email']),
-                        'password' => '$2y$10$vTj1GhEjFcL0duMu1AqmGebo48zWZoxIuG8ThKXNfEDw7ltrUobTC',    // India@1234
+                        'password' => '$2y$12$xTJrkHbaDKr7FvpU2xri.eM781kY1dna7XAGFbFkQMpMLQ1ZytU/C',    // India@1234
                         // 'password' => Hash::make($randomString),    // dynamic password generation
                         'contact_person'=> trim($value['contact_person']),
                         'designation'  => trim($value['designation']),
@@ -800,40 +800,40 @@ class BankBranchController extends Controller
             throw new \Exception('Bank create limit is not set in the configuration');
         }
 
-       
+
         $records = DB::table('users_temp')
             ->where('status', 'S')
             ->orderBy('id', 'ASC')
             ->take($bank_create_limit)
             ->get();
 
-       
+
         if ($records->isEmpty()) {
             Log::info('No records found in users_temp table.');
             return 'No records to process.';
         }
 
         foreach ($records as $key => $value) {
-            $value = (array) $value;  
+            $value = (array) $value;
 
             try {
-               
+
                 DB::beginTransaction();
 
                 $randomString = $this->generateRandomString(5);
 
-              
+
                 $ifscCode = $value['ifsc_code'];
                 $response = Http::get("https://ifsc.razorpay.com/{$ifscCode}");
 
-             
+
                 if ($response->failed()) {
                     throw new \Exception('Invalid IFSC Code or not found.');
                 }
 
                 $data = $response->json();
 
-               
+
                 if (!isset($data['BANK']) || !isset($data['STATE'])) {
                     throw new \Exception('Incomplete data from Razorpay API for IFSC Code: ' . $ifscCode);
                 }
@@ -841,7 +841,7 @@ class BankBranchController extends Controller
                $insertedId = DB::table('users')->insertGetId([
                     'name'          => trim($data['BRANCH']),
                     'email'         => trim($value['email']),
-                    'password'      => '$2y$10$vTj1GhEjFcL0duMu1AqmGebo48zWZoxIuG8ThKXNfEDw7ltrUobTC', 
+                    'password'      => '$2y$12$xTJrkHbaDKr7FvpU2xri.eM781kY1dna7XAGFbFkQMpMLQ1ZytU/C',
                     'contact_person'=> trim($value['contact_person']),
                     'designation'   => trim($value['designation']),
                     'mobile'        => trim($value['mobile']),
@@ -852,11 +852,11 @@ class BankBranchController extends Controller
                     'updated_at'    => carbon::now(),
                     'status'        => 'S',
                     'isactive'      => 'Y',
-                    'state'         => $data['STATE'],        
-                    'city'          => $data['CITY'],          
-                    'district'      => $data['DISTRICT'],  
-                    'micr_code'     => trim($data['MICR']), 
-                   
+                    'state'         => $data['STATE'],
+                    'city'          => $data['CITY'],
+                    'district'      => $data['DISTRICT'],
+                    'micr_code'     => trim($data['MICR']),
+
                 ]);
 
                 // Assign role to the newly created user
