@@ -41,7 +41,7 @@
                                 <table id="companyTable" class="table table-sm table-striped table-hover">
                                     <thead>
                                         <tr class="tablebgcolor text-center" style="font-size: 0.8rem; height: 40px;">
-                                            <th class="border textcolor"style="padding: 8px 5px; text-align: center; vertical-align: middle;">Sr. No</th>
+                                            <th class="border textcolor" style="padding: 8px 5px; text-align: center; vertical-align: middle;">Sr. No</th>
                                             <th class="border textcolor" style="padding: 8px 5px; text-align: center; vertical-align: middle;">Company Name</th>
                                             <th class="border textcolor" style="padding: 8px 5px; text-align: center; vertical-align: middle;">Company Type</th>
                                             <th class="border textcolor" style="padding: 8px 5px; text-align: center; vertical-align: middle;">Sector</th>
@@ -51,7 +51,9 @@
                                             <th class="border textcolor" style="padding: 8px 5px; text-align: center; vertical-align: middle;">Action</th>
                                         </tr>
                                     </thead>
+                                    
                                     <tbody>
+                                        
                                         @if ($corp_detail)
                                             @foreach ($corp_detail as $key => $user)
                                                 <tr>
@@ -59,8 +61,8 @@
                                                     <td class="text-center" style="font-size:0.8rem;">{{ $user->name }}</td>
                                                     <td class="text-center" style="font-size:0.8rem;">{{ $user->comp_type }}</td>
                                                     <td class="text-center" style="font-size:0.8rem;">{{ $user->sector }}</td>
-                                                    <td class="text-center" style="font-size:0.8rem;">{{ $user->pan ?? 'N/A' }}</td>
-                                                    <td class="text-center" style="font-size:0.8rem;">{{ $user->unique_login_id ?? '--' }}</td>
+                                                    <td class="text-center" style="font-size:0.8rem;">{{ $user->pan }}</td>
+                                                    <td class="text-center" style="font-size:0.8rem;">{{ $user->unique_login_id }}</td>
                                                     <td class="text-center" style="font-size:0.8rem;">
                                                         @if (($user->status ?? '') == 'S')
                                                             <span class="text-success"><b>Created</b></span>
@@ -71,7 +73,7 @@
                                                         @endif
                                                     </td>
                                                     <td class="text-center" style="font-size:0.8rem;">
-                                                        @if(($user->created_by ?? null) == Auth::user()->id)
+                                                        @if(($user->created_by) == Auth::user()->id)
                                                             <a href="{{ route('admin.user.edituser', ['id' => encrypt($user->id)]) }}" class="btn btn-primary Custom-btn-edit btn-sm">
                                                                 <i class="fa fa-edit"></i>Edit
                                                             </a>
