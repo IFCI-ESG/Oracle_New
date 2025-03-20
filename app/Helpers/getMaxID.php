@@ -10,7 +10,7 @@ function getMaxID($table)
     return $maxid;
 }
 
-function getFinancialYear()
+function getfy_masters()
 {
     //dd("");
     $year = date('Y');

@@ -1,4 +1,4 @@
-Pan,ContactPerson,Designation,Mobile,BankZone,TypeAssetClass,CompanyType,Sector,Financialyear,BankExposure,IfscCode
+Pan,ContactPerson,Designation,Mobile,BankZone,TypeAssetClass,CompanyType,Sector,fy_masters,BankExposure,IfscCode
 BINPR9911D,Ravi,Haryana,9555060021,East,2,1,1,1,10,HDFC0000691
 BINPR9911D,Shankar,Haryana,9555060022,North,1,2,2,2,10,HDFC0000691
 BINPR9911D,Tushar,Haryana,9555060023,South,1,1,3,3,10,HDFC0000691

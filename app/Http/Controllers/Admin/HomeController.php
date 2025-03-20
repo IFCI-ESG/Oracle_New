@@ -23,7 +23,7 @@ class HomeController extends Controller
     public function index()
     {
 
-        //$arr_financial_year=getFinancialYear();
+        //$arr_financial_year=getfy_masters();
         //dd($arr_financial_year['sort_year']);
         $user = Auth::user();
 

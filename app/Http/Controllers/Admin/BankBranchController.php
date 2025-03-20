@@ -259,13 +259,15 @@ class BankBranchController extends Controller
 
     // }
 
-    public function bulk_store(Request $request) {
+    public function bulk_store(Request $request)
+    {
         $userInput = $request->all();
         $rules = [
-            'file' => 'required|file|mimes:csv,txt|max:20480'
+            'file' => 'required|file|mimes:csv,txt|max:20480',
         ];
 
         $validator = Validator::make($request->only('file'), $rules);
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
@@ -273,9 +275,9 @@ class BankBranchController extends Controller
         $file = $request->file('file');
         $name = time() . '-' . $file->getClientOriginalName();
 
+        // Parse the CSV to array
         $arraydata = $this->csvToArray($file);
         $i = 1;
-
 
         DB::beginTransaction();
 
@@ -283,52 +285,58 @@ class BankBranchController extends Controller
             foreach ($arraydata as $key => $value) {
                 $i = $i + 1;
 
+                // Normalize the keys to lowercase
+                $value = array_change_key_case($value, CASE_LOWER);
 
-                if ((!isset($value['Email'])) ||  (!isset($value['ContactPerson'])) ||  (!isset($value['Designation'])) ||  (!isset($value['Mobile'])) ||  (!isset($value['IfscCode'])) ||  (!isset($value['PinCode']))) {
+                // Log the problematic row
+                \Log::info("Processing row $i: " . json_encode($value));
+
+                // Check if required columns exist
+                if ((!isset($value['email'])) || (!isset($value['contact_person'])) || (!isset($value['designation'])) || (!isset($value['mobile'])) || (!isset($value['ifsc_code'])) || (!isset($value['pincode']))) {
+                    \Log::error("Missing columns in row $i: " . json_encode($value)); // Log the problematic row
                     $validator->errors()->add('customError', 'The column names "Email", "ContactPerson", "Designation", "Mobile", "IfscCode" and "PinCode" should appear in the first row of the CSV.');
                     return redirect()->back()->withErrors($validator);
                 }
 
-
                 // Validate Email
-                if (empty(trim($value['Email'])) || !filter_var($value['Email'], FILTER_VALIDATE_EMAIL)) {
+                if (empty(trim($value['email'])) || !filter_var($value['email'], FILTER_VALIDATE_EMAIL)) {
                     $validator->errors()->add('customError', "Invalid email or empty field. Please check row no:- " . $i);
                     return redirect()->back()->withErrors($validator);
                 }
 
                 // Validate ContactPerson
-                if (empty(trim($value['ContactPerson']))) {
+                if (empty(trim($value['contact_person']))) {
                     $validator->errors()->add('customError', 'Column "ContactPerson" cannot be null. Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
 
                 // Validate Designation
-                if (empty(trim($value['Designation']))) {
+                if (empty(trim($value['designation']))) {
                     $validator->errors()->add('customError', 'Column "Designation" cannot be null. Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
 
                 // Validate Mobile
                 $pattern = "/^[6789]\d{9}$/";
-                if (empty($value['Mobile']) || !preg_match($pattern, $value['Mobile'])) {
+                if (empty($value['mobile']) || !preg_match($pattern, $value['mobile'])) {
                     $validator->errors()->add('customError', 'Invalid Mobile No or empty field!. Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
 
                 // Validate PinCode
-                if (empty($value['PinCode']) || !preg_match("/^\d{5}|\d{6}$/", $value['PinCode'])) {
+                if (empty($value['pincode']) || !preg_match("/^\d{5}|\d{6}$/", $value['pincode'])) {
                     $validator->errors()->add('customError', 'Invalid PinCode or empty field! Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
 
                 // Validate IFSC Code
-                if (empty($value['IfscCode'])) {
+                if (empty($value['ifsc_code'])) {
                     $validator->errors()->add('customError', 'Column "IfscCode" cannot be null!. Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
 
                 // Fetch IFSC code data
-                $ifscCode = $value['IfscCode'];
+                $ifscCode = $value['ifsc_code'];
                 $userBankCode = Auth::user()->bank_code;
                 $response = Http::get("https://ifsc.razorpay.com/{$ifscCode}");
 
@@ -348,15 +356,15 @@ class BankBranchController extends Controller
                 // Insert valid data into the database
                 DB::table('users_temp')->insert([
                     'name' => 'NA',
-                    'email' => trim($value['Email']),
-                    'contact_person' => trim($value['ContactPerson']),
-                    'designation' => trim($value['Designation']),
-                    'mobile' => trim($value['Mobile']),
-                    'ifsc_code' => trim($value['IfscCode']),
-                    'pincode' => trim($value['PinCode']),
+                    'email' => trim($value['email']),
+                    'contact_person' => trim($value['contact_person']),
+                    'designation' => trim($value['designation']),
+                    'mobile' => trim($value['mobile']),
+                    'ifsc_code' => trim($value['ifsc_code']),
+                    'pincode' => trim($value['pincode']),
                     'created_by' => Auth::user()->id,
-                    'created_at' => carbon::now(),
-                    'updated_at' => carbon::now(),
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
                 ]);
             }
 
@@ -437,7 +445,7 @@ class BankBranchController extends Controller
             $branch->ifsc_code = $request->ifsc_code;
             $branch->pincode = $request->pincode;
             $branch->status = 'D';
-
+            $branch->isactive = 'N';
             $branch->created_by = Auth::user()->id;
 
         DB::transaction(function () use ($branch) {
@@ -558,61 +566,32 @@ class BankBranchController extends Controller
     }
 
     public function submit(Request $request)
-    {
-        // dd($request);
-
-        // try{
-
-        DB::transaction(function () use ($request) {
-            // $randomString = $this->generateRandomString(5);
-            $randomString = 'Express@2025!';
-
-            $user = AdminUser::find($request->user_id);
-            $user->isactive = 'Y';
-            $user->status   = 'S';
-            $user->password_changed   = 0;  //First Login
-            //$user->password=Hash::make($randomString);
-             $user->password = '$2y$12$xTJrkHbaDKr7FvpU2xri.eM781kY1dna7XAGFbFkQMpMLQ1ZytU/C'; // India@1234
-
-            $user->save();
-
-            // $data_role1 = ['role_id' => 2, 'model_type' => 'App\Models\AdminUser', 'model_id' => $user->id];
-            $data_role2 = ['role_id' => 3, 'model_type' => 'App\Models\AdminUser', 'model_id' => $user->id];
-            DB::table('model_has_roles')->insert([$data_role2]);
-
-            // $esd_det = array('bank_user_id' =>  $user->id, 'esd' => 'ESG/'.$user->id, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now());
-            // DB::table('bank_esd_details')->insert($esd_det);
-
-            // dd($user,Auth::user()->name);
-            // $user->password=Hash::make($randomString);
-            // dd($randomString);
-
-            // $data = array('name'=>$user->name, 'unique_id'=>$user->email, 'password'=>$randomString, 'bank_name'=>Auth::user()->name);
-
-            //             //  dd($data);
-
-            // Mail::send('emails.email_credentials', $data, function($message) use($data) {
-            //    $message->to($data ['unique_id'],$data ['name'])
-            //             ->subject('Account Created | ESG - Prakrit')
-            //             ->attach(public_path('asset/images/logo/email_logo.png'), [
-            //                 'as' => 'email_logo',
-            //                 'mime' => 'image/png',
-            //             ]);
-            //         // $message->cc('pliwg@ifciltd.com');
-            //         // $message->bcc('shivam.shukla@ifciltd.com');
-            // });
-
-        });
-        alert()->success('New Branch Created', 'Success!')->persistent('Close');
+{
+    $loggedInUserEmail = Auth::user()->email;
+    $corporate = DB::table('corporate_master')->where('email', $loggedInUserEmail)->first();
+    if (!$corporate) {
+        alert()->error('Corporate does not exist!')->persistent('Close');
         return redirect()->route('admin.bank_branch.index');
-        // return redirect()->back()->with('success', 'Data successfully Submitted');
-        // }catch (\Exception $e)
-        // {
-        //     alert()->error('Something Went Wrong!', 'Attention!')->persistent('Close');
-        //     return redirect()->back();
-        // }
-
     }
+    DB::transaction(function () use ($request, $corporate) {
+
+        $user = AdminUser::find($request->user_id);
+        $user->isactive = 'Y';
+        $user->status = 'S';
+        $user->profileid = 3;
+        $user->password_changed = 0;  // First login
+        $user->password = Hash::make('India@1234');
+        $user->corporateid = $corporate->id;
+        $user->save();
+        $data_role2 = ['role_id' => 3, 'model_type' => 'App\Models\AdminUser', 'model_id' => $user->id];
+        DB::table('model_has_roles')->insert([$data_role2]);
+    });
+
+
+    alert()->success('New Branch Created', 'Success!')->persistent('Close');
+    return redirect()->route('admin.bank_branch.index');
+}
+
 
     // Additional helper function to validate each row of data
     private function validateRowData($value, $i, $validator)
@@ -717,7 +696,7 @@ class BankBranchController extends Controller
                     $insertedId = DB::table('users')->insertGetId([
                         'name'     => trim($value['name']),
                         'email'        => trim($value['email']),
-                        'password' => '$2y$12$xTJrkHbaDKr7FvpU2xri.eM781kY1dna7XAGFbFkQMpMLQ1ZytU/C',    // India@1234
+                        'password' => '$2y$10$vTj1GhEjFcL0duMu1AqmGebo48zWZoxIuG8ThKXNfEDw7ltrUobTC',    // India@1234
                         // 'password' => Hash::make($randomString),    // dynamic password generation
                         'contact_person'=> trim($value['contact_person']),
                         'designation'  => trim($value['designation']),
@@ -733,7 +712,7 @@ class BankBranchController extends Controller
 
                         // dd($insertedId);
 
-                    $data_role = array('role_id' => 3, 'model_type' => 'App\AdminUser', 'model_id' => $insertedId);
+                    $data_role = array('role_id' => 3, 'model_type' => 'App\Models\AdminUser', 'model_id' => $insertedId);
                     DB::table('model_has_roles')->insert($data_role);
 
                     $branch = DB::table('users')->where('id', $insertedId)->first();
@@ -820,12 +799,21 @@ class BankBranchController extends Controller
 
                 DB::beginTransaction();
 
-                $randomString = $this->generateRandomString(5);
+                $randomString = 'India@1234';
 
 
                 $ifscCode = $value['ifsc_code'];
                 $response = Http::get("https://ifsc.razorpay.com/{$ifscCode}");
 
+                $pincodeDetails = DB::table('pincodes')->where('pincode', $value['pincode'])->first(['state', 'city']);
+
+                if ($pincodeDetails) {
+                  $state = $pincodeDetails->state;
+                  $city = $pincodeDetails->city;
+                } else {
+                  $state = null;
+                  $city = null;
+                }
 
                 if ($response->failed()) {
                     throw new \Exception('Invalid IFSC Code or not found.');
@@ -838,10 +826,13 @@ class BankBranchController extends Controller
                     throw new \Exception('Incomplete data from Razorpay API for IFSC Code: ' . $ifscCode);
                 }
 
+
+                $password= Hash::make($randomString);
+
                $insertedId = DB::table('users')->insertGetId([
                     'name'          => trim($data['BRANCH']),
                     'email'         => trim($value['email']),
-                    'password'      => '$2y$12$xTJrkHbaDKr7FvpU2xri.eM781kY1dna7XAGFbFkQMpMLQ1ZytU/C',
+                    'password'      =>  $password,
                     'contact_person'=> trim($value['contact_person']),
                     'designation'   => trim($value['designation']),
                     'mobile'        => trim($value['mobile']),
@@ -852,15 +843,17 @@ class BankBranchController extends Controller
                     'updated_at'    => carbon::now(),
                     'status'        => 'S',
                     'isactive'      => 'Y',
-                    'state'         => $data['STATE'],
-                    'city'          => $data['CITY'],
-                    'district'      => $data['DISTRICT'],
+                    'state'         => $state,
+                    'city'          => $city,
+                    'district'      => $city,
+                    'full_address'  => trim($data['ADDRESS']),
                     'micr_code'     => trim($data['MICR']),
+                    'password_changed' => 0,
 
                 ]);
 
                 // Assign role to the newly created user
-                $data_role = array('role_id' => 3, 'model_type' => 'App\AdminUser', 'model_id' => $insertedId);
+                $data_role = array('role_id' => 3, 'model_type' => 'App\Models\AdminUser', 'model_id' => $insertedId);
                 DB::table('model_has_roles')->insert($data_role);
 
                 // Delete the record from the temp table after processing

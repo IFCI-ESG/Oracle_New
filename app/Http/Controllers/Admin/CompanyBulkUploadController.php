@@ -28,7 +28,7 @@ class CompanyBulkUploadController extends Controller
 
     {
         $userId = Auth::user()->id;
-        
+
         if (Auth::user()->hasRole('Admin')) {
           $ifscCodes = DB::table('users')
            ->where('created_by', $userId)
@@ -55,19 +55,19 @@ class CompanyBulkUploadController extends Controller
                 ->where('bank_id', $userId)
                 ->where('status', '!=', 'S')
                 ->count();
-            
+
         $duplicatemobileCount = DB::table('users_details_temp')
                 ->select('mobile')
                 ->groupBy('mobile')
                 ->havingRaw('count(mobile) > 1')
                 ->count();
-        
+
         $duplicatepanCount = DB::table('users_details_temp')
                 ->select('pan')
                 ->groupBy('pan')
                 ->havingRaw('count(pan) > 1')
                 ->count();
-        
+
         if (Auth::user()->hasRole('Admin')) {
           $userDetails = DB::table('users_details_temp')
                 ->select('users_details_temp.*', 'sector_master.id as sector_name', 'comp_type_master.id as company_type', 'class_type_master.id as class_type')
@@ -97,32 +97,32 @@ class CompanyBulkUploadController extends Controller
              })
             ->get();
         }
-            
+
          return view('admin.user.bulk_company_user_create', compact('userDetails','ifscCodes','sectors','company_types','class_types','duplicatemobileCount','duplicatepanCount','totalCount'));
     }
 
     public function deleteCompanyTempRow($id) {
-     
+
         $row = DB::table('users_details_temp')->where('id', $id)->first();
         if ($row) {
           DB::table('users_details_temp')->where('id', $id)->delete();
-          return response()->json(true);  
+          return response()->json(true);
          }
-        return response()->json(false); 
+        return response()->json(false);
     }
 
     public function deleteAllCompanyRecords(Request $request) {
-      
+
        $userId = (string) Auth::user()->id;
        try {
          if (Auth::user()->hasRole('Admin')) {
             DB::table('users_details_temp')
-             ->where('bank_id', $userId)  
+             ->where('bank_id', $userId)
              ->where('uploaded_by', 'Bank')
              ->delete();
          } else if(Auth::user()->hasRole('SubAdmin')){
             DB::table('users_details_temp')
-            ->where('created_by', $userId)  
+            ->where('created_by', $userId)
             ->where('uploaded_by', 'Branch')
             ->delete();
          }
@@ -139,21 +139,21 @@ class CompanyBulkUploadController extends Controller
           DB::table('users_details_temp')
             ->where('bank_id', $userId)
             ->where('uploaded_by', 'Bank')
-            ->update(['status' => 'S']); 
+            ->update(['status' => 'S']);
         } else if(Auth::user()->hasRole('SubAdmin')) {
             DB::table('users_details_temp')
             ->where('created_by', $userId)
             ->where('uploaded_by', 'Branch')
-            ->update(['status' => 'S']); 
+            ->update(['status' => 'S']);
         }
         return response()->json(['success' => true, 'message' => 'All records updated successfully']);
     } catch (\Exception $e) {
         return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
     }
- } 
+ }
 
  public function updateCompany(Request $request) {
-   
+
     $request->validate([
         'id' => 'required|exists:users_details_temp,id',
         'ifsc_code' => 'required',
@@ -165,7 +165,7 @@ class CompanyBulkUploadController extends Controller
         'zone' => 'required',
         'comp_type_id' => 'required',
         'class_type_id' => 'required',
-         
+
     ]);
 
     $existingMobile = DB::table('users_details_temp')
@@ -177,7 +177,7 @@ class CompanyBulkUploadController extends Controller
         return response()->json(['success' => false, 'message' => 'Mobile number already exists']);
     }
 
-   
+
     $existingPan = DB::table('users_details_temp')
         ->where('pan', $request->pan)
         ->where('id', '!=', $request->id)
@@ -186,8 +186,8 @@ class CompanyBulkUploadController extends Controller
     if ($existingPan) {
         return response()->json(['success' => false, 'message' => 'PAN already exists']);
     }
- 
-    
+
+
     $updated = DB::table('users_details_temp')
         ->where('id', $request->id)
         ->update([
@@ -200,7 +200,7 @@ class CompanyBulkUploadController extends Controller
             'zone' => $request->zone,
             'comp_type_id' => $request->comp_type_id,
             'class_type_id' => $request->class_type_id
-            
+
 
         ]);
 
@@ -235,7 +235,7 @@ public function deleteCorp($file)
 
         $rules = [
             'file' => 'required|file|mimes:csv|max:20480'
-          
+
         ];
 
         $validator = Validator::make($request->only('file'), $rules);
@@ -256,21 +256,21 @@ public function deleteCorp($file)
             $i=1;
             foreach ($arraydata as $key => $value) {
                 $i = $i + 1;
-            
+
                 if (Auth::user()->hasRole('Admin')) {
-                   if ((!isset($value['Pan'])) ||  (!isset($value['ContactPerson'])) ||  (!isset($value['Designation'])) ||   
-                     (!isset($value['Mobile'])) ||  (!isset($value['BankZone'])) ||  (!isset($value['TypeAssetClass'])) ||  
-                     (!isset($value['CompanyType'])) ||  (!isset($value['Sector'])) ||  (!isset($value['Financialyear'])) ||  
+                   if ((!isset($value['Pan'])) ||  (!isset($value['ContactPerson'])) ||  (!isset($value['Designation'])) ||
+                     (!isset($value['Mobile'])) ||  (!isset($value['BankZone'])) ||  (!isset($value['TypeAssetClass'])) ||
+                     (!isset($value['CompanyType'])) ||  (!isset($value['Sector'])) ||  (!isset($value['fy_masters'])) ||
                      (!isset($value['BankExposure'])) ||  (!isset($value['IfscCode']))) {
-                      $validator->errors()->add('customError', 'The column names "Pan","BankName","Email","ContactPerson","Designation","Mobile","BankZone" , "TypeAssetClass", " CompanyType", "Sector" ,"Financialyear", "BankExposure", "IfscCode" should appear in the first row of the CSV.');
+                      $validator->errors()->add('customError', 'The column names "Pan","BankName","Email","ContactPerson","Designation","Mobile","BankZone" , "TypeAssetClass", " CompanyType", "Sector" ,"fy_masters", "BankExposure", "IfscCode" should appear in the first row of the CSV.');
                       return redirect()->back()->withErrors($validator);
                     }
                 } else if (Auth::user()->hasRole('SubAdmin')) {
-                    if ((!isset($value['Pan'])) ||  (!isset($value['ContactPerson'])) ||  (!isset($value['Designation'])) ||   
-                     (!isset($value['Mobile'])) ||  (!isset($value['BankZone'])) ||  (!isset($value['TypeAssetClass'])) ||  
-                     (!isset($value['CompanyType'])) ||  (!isset($value['Sector'])) ||  (!isset($value['Financialyear'])) ||  
+                    if ((!isset($value['Pan'])) ||  (!isset($value['ContactPerson'])) ||  (!isset($value['Designation'])) ||
+                     (!isset($value['Mobile'])) ||  (!isset($value['BankZone'])) ||  (!isset($value['TypeAssetClass'])) ||
+                     (!isset($value['CompanyType'])) ||  (!isset($value['Sector'])) ||  (!isset($value['fy_masters'])) ||
                      (!isset($value['BankExposure']))) {
-                      $validator->errors()->add('customError', 'The column names "Pan","BankName","Email","ContactPerson","Designation","Mobile","BankZone" , "TypeAssetClass", " CompanyType", "Sector" ,"Financialyear", "BankExposure" should appear in the first row of the CSV.');
+                      $validator->errors()->add('customError', 'The column names "Pan","BankName","Email","ContactPerson","Designation","Mobile","BankZone" , "TypeAssetClass", " CompanyType", "Sector" ,"fy_masters", "BankExposure" should appear in the first row of the CSV.');
                       return redirect()->back()->withErrors($validator);
                     }
                 }
@@ -280,8 +280,8 @@ public function deleteCorp($file)
                   $ifscCodeExists = DB::table('users')
                   ->where('ifsc_code', '=', $value['IfscCode'])
                   ->where('created_by', '=', Auth()->user()->id)
-                  ->exists(); 
-          
+                  ->exists();
+
                  if (!$ifscCodeExists) {
                    $validator->errors()->add('customError', 'Invalid IFSC or IFSC Code does not belong to your bank. Please check row no:- ' . $i);
                    return redirect()->back()->withErrors($validator);
@@ -293,61 +293,61 @@ public function deleteCorp($file)
                     $validator->errors()->add('customError', 'Column "ContactPerson" cannot be null. Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
-            
+
                 // Validate if Designation is empty
                 if (empty(trim($value['Designation']))) {
                     $validator->errors()->add('customError', 'Column "Designation" cannot be null. Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
-            
+
                 // Mobile validation - check if the mobile number is empty or invalid
                 $pattern = "/^[6789]\d{9}$/";  // Mobile number pattern
                 if (empty($value['Mobile']) || !preg_match($pattern, $value['Mobile'])) {
                     $validator->errors()->add('customError', 'Invalid Mobile No or empty field! Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
-            
-                
-              
+
+
+
                 // Pan validation - check if the PAN is empty or invalid
                 if (empty($value['Pan']) || !preg_match("/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/", $value['Pan'])) {
                     $validator->errors()->add('customError', 'Invalid Pan or empty field! Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
-            
-              
+
+
                 // Validate other required fields
                 if (empty($value['BankZone'])) {
                     $validator->errors()->add('customError', 'Column "BankZone" cannot be null! Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
-            
+
                 if (empty($value['TypeAssetClass'])) {
                     $validator->errors()->add('customError', 'Column "TypeAssetClass" cannot be null! Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
-            
+
                 if (empty($value['CompanyType'])) {
                     $validator->errors()->add('customError', 'Column "CompanyType" cannot be null! Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
-            
+
                 if (empty($value['Sector'])) {
                     $validator->errors()->add('customError', 'Column "Sector" cannot be null! Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
-            
-                if (empty($value['Financialyear'])) {
-                    $validator->errors()->add('customError', 'Column "Financialyear" cannot be null! Please check row no:- ' . $i);
+
+                if (empty($value['fy_masters'])) {
+                    $validator->errors()->add('customError', 'Column "fy_masters" cannot be null! Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
-            
+
                 if (empty($value['BankExposure'])) {
                     $validator->errors()->add('customError', 'Column "BankExposure" cannot be null! Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
             }
-            
+
 
         foreach ($arraydata as $key => $value) {
 
@@ -365,7 +365,7 @@ public function deleteCorp($file)
                         'class_type_id' => trim($value['TypeAssetClass']),
                         'comp_type_id' => trim($value['CompanyType']),
                         'sector_id' => trim($value['Sector']),
-                        'fy_id' => trim($value['Financialyear']),
+                        'fy_id' => trim($value['fy_masters']),
                         'bank_exposure' => trim($value['BankExposure']),
                         'ifsc_code' => trim($value['IfscCode']),
                         'created_by' => $branch ? $branch->id : null ,
@@ -373,12 +373,12 @@ public function deleteCorp($file)
                         'borrower_type' => 'C',
                         'uploaded_by' => 'Bank'
                         ]);
-                
+
                 } else if (Auth::user()->hasRole('SubAdmin')) {
                      $branch_ifscCode = DB::table('users')
                       ->where('id', Auth()->user()->id)
                       ->value('ifsc_code');
-                     
+
                      DB::table('users_details_temp')->insert([
                           'name' => 'NA',
                           'contact_person' => trim($value['ContactPerson']),
@@ -389,14 +389,14 @@ public function deleteCorp($file)
                           'class_type_id' => trim($value['TypeAssetClass']),
                           'comp_type_id' => trim($value['CompanyType']),
                           'sector_id' => trim($value['Sector']),
-                          'fy_id' => trim($value['Financialyear']),
+                          'fy_id' => trim($value['fy_masters']),
                           'bank_exposure' => trim($value['BankExposure']),
                           'ifsc_code' => trim($branch_ifscCode),
                           'created_by' =>Auth::user()->id ,
                           'borrower_type' => 'C',
                           'uploaded_by' => 'Branch'
                           ]);
-                  } 
+                  }
 
             }
 
@@ -433,10 +433,10 @@ public function deleteCorp($file)
             $i=1;
            foreach ($arraydata as $key => $value) {
             $i=$i+1;
-            if ((!isset($value['Pan'])) ||  (!isset($value['CustomerName'])) ||  (!isset($value['ValueAsset']))||  (!isset($value['Email']))||  (!isset($value['Mobile']))||  (!isset($value['BankZone']))||  (!isset($value['TypeAssetClass'])) ||  (!isset($value['LoanTenure']))||  (!isset($value['Financialyear'])) ||  (!isset($value['BankExposure'])) ||  (!isset($value['Pincode'])) ||  (!isset($value['State'])) ||  (!isset($value['City']))||  (!isset($value['Address']))) {
+            if ((!isset($value['Pan'])) ||  (!isset($value['CustomerName'])) ||  (!isset($value['ValueAsset']))||  (!isset($value['Email']))||  (!isset($value['Mobile']))||  (!isset($value['BankZone']))||  (!isset($value['TypeAssetClass'])) ||  (!isset($value['LoanTenure']))||  (!isset($value['fy_masters'])) ||  (!isset($value['BankExposure'])) ||  (!isset($value['Pincode'])) ||  (!isset($value['State'])) ||  (!isset($value['City']))||  (!isset($value['Address']))) {
 
 
-                $validator->errors()->add('customError', 'The column names "Pan","BankName","Email","CustomerName","ValueAsset","Mobile","BankZone" , "TypeAssetClass", "LoanTenure" ,"Financialyear" and "BankExposure","Address","State","Pincode", "City" should appear in the first row of the CSV.');
+                $validator->errors()->add('customError', 'The column names "Pan","BankName","Email","CustomerName","ValueAsset","Mobile","BankZone" , "TypeAssetClass", "LoanTenure" ,"fy_masters" and "BankExposure","Address","State","Pincode", "City" should appear in the first row of the CSV.');
                 return redirect()->back()->withErrors($validator);
             }
             if (empty(trim($value['CustomerName']))) {
@@ -478,8 +478,8 @@ public function deleteCorp($file)
              $validator->errors()->add('customError', 'Column "LoanTenure" cannot be null!. Please check  row no:- '.$i);
                 return redirect()->back()->withErrors($validator);
             }
-               if (empty($value['Financialyear'])) {
-             $validator->errors()->add('customError', 'Column "Financialyear" cannot be null!. Please check  row no:- '.$i);
+               if (empty($value['fy_masters'])) {
+             $validator->errors()->add('customError', 'Column "fy_masters" cannot be null!. Please check  row no:- '.$i);
                 return redirect()->back()->withErrors($validator);
             }
                if (empty($value['BankExposure'])) {
@@ -517,7 +517,7 @@ public function deleteCorp($file)
                                 'mobile' =>trim($value['Mobile']),
                                 'zone' => trim($value['BankZone']),
                                 'class_type_id' => trim($value['TypeAssetClass']),
-                                'fy_id' => trim($value['Financialyear']),
+                                'fy_id' => trim($value['fy_masters']),
                                 'bank_exposure' => trim($value['BankExposure']),
                                 'value_asset' => trim($value['ValueAsset']),
                                 'loan_tenure' => trim($value['LoanTenure']),
@@ -540,53 +540,53 @@ public function deleteCorp($file)
         }
 
     }
- 
+
     public function FinalInsertCorp() {
         try {
             $brrower_create_limit = config('constants.brrower_create_limit');
-            
+
             if (empty($brrower_create_limit)) {
                 throw new \Exception('Brrower create limit is not set in the configuration');
             }
-    
+
             $records = DB::table('users_details_temp')
                 ->where('borrower_type', 'C')
                 ->where('status', 'S')
                 ->orderBy('id', 'ASC')
                 ->take($brrower_create_limit)
                 ->get();
-           
-          
+
+
             if ($records->isEmpty()) {
                 Log::info('No records found in users_details_temp table.');
                 return 'No records to process.';
             }
-    
+
             foreach ($records as $key => $value) {
                 try {
                     // API Call for Company Details
                     $url = 'https://api.probe42.in/probe_pro_sandbox/companies/' . $value->pan . '/comprehensive-details?identifier_type=PAN';
                     $api_key = '07wvsOWBoq9iwpjhMm2C22eKOymlpqht9WmtYEFb';
-            
+
                     $headers = [
                         'Accept: application/json',
                         'x-api-key: ' . $api_key,
                         'x-api-version: 1.3'
                     ];
-    
+
                     $ch = curl_init();
                     curl_setopt($ch, CURLOPT_URL, $url);
                     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                     $response = curl_exec($ch);
                     curl_close($ch);
-    
+
                     if (curl_errno($ch)) {
                         throw new \Exception('cURL Error: ' . curl_error($ch));
                     }
-    
+
                     $companyData = json_decode($response, true);
-                   
+
                     $companyName = $companyData['data']['company']['legal_name'] ?? 'Unknown Company';
                     $companyEmail = $companyData['data']['company']['email'] ?? 'Unknown';
                     $companyCin = $companyData['data']['company']['cin'] ?? '';
@@ -597,19 +597,19 @@ public function deleteCorp($file)
                     $addressLines = [
                         $companyData['data']['company']['business_address']['address_line1'] ?? '',
                         $companyData['data']['company']['business_address']['address_line2'] ?? '',
-                       
+
                     ];
-                   
+
                     $CoOffAddress = implode(' ', array_filter($addressLines));
-               
+
                     $CooffPin =  $companyData['data']['company']['business_address']['pincode'] ?? '';
                     $CooffState =  $companyData['data']['company']['business_address']['state'] ?? '';
                     $CooffCity =  $companyData['data']['company']['business_address']['city'] ?? '';
-                     
+
                     $companyRating = $companyData['data']['credit_ratings'][0]['rating'] ?? NULL;
                     $companyRatingDate = $companyData['data']['credit_ratings'][0]['rating_date'] ?? NULL;
                     $companyRatingAgency = $companyData['data']['credit_ratings'][0]['rating_agency'] ?? NULL;
-                  
+
                     if (!$companyData || !isset($companyData['data']['company'])) {
                         Log::info("Company not found for PAN: {$value->pan}");
                         DB::table('users_details_junk')->insert([
@@ -633,18 +633,18 @@ public function deleteCorp($file)
                             'borrower_type' => 'R',
                         ]);
                         DB::table('users_details_temp')->where('id', $value->id)->delete();
-                    } 
-                    
+                    }
+
                         // Check if user exists based on PAN
                         $existingUser = User::where('pan', $value->pan)->first();
-    
+
                         if ($existingUser) {
                             // If user exists, insert into BankFinancialDetails
                             $fincial = new BankFinancialDetails;
-                         
+
                               $adminUser = DB::table('users')->where('ifsc_code', $value->ifsc_code)->first();
                               $adminUserId_mapped_ifsc = $adminUser->id;
-                           
+
                             $fincial->fy_id = $value->fy_id;
                             $fincial->class_type_id = $value->class_type_id;
                             $fincial->com_id = $existingUser->id;
@@ -654,22 +654,23 @@ public function deleteCorp($file)
                             $fincial->rating = $companyRating ?? NULL;
                             $fincial->rating_date = $companyRatingDate ?? NULL;
                             $fincial->rating_agency = $companyRatingAgency ?? NULL;
-                            
+
                             $fincial->save();
-    
+
                             $data = ['role_id' => 4, 'model_type' => 'App\Models\User', 'model_id' => $existingUser->id];
                             DB::table('model_has_roles')->insert($data);
                             DB::table('users_details_temp')->where('id', $value->id)->delete();
                         } else {
-                           
+
                             $adminUser = DB::table('users')->where('ifsc_code', $value->ifsc_code)->first();
                             $adminUserId_mapped_ifsc = $adminUser->id;
                             $randomString = 'Password@1234';
-                            
+
                             $newuser = new User;
                             $newuser->name = $companyName;
                             $newuser->email = $companyEmail;
-                            $newuser->password=Hash::make($randomString);
+                            // $newuser->password=Hash::make($randomString);
+                            $newuser->password='$2y$12$xTJrkHbaDKr7FvpU2xri.eM781kY1dna7XAGFbFkQMpMLQ1ZytU/C';
                             $newuser->mobile = $value->mobile;
                             $newuser->designation = $value->designation;
                             $newuser->cin_llpin = $companyCin;
@@ -699,8 +700,8 @@ public function deleteCorp($file)
                                 Log::error("Failed to create user for PAN: {$value->pan}");
                                 continue;
                             }
-                
-    
+
+
                             // Insert into BankFinancialDetails
                             $fincial = new BankFinancialDetails;
                             $fincial->fy_id = $value->fy_id;
@@ -712,40 +713,40 @@ public function deleteCorp($file)
                             $fincial->rating = $companyRating ?? NULL;
                             $fincial->rating_date = $companyRatingDate ?? NULL;
                             $fincial->rating_agency = $companyRatingAgency ?? NULL;
-                            
+
                             $fincial->save();
                             if (!$fincial->exists) {
                                 Log::error("Failed to insert financial details for PAN: {$value->pan}");
                             }
-    
+
                             // Insert role into model_has_roles table
                             $data = ['role_id' => 4, 'model_type' => 'App\Models\User', 'model_id' => $newuser->id];
                             DB::table('model_has_roles')->insert($data);
                             DB::table('users_details_temp')->where('id', $value->id)->delete();
                         }
-    
+
                         // Delete from temporary table after processing
                         DB::table('users_details_temp')->where('id', $value->id)->delete();
-                  
-                   
+
+
                 } catch (\Exception $e) {
                     Log::error("Error processing record ID: " . $value->id . " - " . $e->getMessage());
                     Log::debug('API Response for PAN ' . $value->pan . ': ' . json_encode($companyData));
 
                 }
             }
-    
+
             // Log success after processing all records
             Log::info('Successfully processed and inserted records from users_details_temp.');
             return 'Process completed successfully.';
-    
+
         } catch (\Exception $e) {
             Log::error('Error during FinalInsert process: ' . $e->getMessage());
             Log::debug("Processing record for PAN: {$value->pan}, Rating: {$companyRating}, Rating Date: {$companyRatingDate}, Rating Agency: {$companyRatingAgency}");
             return 'Error during the insert process: ' . $e->getMessage();
         }
     }
-    
+
 
  public function FinalInsertRetail()
 {

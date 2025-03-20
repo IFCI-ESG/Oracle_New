@@ -10,7 +10,7 @@
         "laravel/tinker": "^2.9",
         "proengsoft/laravel-jsvalidation": "^4.9",
         "realrashid/sweet-alert": "^7.2",
-        "spatie/laravel-permission": "^6.10",
+        "spatie/laravel-permission": "^6.16",
         "yajra/laravel-oci8": "^11.6"
     },
     "require-dev": {

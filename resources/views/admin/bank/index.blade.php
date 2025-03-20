@@ -68,10 +68,13 @@
                                                         @if ($bank->isactive == 'Y')
                                                             <span class="badge text-bg-success"
                                                                 style="background-color: #E5F5E5; color: #28A745; font-size: 0.8rem; padding: 3px 8px; border-radius: 4px;">Active</span>
-                                                        @elseif($bank->isactive == 'N')
-                                                            <span class="badge text-bg-warning"
-                                                                style="background-color: #FFF4E5; color: #FFA500; font-size: 0.8rem; padding: 3px 8px; border-radius: 4px;">Inactive</span>
-                                                        @endif
+                                                                @elseif($bank->isactive == 'N' || is_null($bank->isactive))
+    <span class="badge text-bg-warning"
+        style="background-color: #FFF4E5; color: #FFA500; font-size: 0.8rem; padding: 3px 8px; border-radius: 4px;">
+        Inactive
+    </span>
+@endif
+
                                                     </td>
                                                     <td class="text-center">
                                                         <div class="dropdown">

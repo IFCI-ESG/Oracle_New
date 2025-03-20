@@ -17,7 +17,7 @@
 
         <!-- User box -->
         <div class="user-box text-center border-top border-bottom">
-           
+
 
               @if (auth()->user()->image)
                         <img src="{{ asset('storage/' . auth()->user()->image) }}" alt="user-image"
@@ -55,7 +55,7 @@
         <ul id="side-menu" class="menu">
                      <li class="menu-title">Navigation</li>
             @if (Auth::user()->hasRole('SuperAdmin'))
-       
+
                 <li class="menu-item ">
                     <a href="#" class="menu-link">
                         <span class="menu-icon"><i data-feather="airplay"></i></span>
@@ -105,28 +105,30 @@
                         <span class="menu-text"> MIS </span>
                     </a>
                 </li>
-             <li class="menu-item ">
-                <a class="menu-link textcolor" href="#sidebarBranch" data-bs-toggle="collapse">
-                    <span class="menu-icon"><i data-feather="globe"></i></span>
-                    <span class="menu-text"> Manage Branch </span>
-                    <span class="menu-arrow"></span>
-                </a>
-                <div class="collapse" id="sidebarBranch">
-                    <ul class="sub-menu">
-                        <li class="menu-item">
-                            <a href="{{ route('admin.bank_branch.index') }}" class="menu-link"><span class="menu-text">View Branch List</span></a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="{{ route('admin.bank_branch.addbranch') }}" class="menu-link"><span class="menu-text">Add Branch</span></a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="{{ route('admin.bank_branch_bulk.create') }}" class="menu-link"><span class="menu-text">Bulk Upload Branch</span></a>
-                        </li>
-                    </ul>
-                </div>
+                <li class="menu-item">
+    <a class="menu-link textcolor" href="#sidebarBranch" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarBranch">
+        <span class="menu-icon"><i data-feather="globe"></i></span>
+        <span class="menu-text">Manage Branch</span>
+        <span class="menu-arrow"></span>
+    </a>
+    <div class="collapse" id="sidebarBranch">
+        <ul class="sub-menu">
+            <li class="menu-item">
+                <a href="{{ route('admin.bank_branch.index') }}" class="menu-link"><span class="menu-text">View Branch List</span></a>
             </li>
+            <li class="menu-item">
+                <a href="{{ route('admin.bank_branch.addbranch') }}" class="menu-link"><span class="menu-text">Add Branch</span></a>
+            </li>
+            <li class="menu-item">
+                <a href="{{ route('admin.bank_branch_bulk.create') }}" class="menu-link"><span class="menu-text">Bulk Upload Branch</span></a>
+            </li>
+        </ul>
+    </div>
+</li>
 
-    
+
+
+
 
          <li class="menu-item ">
                 <a class="menu-link" href="#sidebarExposure" data-bs-toggle="collapse">

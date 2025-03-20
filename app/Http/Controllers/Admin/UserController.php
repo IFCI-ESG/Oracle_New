@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdminUser;
 use DB;
 use Auth;
 use App\Models\User;
@@ -301,69 +302,50 @@ class UserController extends Controller
     }
 
     public function user_index()
-    {
+{
+    $user = Auth::user();
 
-        $user = Auth::user();
+    // Get the bank esd details
+    $bank_esd = DB::table('bank_esd_details')->where('bank_user_id', $user->id)->first();
 
-        $bank_esd = DB::table('bank_esd_details')->where('bank_user_id', $user->id)->first();
+    // Get bank branch details
+    $bank_branch = DB::table('users')->where(function ($query) {
+        $query->where('id', auth()->user()->id)
+              ->orWhere('created_by', auth()->user()->id);
+    })->pluck('id');
 
-        //$bank_branch = DB::table('users')->where('created_by', $user->id) ->pluck('id');
-
-        $bank_branch = DB::table('users')->where(function ($query) {
-               $query->where('id', auth()->user()->id)
-                  ->orWhere('created_by', auth()->user()->id);
-               })->pluck('id');
-
-
-
-        // $user_detail = DB::table('users')
-        //                 ->join('bank_esd_details as bed','bed.bank_user_id','users.created_by')
-        //                 ->join('sector_master as sm','sm.id','users.sector_id')
-        //                 ->join('comp_type_master as ctm','ctm.id','users.comp_type_id')
-        //                 ->where(DB::RAW("is_normal_user(users.id)"), 1)
-        //                 ->where('users.created_by',Auth::user()->id)
-        //                 ->orderby('users.id', 'Desc')
-        //                 ->get(['users.*','sm.name as sector','ctm.name as comp_type']);
-
-
-        if (Auth::user()->hasRole('Admin')){
-          $corp_detail = DB::table('bank_financial_details as bfd')
-                            ->join('users as u','u.id','bfd.com_id')
-                            ->join('sector_master as sm','sm.id','u.sector_id')
-                            ->join('comp_type_master as ctm','ctm.id','u.comp_type_id')
-                            ->whereIn('bfd.bank_id',$bank_branch)
-                            ->where('u.borrower_type','C')
-                            ->distinct('bfd.com_id')
-                            // ->orderby('bfd.id','Desc')
-                            ->get(['u.*','sm.name as sector','ctm.name as comp_type']);
-        }
-
-         else if ((Auth::user()->hasRole('SubAdmin'))) {
-            $corp_detail = DB::table('bank_financial_details as bfd')
-            ->join('users as u','u.id','bfd.com_id')
-            ->join('sector_master as sm','sm.id','u.sector_id')
-            ->join('comp_type_master as ctm','ctm.id','u.comp_type_id')
-            ->where('bfd.bank_id',$user->id)
-            ->where('u.borrower_type','C')
-            ->distinct('bfd.com_id')
-            // ->orderby('bfd.id','Desc')
-            ->get(['u.*','sm.name as sector','ctm.name as comp_type']);
-        }
-
-        $retail_detail = DB::table('bank_financial_details as bfd')
-                            ->join('users as u','u.id','bfd.com_id')
-                            ->where('bfd.bank_id',$user->id)
-                            ->where('u.borrower_type','R')
-                            ->distinct('bfd.com_id')
-                            // ->orderby('u.id','Desc')
-                            ->get(['u.*']);
-        // $bank_check =
-
-    //    dd($corp_detail);
-
-        return view('admin.user.index', compact('corp_detail','retail_detail'));
-
+    // If the user is an Admin
+    if (Auth::user()->hasRole('Admin')) {
+        $corp_detail = DB::table('bank_financial_details as bfd')
+            ->join('users as u', 'u.id', 'bfd.com_id')
+            ->join('sector_master as sm', 'sm.id', 'u.sector_id')
+            ->join('comp_type_master as ctm', 'ctm.id', 'u.comp_type_id')
+            ->whereIn('bfd.bank_id', $bank_branch) // No borrower_type filter
+            ->distinct() // Remove distinct on CLOB columns
+            ->get(['u.id', 'u.name', 'u.email', 'sm.name as sector', 'ctm.name as comp_type']); // Select only necessary columns
     }
+
+    // If the user is a SubAdmin
+    else if (Auth::user()->hasRole('SubAdmin')) {
+        $corp_detail = DB::table('bank_financial_details as bfd')
+            ->join('users as u', 'u.id', 'bfd.com_id')
+            ->join('sector_master as sm', 'sm.id', 'u.sector_id')
+            ->join('comp_type_master as ctm', 'ctm.id', 'u.comp_type_id')
+            ->where('bfd.bank_id', $user->id) // No borrower_type filter
+            ->distinct() // Remove distinct on CLOB columns
+            ->get(['u.id', 'u.name', 'u.email', 'sm.name as sector', 'ctm.name as comp_type']); // Select only necessary columns
+    }
+
+    // Fetch retail details (no borrower_type filter)
+    $retail_detail = DB::table('bank_financial_details as bfd')
+        ->join('users as u', 'u.id', 'bfd.com_id')
+        ->where('bfd.bank_id', $user->id) // No borrower_type filter
+        ->distinct() // Remove distinct on CLOB columns
+        ->get(['u.id', 'u.name', 'u.email']); // Select only necessary columns
+
+    return view('admin.user.index', compact('corp_detail', 'retail_detail'));
+}
+
 
     public function adduser()
     {
@@ -385,25 +367,28 @@ class UserController extends Controller
     }
 
     public function getBranchDetails(Request $request) {
-      $ifsc_code = $request->input('ifsc_code');
-      $branch = DB::table('users')
-        ->where('ifsc_code', $ifsc_code)
-        ->where(function ($query) {
-            $query->where('id', auth()->user()->id)
-                ->orWhere('created_by', auth()->user()->id);
-           })
-        ->first();
-
+        $ifsc_code = $request->input('ifsc_code');
+        $user_id = auth()->user()->id;
+    
+        // Query the users table to find the branch details
+        $branch = DB::table('users')
+            ->where('IFSC_CODE', $ifsc_code)
+            ->where(function ($query) use ($user_id) {
+                $query->where('id', $user_id)
+                      ->orWhere('created_by', $user_id);
+            })
+            ->first();
+    
+        // Check if the branch details are found
         if ($branch) {
-          return response()->json([
-            'name' => $branch->name,
-            'full_address' => $branch->full_address,
-          ]);
-       } else {
-        return response()->json(['error' => 'Branch not found.'], 404);
-       }
+            return response()->json([
+                'name' => $branch->name ?? null,
+                'full_address' => $branch->full_address ?? null,
+            ]);
+        } else {
+            return response()->json(['error' => 'Branch not found.'], 404);
+        }
     }
-
     public function retail_adduser()
     {
         $sector = DB::table('sector_master')->get();
@@ -807,12 +792,12 @@ class UserController extends Controller
             return back()->withErrors($valid)->withInput();
         }
 
-        $panExists = User::where('pan', $request->pan)->exists();
+        $panExists = AdminUser::where('pan', $request->pan)->exists();
 
 
         if($panExists)
         {
-            $user=User::where('pan', $request->pan)->first();
+            $user=AdminUser::where('pan', $request->pan)->first();
 
             alert()->success('This Company is already Registered by another Bank', 'Data Fetched!')->persistent('Close');
             return redirect()->route('admin.user.existuser',['id' => encrypt($user->id)]);
@@ -947,11 +932,11 @@ class UserController extends Controller
             return back()->withErrors($valid)->withInput();
         }
 
-        $panExists = User::where('pan', $request->pan)->exists();
+        $panExists = AdminUser::where('pan', $request->pan)->exists();
 
         if($panExists)
         {
-            $user=User::where('pan', $request->pan)->first();
+            $user=AdminUser::where('pan', $request->pan)->first();
 
             alert()->success('This Customer is already Registered by another Bank', 'Data Fetched!')->persistent('Close');
             return redirect()->route('admin.retail.existuser',['id' => encrypt($user->id)]);
@@ -1134,9 +1119,9 @@ class UserController extends Controller
 
             // dd($bank_esd);
             // Validate unique email and mobile
-            $emailExists = User::where('email', $request->email)->exists();
-            $mobileExists = User::where('mobile', $request->mobile)->exists();
-            $panExists = User::where('pan', $request->pan)->exists();
+            $emailExists = AdminUser::where('email', $request->email)->exists();
+            $mobileExists = AdminUser::where('mobile', $request->mobile)->exists();
+            $panExists = AdminUser::where('pan', $request->pan)->exists();
             // $cinExists = User::where('cin_llpin', $request->cin)->exists();
 
             if ($emailExists || $mobileExists || $panExists) {
@@ -1148,7 +1133,7 @@ class UserController extends Controller
 
                 // dd($randomString);
 
-                $newuser = new User;
+                $newuser = new AdminUser;
 
                 // dd($newuser);
 
@@ -1232,7 +1217,7 @@ class UserController extends Controller
         $id=decrypt($id);
         // dd($id);
 
-        $user = User::find($id);
+        $user = AdminUser::find($id);
         $sector = DB::table('sector_master')->get();
         $zone = DB::table('tbl_zone_master')->get();
         $fys = DB::table('fy_masters')->get();
@@ -1259,7 +1244,7 @@ class UserController extends Controller
         $id=decrypt($id);
         // dd($id);
 
-        $user = User::find($id);
+        $user = AdminUser::find($id);
         $zone = DB::table('tbl_zone_master')->get();
         $fys = DB::table('fy_masters')->orderby('id','Desc')->first();
 
@@ -1284,7 +1269,7 @@ class UserController extends Controller
         $id=decrypt($id);
         // dd($id);
 
-        $user = User::find($id);
+        $user = AdminUser::find($id);
         $sector = DB::table('sector_master')->get();
         $zone = DB::table('tbl_zone_master')->get();
         $fys = DB::table('fy_masters')->get();
@@ -1309,7 +1294,7 @@ class UserController extends Controller
         $id=decrypt($id);
         // dd($id);
 
-        $user = User::find($id);
+        $user = AdminUser::find($id);
         $zone = DB::table('tbl_zone_master')->get();
         $fys = DB::table('fy_masters')->orderby('id','Desc')->first();
 
@@ -1334,7 +1319,7 @@ class UserController extends Controller
         $id=decrypt($id);
 
 
-        $user = User::find($id);
+        $user = AdminUser::find($id);
         $sector = DB::table('sector_master')->get();
         $zone = DB::table('tbl_zone_master')->get();
         $fys = DB::table('fy_masters')->get();
@@ -1359,7 +1344,7 @@ class UserController extends Controller
         $id=decrypt($id);
         // dd($id);
 
-        $user = User::find($id);
+        $user = AdminUser::find($id);
         $zone = DB::table('tbl_zone_master')->get();
         $fys = DB::table('fy_masters')->orderby('id','Desc')->first();
 
@@ -1385,7 +1370,7 @@ class UserController extends Controller
         // dd($id);
         DB::transaction(function () use ($id)
         {
-            $user = User::find($id);
+            $user = AdminUser::find($id);
             // dd($user);
             BankFinancialDetails::where('com_id', $id)->where('bank_id', Auth::user()->id)->delete();
 
@@ -1407,7 +1392,7 @@ class UserController extends Controller
         $id=decrypt($id);
         // dd($id);
 
-        $user = User::find($id);
+        $user = AdminUser::find($id);
         $user->purpose = explode(',', $user->purpose);
         $sector = DB::table('sector_master')->get();
         $zone = DB::table('tbl_zone_master')->get();
@@ -1432,7 +1417,7 @@ class UserController extends Controller
             DB::transaction(function () use ($request)
             {
 
-                $user = User::find($request->user_id);
+                $user = AdminUser::find($request->user_id);
 
                     if($user->sector_id != $request->sector || $user->comp_type_id != $request->comp_type){
                         // dd('d');
@@ -1487,7 +1472,7 @@ class UserController extends Controller
             DB::transaction(function () use ($request)
             {
 
-                $user = User::find($request->user_id);
+                $user = AdminUser::find($request->user_id);
                     $user->name = $request->cust_name;
                     $user->pan = $request->pan;
                     $user->email = $request->email;
@@ -1659,7 +1644,7 @@ class UserController extends Controller
                     $fincial->save();
                 }
 
-                $user = User::find($request->user_id);
+                $user = AdminUser::find($request->user_id);
 
                 // $data = array('name'=>$user->name,'email'=>$user->email, 'bank_name'=>Auth::user()->name);
 
@@ -1707,7 +1692,7 @@ class UserController extends Controller
                     $fincial->save();
                 }
 
-                $user = User::find($request->user_id);
+                $user = AdminUser::find($request->user_id);
 
                 // $data = array('name'=>$user->name,'email'=>$user->email, 'bank_name'=>Auth::user()->name);
 
@@ -1768,15 +1753,17 @@ class UserController extends Controller
                 $randomString = 'Express@2025!';
 
 
-                $user = User::find($request->user_id);
+                $user = AdminUser::find($request->user_id);
                     $user->status = 'S' ;
                     $user->isactive = 'Y' ;
+                    $user->profileid   = 4;
+                    // $user->pan   = 'N/A';
                     $user->password_changed = '0';
                     $user->password=Hash::make($randomString);
                     // $user->ifsc_code = $request->ifsc_code;
                 $user->save();
 
-                $data = array('role_id' => 4, 'model_type' => 'App\Models\User', 'model_id' => $user->id);
+                $data = array('role_id' => 4, 'model_type' => 'App\Models\AdminUser', 'model_id' => $user->id);
                 DB::table('model_has_roles')->insert($data);
 
                 // $data = array('name'=>$user->name,'email'=>$user->email,'unique_id'=>$user->unique_login_id,'password'=>$randomString,
@@ -1818,17 +1805,18 @@ class UserController extends Controller
             DB::transaction(function () use ($request)
             {
                 // $randomString = $this->generateRandomString(5);
-                $randomString = 'India@1234';
+                $randomString = 'Express@2025!';
 
 
-                $user = User::find($request->user_id);
+                $user = AdminUser::find($request->user_id);
                     $user->status = 'S' ;
                     $user->isactive = 'Y' ;
+                    $user->profileid   = 4;
                     $user->password=Hash::make($randomString);
                     $user->ifsc_code = $request->ifsc_code;
                 $user->save();
 
-                $data = array('role_id' => 4, 'model_type' => 'App\User', 'model_id' => $user->id);
+                $data = array('role_id' => 4, 'model_type' => 'App\Models\AdminUser', 'model_id' => $user->id);
                 DB::table('model_has_roles')->insert($data);
 
                 // $data = array('name'=>$user->name,'email'=>$user->email,'unique_id'=>$user->unique_login_id,'password'=>$randomString,

@@ -1,4 +1,4 @@
-CustomerName,Pan,Email,Mobile,BankZone,Address,Pincode,State,City,Financialyear,TypeAssetClass,BankExposure,ValueAsset,LoanTenure
+CustomerName,Pan,Email,Mobile,BankZone,Address,Pincode,State,City,fy_masters,TypeAssetClass,BankExposure,ValueAsset,LoanTenure
 Ravi1,BINPR9933D,ravi12351@gmail.com,9555010045,East,Sector-4,122016,Haryana,Gurugram,1,2,10000,2000,5
 Shankar1,BINPR9934R,ravi13351@gmail.com,9555010046,North,Sector-1,122017,Haryana,Gurugram,2,1,10000,3000,15
 Tushar1,BINPR9945S,ravi14351@gmail.com,9555010047,West,Sector-5,122018,Haryana,Gurugram,3,1,10000,4000,25
