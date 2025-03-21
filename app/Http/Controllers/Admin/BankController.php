@@ -386,19 +386,14 @@ class BankController extends Controller
             $user->mobile         = $request->mobile;
             $user->altr_mobile    = $request->altr_mobile ? $request->altr_mobile : Null;
             $user->services       = json_encode($request->input('services', []));
-            // $purpose = $request->input('purpose', []);
-            // $user->purpose = implode(',', $purpose);
+          
             $user->save();
 
         });
 
         alert()->success('Data Updated Successfully', 'Success!')->persistent('Close');
         return redirect()->back()->with('success', 'Data successfully Updated');
-        // }catch (\Exception $e)
-        // {
-        //     alert()->Warning('Something Went Wrong', 'Warning!')->persistent('Close');
-        //     return redirect()->back();
-        // }
+    
 
         return view('admin.user.edituser', compact('user'));
 
