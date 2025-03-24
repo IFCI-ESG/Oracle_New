@@ -300,7 +300,6 @@ class UserController extends Controller
     {
         return view('admin.dash_v2');
     }
-<<<<<<< HEAD
     public function user_home($id)
     {
         $id= decrypt($id);
@@ -314,9 +313,6 @@ class UserController extends Controller
         // return view('admin.user.index', compact('corp_detail','retail_detail'));
 
     }
-=======
-
->>>>>>> c8408fe837148982479277ffcd8a390c130861e7
     public function user_index()
 {
     $user = Auth::user();
@@ -385,11 +381,7 @@ class UserController extends Controller
     public function getBranchDetails(Request $request) {
         $ifsc_code = $request->input('ifsc_code');
         $user_id = auth()->user()->id;
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> c8408fe837148982479277ffcd8a390c130861e7
         // Query the users table to find the branch details
         $branch = DB::table('users')
             ->where('IFSC_CODE', $ifsc_code)
@@ -398,11 +390,7 @@ class UserController extends Controller
                       ->orWhere('created_by', $user_id);
             })
             ->first();
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> c8408fe837148982479277ffcd8a390c130861e7
         // Check if the branch details are found
         if ($branch) {
             return response()->json([

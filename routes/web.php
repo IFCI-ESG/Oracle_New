@@ -119,11 +119,7 @@ Route::name('admin.')->prefix('admin')->middleware(['auth:admin','role:SuperAdmi
     Route::get('user', [\App\Http\Controllers\Admin\UserController::class, 'user_index'])->name('user.index');
     Route::get('user/add', [\App\Http\Controllers\Admin\UserController::class, 'adduser'])->name('adduser');
     Route::get('user/getBranchDetails', [\App\Http\Controllers\Admin\UserController::class, 'getBranchDetails'])->name('user.getBranchDetails');
-<<<<<<< HEAD
     Route::get('user/home/{id}', [\App\Http\Controllers\Admin\UserController::class, 'user_home'])->name('user.home');
-=======
-
->>>>>>> c8408fe837148982479277ffcd8a390c130861e7
     Route::get('user/apidata', [\App\Http\Controllers\Admin\UserController::class,'apidata'])->name('user.apidata');
     Route::post('user/store', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('user.store');
     Route::get('user/check-ifsc-code/{ifscCode}', [\App\Http\Controllers\Admin\UserController::class, 'checkIFSCCode'])->name('check-ifsc-code');
@@ -153,11 +149,7 @@ Route::name('admin.')->prefix('admin')->middleware(['auth:admin','role:SuperAdmi
     Route::get('user/bulk/company/finalinsertcorp', [\App\Http\Controllers\Admin\CompanyBulkUploadController::class, 'FinalInsertCorp'])->name('user.bulk.company.finalinsertcorp');
 
     // In web.php or api.php (depending on your structure)
-<<<<<<< HEAD
 
-=======
- 
->>>>>>> c8408fe837148982479277ffcd8a390c130861e7
     Route::get('new_admin', [\App\Http\Controllers\Admin\BankController::class,'index'])->name('new_admin.index');
     Route::get('new_admin/create', [\App\Http\Controllers\Admin\BankController::class,'create'])->name('new_admin.create');
     Route::post('new_admin/store', [\App\Http\Controllers\Admin\BankController::class,'store'])->name('new_admin.store');
