@@ -119,7 +119,7 @@ Route::name('admin.')->prefix('admin')->middleware(['auth:admin','role:SuperAdmi
     Route::get('user', [\App\Http\Controllers\Admin\UserController::class, 'user_index'])->name('user.index');
     Route::get('user/add', [\App\Http\Controllers\Admin\UserController::class, 'adduser'])->name('adduser');
     Route::get('user/getBranchDetails', [\App\Http\Controllers\Admin\UserController::class, 'getBranchDetails'])->name('user.getBranchDetails');
-    Route::get('user/home/{id}', [\App\Http\Controllers\Admin\UserController::class, 'user_home'])->name('user.home');
+    Route::get('user/home/{id}', [\App\Http\Controllers\Admin\UserController::class, 'inspect_company'])->name('user.home');
     Route::get('user/apidata', [\App\Http\Controllers\Admin\UserController::class,'apidata'])->name('user.apidata');
     Route::post('user/store', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('user.store');
     Route::get('user/check-ifsc-code/{ifscCode}', [\App\Http\Controllers\Admin\UserController::class, 'checkIFSCCode'])->name('check-ifsc-code');

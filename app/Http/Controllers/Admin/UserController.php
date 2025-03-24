@@ -300,7 +300,7 @@ class UserController extends Controller
     {
         return view('admin.dash_v2');
     }
-    public function user_home($id)
+    public function inspect_company($id)
     {
         $id= decrypt($id);
         session(['admin_id' => Auth::id()]); // Save the admin's ID
