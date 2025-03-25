@@ -7,7 +7,7 @@
 
     <!-- Start Content-->
     <div class="container-fluid mt-4">
-  
+
 
         {{-- <div class="row"> --}}
                 <div class="row">
@@ -147,7 +147,7 @@
 
     </div> <!-- container -->
 @endsection
-
 {{-- @section('script')
     @vite(['resources/js/pages/dashboard-4.init.js'])
 @endsection --}}
+

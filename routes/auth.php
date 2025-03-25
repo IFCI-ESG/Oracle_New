@@ -62,3 +62,7 @@ Route::post('/confirm-password', [ConfirmablePasswordController::class, 'store']
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
+
+// OTP Routes
+Route::post('/check-credentials', [\App\Http\Controllers\Auth\OtpController::class, 'checkCredentials'])->name('check.credentials');
+Route::post('/verify-otp', [\App\Http\Controllers\Auth\OtpController::class, 'verifyOtp'])->name('verify.otp');

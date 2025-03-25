@@ -5,6 +5,7 @@
     @include('layouts.shared/title-meta', ['title' => 'Log In'])
     @include('layouts.shared/head-css')
     @vite(['resources/scss/icons.scss'])
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body class="loading auth-fluid-pages pb-0">
@@ -46,7 +47,7 @@
                     </div>
 
                     <!-- title-->
-                    {{-- <h4 class="mt-0">Bank Sign In</h4> --}}
+                   <h4 class="mt-0">Welcome to ESG-PRAKRIT Portal</h4> 
                     <p class="text-muted mb-4">Enter your Username and password to access account.</p>
                     @if (session('error'))
                         <div class="alert alert-danger">{{ session('error') }}</div>
@@ -155,6 +156,28 @@
     </div>
     <!-- end auth-fluid-->
 
+    <!-- OTP Modal -->
+    <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="otpModalLabel">Enter OTP</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="otp" class="form-label">Enter 6-digit OTP</label>
+                        <input type="text" class="form-control" id="otp" maxlength="6" placeholder="Enter OTP">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="verifyOtp">Verify OTP</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @vite('resources/js/pages/auth.js')
 
     <script src="{{ asset('asset/js/landing/crypto-js.min.js') }}"></script>
@@ -166,68 +189,95 @@
     </script>
 
     <script>
-        // document.querySelector('#loginForm').addEventListener('submit', (e) => {
-        //     e.preventDefault();
-        //     var id = document.getElementById("identity");
-        //     var pwd = document.getElementById("password");
+        document.querySelector('#loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
 
-        //     var key = CryptoJS.enc.Hex.parse("0123456789abcdef0123456789abcdef");
-        //     var iv = CryptoJS.enc.Hex.parse("abcdef9876543210abcdef9876543210");
+            var id = document.getElementById("identity");
+            var pwd = document.getElementById("password");
+            var encIdField = document.getElementById("encryptedIdentity");
+            var encPwdField = document.getElementById("encryptedPassword");
 
+            var key = CryptoJS.enc.Hex.parse("0123456789abcdef0123456789abcdef");
+            var iv = CryptoJS.enc.Hex.parse("abcdef9876543210abcdef9876543210");
 
-        //     var encId = CryptoJS.AES.encrypt(id.value, key, {
-        //         iv,
-        //         padding: CryptoJS.pad.ZeroPadding,
-        //     });
-        //     var encPwd = CryptoJS.AES.encrypt(pwd.value, key, {
-        //         iv,
-        //         padding: CryptoJS.pad.ZeroPadding,
-        //     });
+            var encId = CryptoJS.AES.encrypt(id.value, key, {
+                iv,
+                padding: CryptoJS.pad.ZeroPadding,
+            }).toString();
 
+            var encPwd = CryptoJS.AES.encrypt(pwd.value, key, {
+                iv,
+                padding: CryptoJS.pad.ZeroPadding,
+            }).toString();
 
-        //     id.value = encId.toString();
-        //     pwd.value = encPwd.toString();
-        //     var loginForm = document.getElementById("loginForm");
-        //     loginForm.submit();
-        // });
+            // Store encrypted values in hidden inputs
+            encIdField.value = encId;
+            encPwdField.value = encPwd;
 
+            // First check credentials and get OTP
+            fetch('{{ route("check.credentials") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    identity: id.value,
+                    password: pwd.value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show OTP Modal
+                    var otpModal = new bootstrap.Modal(document.getElementById('otpModal'));
+                    otpModal.show();
+                } else {
+                    alert(data.message || 'Invalid credentials');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        });
 
+        // Add OTP verification handler
+        document.getElementById('verifyOtp').addEventListener('click', function() {
+            const otpInput = document.getElementById('otp');
+            const enteredOtp = otpInput.value;
+            const identity = document.getElementById('identity').value;
 
-
-
-
-document.querySelector('#loginForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    var id = document.getElementById("identity");
-    var pwd = document.getElementById("password");
-    var encIdField = document.getElementById("encryptedIdentity");
-    var encPwdField = document.getElementById("encryptedPassword");
-
-    var key = CryptoJS.enc.Hex.parse("0123456789abcdef0123456789abcdef");
-    var iv = CryptoJS.enc.Hex.parse("abcdef9876543210abcdef9876543210");
-
-    var encId = CryptoJS.AES.encrypt(id.value, key, {
-        iv,
-        padding: CryptoJS.pad.ZeroPadding,
-    }).toString();
-
-    var encPwd = CryptoJS.AES.encrypt(pwd.value, key, {
-        iv,
-        padding: CryptoJS.pad.ZeroPadding,
-    }).toString();
-
-    // Store encrypted values in hidden inputs
-    encIdField.value = encId;
-    encPwdField.value = encPwd;
-
-    // Clear original inputs so plaintext values are not sent
-   // id.value = "";
-   // pwd.value = "";
-
-    e.target.submit();
-});
-
+            // Verify OTP
+            fetch('{{ route("verify.otp") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    identity: identity,
+                    otp: enteredOtp
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Close the modal
+                    var otpModal = bootstrap.Modal.getInstance(document.getElementById('otpModal'));
+                    otpModal.hide();
+                    
+                    // Submit the form
+                    document.getElementById('loginForm').submit();
+                } else {
+                    alert(data.message || 'Invalid OTP. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        });
 
         document.addEventListener("DOMContentLoaded", function () {
             const togglePasswordButtons = document.querySelectorAll("#toggle-password");

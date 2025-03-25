@@ -217,6 +217,10 @@ Route::name('admin.')->prefix('admin')->middleware(['auth:admin','role:SuperAdmi
     Route::get('bank', 'Admin\BankController@index')->name('bank');
     Route::get('user/adminhome', [\App\Http\Controllers\Admin\BankController::class,'adminhome'])->name('user.adminhome');
     Route::post('user/dataupdate', [\App\Http\Controllers\Admin\BankController::class,'dataupdate'])->name('user.dataupdate');
+
+    // Dashboard Export and Refresh routes
+    Route::post('/export-dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'exportDashboard'])->name('dashboard.export');
+    Route::post('/refresh-dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'refreshDashboard'])->name('dashboard.refresh');
 });
 
 // Company
@@ -375,7 +379,7 @@ Route::name('user.')->prefix('user')->middleware(['role:ActiveUser', 'verified',
   //  Route::post('questionnaire/update', 'User\UserController@update')->name('questionnaire.update');
   //  Route::get('edit/questionnaire/{ques_id}/{fy_id}', 'User\UserController@editquestionnaire')->name('editquestionnaire');
     //Route::get('ques_delete/{id}', 'User\UserController@destroy')->name('ques_delete');
-  //  Route::get('questionnaire/update', 'User\UserController@update')->name('questionnaire.update');
+   // Route::get('questionnaire/update', 'User\UserController@update')->name('questionnaire.update');
    // Route::post('questionnaire/submit', 'User\UserController@submit')->name('questionnaire.submit');
     //Route::post('questionnaire/quality_store', 'User\UserController@quality_store')->name('questionnaire.quality_store');
 
@@ -464,3 +468,12 @@ Route::name('user.')->prefix('user')->middleware(['role:ActiveUser', 'verified',
 
 
 });
+
+// Dashboard routes
+Route::prefix('admin')->middleware(['auth'])->group(function () {
+    Route::post('/export-dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'exportDashboard'])->name('admin.dashboard.export');
+    Route::post('/refresh-dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'refreshDashboard'])->name('admin.dashboard.refresh');
+});
+
+Route::post('/check-credentials', [\App\Http\Controllers\Auth\OtpController::class, 'checkCredentials'])->name('check.credentials');
+Route::post('/verify-otp', [\App\Http\Controllers\Auth\OtpController::class, 'verifyOtp'])->name('verify.otp');

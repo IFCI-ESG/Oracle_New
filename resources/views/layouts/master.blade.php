@@ -152,13 +152,8 @@
                                         <a href="{{ route('contact') }}">Connect With Us</a>
                                     </li>
 
-                                    <li class="nav-item dropdown " class="scrollto animation-btn-css" data-aos="fade-left" data-aos-delay="800">
-                                        <a class="nav-link dropdown-toggle btn animation-btn company-login" data-toggle="dropdown" href="#">Login</a>
-
-                                        <div class="dropdown-menu login-dropdown">
-                                            <a href="{{ route('admin.login') }}" class="dropdown-item" onclick="session1('Bank')">  &nbsp;&nbsp; Bank &nbsp;&nbsp;</a>
-                                            <a href="{{ route('login') }}" class="dropdown-item"  onclick="session1('Company')">Company </a>
-                                        </div>
+                                    <li class="nav-item" class="scrollto animation-btn-css" data-aos="fade-left" data-aos-delay="800">
+                                        <a class="btn animation-btn company-login" href="{{ route('admin.login') }}">Login</a>
                                     </li>
                                     <li class="nav-item" class="scrollto"style="padding: 33px 20px;">
 
