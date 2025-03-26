@@ -1,0 +1,86 @@
+@extends('layouts.vertical', ['title' => 'ESG PRAKRIT'])
+
+@section('css')
+    @vite('node_modules/dropify/dist/css/dropify.min.css')
+@endsection
+
+@section('content')
+    <!-- Start Content-->
+    <div class="container-fluid">
+
+        @include('layouts.shared.page-title' , ['title' => 'Bulk Upload Company','subtitle' => 'Forms'])
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                <div class="alert alert-danger alert-dismissible bg-danger text-white border-0 fade show" role="alert">
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                    {{ $error }}
+                </div>
+            @endforeach
+        @endif
+
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible bg-success text-white border-0 fade show" role="alert">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                {{ session('success') }}
+            </div>
+        @elseif(session('error'))
+            <div class="alert alert-danger alert-dismissible bg-danger text-white border-0 fade show" role="alert">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                {{ session('error') }}
+            </div>
+        @endif
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                     <div class="position-absolute top-0 end-0 p-2">
+                             <a href="{{ asset('csv_sample/corp_upload_sample.csv') }}">  <button class="btn btn-secondary"><i class="bi bi-download"></i>  Sample File</button> </a>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="header-title">Exposuer File Upload</h4>
+                        <p class="sub-header">
+                            Please Upload Your Exposure List with valid  IFSC code.
+                        </p>
+                        <form action="{{ route('admin.user.bulk.company.store') }}" role="form" method="post" class='prevent_multiple_submit-upload' files=true enctype='multipart/form-data' accept-charset="utf-8">
+                            @csrf
+                            <table class="table">
+                                <tbody style="border-style: hidden;">
+                                    <tr>
+                                        {{-- <th rowspan="2" class="company-head">Bulk Upload Data</th> --}}
+                                        <td>
+                                            <span class="file-btn"> Upload Data</span>
+                                            <span class="file-msg">or drag and drop files here</span>
+                                            <input type="file" id="file" name="file" class="form-control file-input">
+                                                @error('pan')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+
+                                        </td>
+                                        <td class="text-right">
+                                            {{-- <input type="hidden" name="file" class="form-control" /> --}}
+                                            <button type="submit" class="btn btn-primary btn-sm form-control form-control-sm mt-3">
+                                                Upload
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    
+
+     <div class="row mb-1">
+                    <div class="col-md-2 offset-md-1">
+                        <a href="{{ route('admin.user.index') }}" class="btn btn-secondary btn-sm form-control form-control-sm">
+                            <em class="fas fa-arrow-left"></em> Back
+                        </a>
+         </div>
+     </div>
+        <!-- end row -->
+
+    </div> <!-- container -->
+@endsection
+
+
+ 
+@section('script')
+    @vite(['resources/js/pages/bulk-copmay-create.js'])
+@endsection
