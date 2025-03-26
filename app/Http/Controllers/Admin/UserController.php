@@ -303,7 +303,7 @@ class UserController extends Controller
     public function inspect_company($id)
     {
         $id= decrypt($id);
-        session(['admin_id' => Auth::id()]); // Save the admin's ID
+        session(['admin_id' => Auth::id()]); 
         $user = User::find($id);
         // Auth::login($user);
         Auth::guard('web')->login($user);

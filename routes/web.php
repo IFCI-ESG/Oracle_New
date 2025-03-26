@@ -93,6 +93,8 @@ Route::get('/signup', [\App\Http\Controllers\Admin\SignupController::class, 'sho
 Route::post('/signup', [\App\Http\Controllers\Admin\SignupController::class, 'submitSignupForm'])->name('submit_signup');
 Route::post('/admin/login', [\App\Http\Controllers\Admin\LoginController::class, 'login'])
     ->name('admin.login');
+Route::post('/admin/validate-credentials', [\App\Http\Controllers\Admin\LoginController::class, 'validateCredentials'])->name('admin.validate.credentials');
+Route::post('/admin/verify-otp', [\App\Http\Controllers\Admin\LoginController::class, 'verifyOtpAndLogin'])->name('admin.verify.otp');
 
 
     Route::post('/admin/logout', [\App\Http\Controllers\Admin\LoginController::class, 'logout'])

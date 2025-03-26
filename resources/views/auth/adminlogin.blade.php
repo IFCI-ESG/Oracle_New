@@ -70,19 +70,22 @@
                     <!-- form -->
                     <form method="POST" action="{{ route('admin.login') }}" id="loginForm">
                         @csrf
-                        <input class="form-control" type="hidden" name="user_type" id="user_type" readonly
-                            value="bank">
+                        <input class="form-control" type="hidden" name="user_type" id="user_type" readonly value="bank">
+                        <input type="hidden" name="encryptedIdentity" id="encryptedIdentity">
+                        <input type="hidden" name="encryptedPassword" id="encryptedPassword">
+                        
+                        <!-- Add error message div -->
+                        <div id="error-message" class="alert alert-danger" style="display: none; margin-bottom: 15px;"></div>
+                        
                         <div class="mb-3">
                             <label for="emailaddress" class="form-label">Username</label>
                             <input id="identity" type="text"
                                 class="form-control @if ($errors->has('unique_login_id')) {{ $errors->has('unique_login_id') ? ' is-invalid' : '' }} @elseif($errors->has('email')) {{ $errors->has('email') ? ' is-invalid' : '' }} @endif"
                                 name="identity" value="{{ old('identity') }}" placeholder="" required autofocus>
-
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
                             <div class="input-group input-group-merge">
-
                                 <input id="password" type="password"
                                     class="form-control @error('password') is-invalid @enderror" name="password"
                                     placeholder="" required autocomplete="off">
@@ -92,8 +95,6 @@
                             </div>
                             <a href="{{ route('password.request') }}" class="text-muted float-end mt-1" style="color: #0f9ee6 !important;"><small>Forgot password?</small></a>
                         </div>
-                    <input type="hidden" id="encryptedIdentity" name="encryptedIdentity">
-                        <input type="hidden" id="encryptedPassword" name="encryptedPassword">
                         <div class="mb-3">
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="checkbox-signin" name="remember">
@@ -116,7 +117,7 @@
 
 
                         <div class="text-center d-grid">
-                            <button class="btn btn-primary" type="submit">Log In </button>
+                            <button class="btn btn-primary" type="submit">Log In</button>
                         </div>
 
 
@@ -189,8 +190,11 @@
     </script>
 
     <script>
-        document.querySelector('#loginForm').addEventListener('submit', (e) => {
+        document.querySelector('#loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
+
+            // Clear any existing error messages
+            document.getElementById('error-message').style.display = 'none';
 
             var id = document.getElementById("identity");
             var pwd = document.getElementById("password");
@@ -214,31 +218,44 @@
             encIdField.value = encId;
             encPwdField.value = encPwd;
 
-            // First check credentials and get OTP
-            fetch('{{ route("check.credentials") }}', {
+            // First validate credentials
+            fetch('{{ route("admin.validate.credentials") }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 },
                 body: JSON.stringify({
-                    identity: id.value,
-                    password: pwd.value
+                    encryptedIdentity: encId,
+                    encryptedPassword: encPwd,
+                    _token: document.querySelector('meta[name="csrf-token"]').content,
+                    remember: document.getElementById('checkbox-signin').checked
                 })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
-                    // Show OTP Modal
+                    // If credentials are valid, show OTP Modal
                     var otpModal = new bootstrap.Modal(document.getElementById('otpModal'));
                     otpModal.show();
                 } else {
-                    alert(data.message || 'Invalid credentials');
+                    // Show error message in red above username field
+                    const errorDiv = document.getElementById('error-message');
+                    errorDiv.textContent = data.message || 'Invalid credentials';
+                    errorDiv.style.display = 'block';
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred. Please try again.');
+                // Show error message in red above username field
+                const errorDiv = document.getElementById('error-message');
+                errorDiv.textContent = 'An error occurred. Please try again.';
+                errorDiv.style.display = 'block';
             });
         });
 
@@ -246,29 +263,34 @@
         document.getElementById('verifyOtp').addEventListener('click', function() {
             const otpInput = document.getElementById('otp');
             const enteredOtp = otpInput.value;
-            const identity = document.getElementById('identity').value;
+            const encIdField = document.getElementById("encryptedIdentity");
+            const encPwdField = document.getElementById("encryptedPassword");
 
-            // Verify OTP
-            fetch('{{ route("verify.otp") }}', {
+            // Verify OTP and complete login
+            fetch('{{ route("admin.verify.otp") }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 },
                 body: JSON.stringify({
-                    identity: identity,
-                    otp: enteredOtp
+                    encryptedIdentity: encIdField.value,
+                    encryptedPassword: encPwdField.value,
+                    otp: enteredOtp,
+                    _token: document.querySelector('meta[name="csrf-token"]').content,
+                    remember: document.getElementById('checkbox-signin').checked
                 })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
-                    // Close the modal
-                    var otpModal = bootstrap.Modal.getInstance(document.getElementById('otpModal'));
-                    otpModal.hide();
-                    
-                    // Submit the form
-                    document.getElementById('loginForm').submit();
+                    // Redirect to the appropriate route
+                    window.location.href = data.redirect;
                 } else {
                     alert(data.message || 'Invalid OTP. Please try again.');
                 }
@@ -281,21 +303,13 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             const togglePasswordButtons = document.querySelectorAll("#toggle-password");
-
             togglePasswordButtons.forEach(button => {
                 button.addEventListener("click", function () {
-                    // Find the closest input field to this button (use the parent div to get the input)
                     const inputGroup = this.closest('.input-group');
-                    const passwordField = inputGroup.querySelector('input[type="password"], input[type="text"]'); // find the input field in the group
-
+                    const passwordField = inputGroup.querySelector('input[type="password"], input[type="text"]');
                     const isPassword = passwordField.getAttribute("type") === "password";
-
-                    // Toggle input type
                     passwordField.setAttribute("type", isPassword ? "text" : "password");
-
-                    // Toggle data attribute on the parent div
                     inputGroup.querySelector('.input-group-text').setAttribute("data-password", isPassword ? "false" : "true");
-
                 });
             });
         });
@@ -303,3 +317,5 @@
 </body>
 
 </html>
+
+
