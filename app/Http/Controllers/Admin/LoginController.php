@@ -392,15 +392,15 @@ class LoginController extends Controller
             // Send email with OTP
             $mail = new PHPMailer(true);
             $mail->isSMTP();
-            $mail->Host = '';
+            $mail->Host = '*';
             $mail->SMTPAuth = true;
-            $mail->Username = '';
-            $mail->Password = '';
+            $mail->Username = '*';
+            $mail->Password = '*';
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
             // Recipients
-            $mail->setFrom('asutosh.maharana@apmosys.com', 'ESG-PRAKRIT Portal');
+            $mail->setFrom('esg.developer@ifciltd.com', 'ESG-PRAKRIT Portal');
             $mail->addAddress($user->email);
 
             // Content
