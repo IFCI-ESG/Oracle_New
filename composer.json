@@ -9,7 +9,10 @@
         "barryvdh/laravel-dompdf": "^3.1",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
+<<<<<<< HEAD
         "phpmailer/phpmailer": "^6.9",
+=======
+>>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
         "proengsoft/laravel-jsvalidation": "^4.9",
         "realrashid/sweet-alert": "^7.2",
         "spatie/laravel-permission": "^6.16",

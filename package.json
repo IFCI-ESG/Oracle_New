@@ -9,7 +9,11 @@
     "axios": "^1.7.4",
     "laravel-vite-plugin": "^1.0",
     "sass": "^1.52.3",
+<<<<<<< HEAD
     "vite": "^5.4.15"
+=======
+    "vite": "^5.0"
+>>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
   },
   "dependencies": {
     "@fullcalendar/bootstrap": "^6.1.15",

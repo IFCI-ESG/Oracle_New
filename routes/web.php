@@ -95,7 +95,10 @@ Route::post('/admin/login', [\App\Http\Controllers\Admin\LoginController::class,
     ->name('admin.login');
 Route::post('/admin/validate-credentials', [\App\Http\Controllers\Admin\LoginController::class, 'validateCredentials'])->name('admin.validate.credentials');
 Route::post('/admin/verify-otp', [\App\Http\Controllers\Admin\LoginController::class, 'verifyOtpAndLogin'])->name('admin.verify.otp');
+<<<<<<< HEAD
 Route::post('/admin/resend-otp', [\App\Http\Controllers\Admin\LoginController::class, 'resendOtp'])->name('admin.resend.otp');
+=======
+>>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
 
 
     Route::post('/admin/logout', [\App\Http\Controllers\Admin\LoginController::class, 'logout'])
