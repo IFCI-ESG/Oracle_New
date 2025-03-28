@@ -11,10 +11,7 @@ use Illuminate\Validation\ValidationException;
 use App\Models\AdminUser;
 use Auth;
 use DB;
-<<<<<<< HEAD
 use PHPMailer\PHPMailer\PHPMailer;
-=======
->>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
 
 class LoginController extends Controller
 {
@@ -59,7 +56,6 @@ class LoginController extends Controller
         }
 
         if ($user) {
-<<<<<<< HEAD
             // Check if user is blocked and attempt to unblock if 10 minutes have passed
             if ($user->isblocked == 1) {
                 if ($this->checkAndUnblockUser($user)) {
@@ -78,19 +74,6 @@ class LoginController extends Controller
                         'email' => "Your account is temporarily blocked. Please try again after {$remainingTime}."
                     ]);
                 }
-=======
-            // Check if user is blocked
-            if ($user->isblocked == 1) {
-                if ($request->ajax()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Your account has been blocked. Please contact administration.'
-                    ]);
-                }
-                return back()->withErrors([
-                    'email' => 'Your account has been blocked. Please contact administration.',
-                ]);
->>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
             }
         }
 
@@ -161,7 +144,6 @@ class LoginController extends Controller
 
             // Block user after 3 failed attempts
             if ($newAttempts >= 3) {
-<<<<<<< HEAD
                 $this->blockUser($user);
                 if ($request->ajax()) {
                     return response()->json([
@@ -171,17 +153,6 @@ class LoginController extends Controller
                 }
                 return back()->withErrors([
                     'email' => 'Your account has been temporarily blocked due to multiple failed attempts. Please try again after 10 minutes.',
-=======
-                DB::table('users')->where('id', $user->id)->update(['isblocked' => 1]);
-                if ($request->ajax()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Your account has been blocked due to multiple failed attempts. Please contact administration.'
-                    ]);
-                }
-                return back()->withErrors([
-                    'email' => 'Your account has been blocked due to multiple failed attempts. Please contact administration.',
->>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
                 ]);
             }
         }
@@ -206,7 +177,6 @@ class LoginController extends Controller
         return redirect('/admin/login');
     }
 
-<<<<<<< HEAD
     private function formatRemainingTime($blockedAt)
     {
         $now = now();
@@ -253,8 +223,6 @@ class LoginController extends Controller
         return false;
     }
 
-=======
->>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
     public function validateCredentials(Request $request)
     {
         $key = hex2bin("0123456789abcdef0123456789abcdef");
@@ -284,7 +252,6 @@ class LoginController extends Controller
         }
 
         if ($user) {
-<<<<<<< HEAD
             // Check if user is blocked and attempt to unblock if 10 minutes have passed
             if ($user->isblocked == 1) {
                 if ($this->checkAndUnblockUser($user)) {
@@ -298,14 +265,6 @@ class LoginController extends Controller
                         'message' => "Your account is temporarily blocked. Please try again after {$remainingTime}."
                     ]);
                 }
-=======
-            // Check if user is blocked
-            if ($user->isblocked == 1) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Your account has been blocked. Please contact administration.'
-                ]);
->>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
             }
         }
 
@@ -332,12 +291,8 @@ class LoginController extends Controller
                 'identity' => $decryptedId,
                 'password' => $decryptedPwd,
                 'remember' => $request->remember,
-<<<<<<< HEAD
                 'guard' => $guard,
                 'userid' => $user->id // Store user ID in session
-=======
-                'guard' => $guard
->>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
             ]]);
 
             return response()->json([
@@ -353,17 +308,10 @@ class LoginController extends Controller
 
             // Block user after 3 failed attempts
             if ($newAttempts >= 3) {
-<<<<<<< HEAD
                 $this->blockUser($user);
                 return response()->json([
                     'success' => false,
                     'message' => 'Your account has been temporarily blocked due to multiple failed attempts. Please try again after 10 minutes.'
-=======
-                DB::table('users')->where('id', $user->id)->update(['isblocked' => 1]);
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Your account has been blocked due to multiple failed attempts. Please contact administration.'
->>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
                 ]);
             }
         }
@@ -374,7 +322,6 @@ class LoginController extends Controller
         ]);
     }
 
-<<<<<<< HEAD
     private function blockUser($user)
     {
         DB::table('users')
@@ -388,31 +335,6 @@ class LoginController extends Controller
 
     public function resendOtp(Request $request)
     {
-=======
-    public function verifyOtpAndLogin(Request $request)
-    {
-        $storedOtp = session('login_otp');
-        $credentials = session('login_credentials');
-
-        if (!$storedOtp || !$credentials) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Session expired. Please try logging in again.'
-            ]);
-        }
-
-        if ($request->otp !== $storedOtp) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid OTP'
-            ]);
-        }
-
-        // Clear the session data
-        session()->forget(['login_otp', 'login_credentials']);
-
-        // Perform the actual login
->>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
         $key = hex2bin("0123456789abcdef0123456789abcdef");
         $iv = hex2bin("abcdef9876543210abcdef9876543210");
 
@@ -422,7 +344,6 @@ class LoginController extends Controller
         $decryptedPwd = trim($decryptedPwd);
 
         $isEmail = filter_var($decryptedId, FILTER_VALIDATE_EMAIL);
-<<<<<<< HEAD
         $isPan = preg_match('/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/', $decryptedId);
 
         if (!$isEmail && !$isPan) {
@@ -471,10 +392,10 @@ class LoginController extends Controller
             // Send email with OTP
             $mail = new PHPMailer(true);
             $mail->isSMTP();
-            $mail->Host = '*';
+            $mail->Host = 'apmosys.icewarpcloud.in';
             $mail->SMTPAuth = true;
-            $mail->Username = '*';
-            $mail->Password = '*';
+            $mail->Username = 'asutosh.maharana@apmosys.com';
+            $mail->Password = 'Welcome@2024#';
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
@@ -560,21 +481,6 @@ class LoginController extends Controller
             'password' => $credentials['password']
         ], $credentials['remember'])) {
             $user = Auth::guard($credentials['guard'])->user();
-=======
-
-        $request->merge([
-            'identity' => $decryptedId,
-            'email' => $isEmail ? $decryptedId : null,
-            'pan' => !$isEmail ? $decryptedId : null,
-            'password' => $decryptedPwd,
-        ]);
-
-        $credentials = $isEmail ? $request->only('email', 'password') : $request->only('pan', 'password');
-        $guard = $isEmail ? 'admin' : 'web';
-
-        if (Auth::guard($guard)->attempt($credentials, $request->remember)) {
-            $user = Auth::guard($guard)->user();
->>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
             
             if ($user->password_changed == '0') {
                 session(['force_password_change' => true]);
@@ -584,12 +490,7 @@ class LoginController extends Controller
 
             return response()->json([
                 'success' => true,
-<<<<<<< HEAD
                 'redirect' => route('admin.home')
-=======
-                'message' => 'Login successful',
-                'redirect' => $guard === 'admin' ? route('admin.home') : route('home')
->>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
             ]);
         }
 

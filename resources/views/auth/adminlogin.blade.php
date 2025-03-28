@@ -168,7 +168,6 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="otp" class="form-label">Enter 6-digit OTP</label>
-<<<<<<< HEAD
                         <div class="input-group">
                             <input type="password" class="form-control" id="otp" maxlength="6" placeholder="Enter OTP" pattern="[0-9]*" inputmode="numeric">
                             <button type="button" class="btn btn-primary" id="sendInitialOtp">Send OTP</button>
@@ -177,14 +176,10 @@
                             Time remaining: <span id="timer" class="timer-warning">02:00</span>
                             <button type="button" id="resendOtpBtn" class="btn btn-link" style="display: none;">Resend OTP</button>
                         </div>
-=======
-                        <input type="text" class="form-control" id="otp" maxlength="6" placeholder="Enter OTP">
->>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-<<<<<<< HEAD
                     <button type="button" class="btn btn-primary" id="verifyOtp" disabled>Verify OTP</button>
                 </div>
             </div>
@@ -222,9 +217,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
-=======
+
                     <button type="button" class="btn btn-primary" id="verifyOtp">Verify OTP</button>
->>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
+
                 </div>
             </div>
         </div>
@@ -283,21 +278,12 @@
                     remember: document.getElementById('checkbox-signin').checked
                 })
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     // If credentials are valid, show OTP Modal
                     var otpModal = new bootstrap.Modal(document.getElementById('otpModal'));
                     otpModal.show();
-<<<<<<< HEAD
-                    // Don't start timer yet - wait for Send OTP button click
-=======
->>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
                 } else {
                     // Show error message in red above username field
                     const errorDiv = document.getElementById('error-message');
@@ -314,7 +300,6 @@
             });
         });
 
-<<<<<<< HEAD
         // Add Send Initial OTP handler
         document.getElementById('sendInitialOtp').addEventListener('click', function() {
             this.disabled = true; // Disable the send button
@@ -362,8 +347,6 @@
             });
         });
 
-=======
->>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
         // Add OTP verification handler
         document.getElementById('verifyOtp').addEventListener('click', function() {
             const otpInput = document.getElementById('otp');
@@ -386,39 +369,22 @@
                     remember: document.getElementById('checkbox-signin').checked
                 })
             })
-<<<<<<< HEAD
             .then(response => response.json())
-=======
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
->>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
             .then(data => {
                 if (data.success) {
                     // Redirect to the appropriate route
                     window.location.href = data.redirect;
                 } else {
-<<<<<<< HEAD
                     const expirationModal = new bootstrap.Modal(document.getElementById('otpExpirationModal'));
                     document.getElementById('expirationMessage').textContent = data.message || 'Invalid OTP. Please try again.';
                     expirationModal.show();
-=======
-                    alert(data.message || 'Invalid OTP. Please try again.');
->>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-<<<<<<< HEAD
                 const expirationModal = new bootstrap.Modal(document.getElementById('otpExpirationModal'));
                 document.getElementById('expirationMessage').textContent = 'An error occurred. Please try again.';
                 expirationModal.show();
-=======
-                alert('An error occurred. Please try again.');
->>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
             });
         });
 
@@ -434,7 +400,7 @@
                 });
             });
         });
-<<<<<<< HEAD
+
 
         // Add OTP timer functionality
         let otpTimer;
@@ -555,9 +521,9 @@
             color: red !important;
         }
     </style>
-=======
+
     </script>
->>>>>>> 7531f0f92209ebd3621ce86b1b6bc8b03947fc36
+
 </body>
 
 </html>
