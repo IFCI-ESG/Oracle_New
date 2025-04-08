@@ -395,7 +395,7 @@ class LoginController extends Controller
             $mail->Host = 'apmosys.icewarpcloud.in';
             $mail->SMTPAuth = true;
             $mail->Username = 'asutosh.maharana@apmosys.com';
-            $mail->Password = 'Welcome@2024#';
+            $mail->Password = 'Asutosh@21396';
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
@@ -439,64 +439,71 @@ class LoginController extends Controller
         $storedOtps = session('login_otp');
         $credentials = session('login_credentials');
 
+        \Log::info('Verifying OTP:', [
+            'entered_otp' => $request->otp,
+            'stored_otps' => $storedOtps,
+            'has_credentials' => !empty($credentials)
+        ]);
+
         if (!$storedOtps || !$credentials) {
+            \Log::error('Session data missing', [
+                'has_stored_otps' => !empty($storedOtps),
+                'has_credentials' => !empty($credentials)
+            ]);
             return response()->json([
                 'success' => false,
                 'message' => 'Session expired. Please try logging in again.'
             ]);
         }
 
-        // Check if OTP matches either random or static OTP
-        if ($request->otp !== $storedOtps['random'] && $request->otp !== $storedOtps['static']) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid OTP'
-            ]);
-        }
+        // First check if OTP exists in database and is valid
+        $validOtp = DB::table('otp')
+            ->where('userid', $credentials['userid'])
+            ->where('otp', $request->otp)
+            ->where('otpfor', 'LOGIN')
+            ->where('validto', '>=', now())
+            ->orderBy('id', 'desc')
+            ->first();
 
-        // If using random OTP, verify it hasn't expired in database
-        if ($request->otp === $storedOtps['random']) {
-            $validOtp = DB::table('otp')
-                ->where('userid', $credentials['userid'])
-                ->where('otp', $request->otp)
-                ->where('otpfor', 'LOGIN')
-                ->where('validto', '>=', now())
-                ->orderBy('id', 'desc')
-                ->first();
+        \Log::info('Database OTP check:', [
+            'found_valid_otp' => !empty($validOtp),
+            'user_id' => $credentials['userid'],
+            'otp' => $request->otp
+        ]);
 
-            if (!$validOtp) {
+        // If OTP is valid in database or matches static OTP
+        if ($validOtp || $request->otp === $storedOtps['static']) {
+            // Clear the session data
+            session()->forget(['login_otp', 'login_credentials']);
+
+            // Perform the actual login
+            if (Auth::guard($credentials['guard'])->attempt([
+                $credentials['guard'] === 'admin' ? 'email' : 'pan' => $credentials['identity'],
+                'password' => $credentials['password']
+            ])) {
+                $user = Auth::guard($credentials['guard'])->user();
+                
+                if ($user->password_changed == '0') {
+                    session(['force_password_change' => true]);
+                } else {
+                    session(['force_password_change' => false]);
+                }
+
                 return response()->json([
-                    'success' => false,
-                    'message' => 'OTP has expired. Please request a new one.'
+                    'success' => true,
+                    'redirect' => route($credentials['guard'] === 'admin' ? 'admin.home' : 'home')
                 ]);
             }
-        }
-
-        // Clear the session data
-        session()->forget(['login_otp', 'login_credentials']);
-
-        // Perform the actual login
-        if (Auth::guard($credentials['guard'])->attempt([
-            $credentials['guard'] === 'admin' ? 'email' : 'pan' => $credentials['identity'],
-            'password' => $credentials['password']
-        ], $credentials['remember'])) {
-            $user = Auth::guard($credentials['guard'])->user();
-            
-            if ($user->password_changed == '0') {
-                session(['force_password_change' => true]);
-            } else {
-                session(['force_password_change' => false]);
-            }
 
             return response()->json([
-                'success' => true,
-                'redirect' => route('admin.home')
+                'success' => false,
+                'message' => 'Login failed. Please try again.'
             ]);
         }
 
         return response()->json([
             'success' => false,
-            'message' => 'Login failed. Please try again.'
+            'message' => 'Invalid OTP'
         ]);
     }
 }

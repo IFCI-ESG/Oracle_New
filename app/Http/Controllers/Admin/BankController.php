@@ -18,12 +18,25 @@ class BankController extends Controller
 {
 
     public function adminhome() {
-
         $user = Auth::User();
         $users = DB::table('users')
          ->where('users.id',$user->id)
          ->first(['users.*']);
-         return view('admin.user.adminhome',compact('user','users'));
+
+        // Get service names if user has services
+        $servicesString = '';
+        if ($users && $users->services) {
+            $serviceIds = json_decode($users->services, true);
+            if ($serviceIds) {
+                $services = DB::table('servicemaster')
+                    ->whereIn('id', $serviceIds)
+                    ->pluck('services')
+                    ->toArray();
+                $servicesString = implode(', ', $services);
+            }
+        }
+
+        return view('admin.user.adminhome',compact('user','users', 'servicesString'));
     }
 
     public function dataupdate(Request $request)

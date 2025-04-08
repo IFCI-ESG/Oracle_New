@@ -159,67 +159,88 @@
 
     <!-- OTP Modal -->
     <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="otpModalLabel">Enter OTP</h5>
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="otpModalLabel">Enter OTP</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="otp" class="form-label">Enter 6-digit OTP</label>
-                        <div class="input-group">
-                            <input type="password" class="form-control" id="otp" maxlength="6" placeholder="Enter OTP" pattern="[0-9]*" inputmode="numeric">
-                            <button type="button" class="btn btn-primary" id="sendInitialOtp">Send OTP</button>
-                        </div>
-                        <div id="otpTimer" class="text-muted mt-2" style="display: none;">
-                            Time remaining: <span id="timer" class="timer-warning">02:00</span>
-                            <button type="button" id="resendOtpBtn" class="btn btn-link" style="display: none;">Resend OTP</button>
-                        </div>
+                <div class="modal-body pt-2">
+                    <!-- Success/Error Messages -->
+                    <div id="otpMessage" class="alert mb-3" style="display: none; border-radius: 8px;"></div>
+                    
+                    <!-- OTP Input -->
+                    <div class="mb-4">
+                        <input type="text" 
+                            class="form-control form-control-lg text-center fw-bold" 
+                            id="otp" 
+                            maxlength="6" 
+                            placeholder="Enter 6-digit OTP" 
+                            pattern="[0-9]*" 
+                            inputmode="numeric" 
+                            disabled
+                            style="letter-spacing: 8px; font-size: 20px; border-radius: 8px;">
+                    </div>
+                    
+                    <!-- Timer -->
+                    <div id="otpTimer" class="text-center mb-3" style="display: none;">
+                        <span class="text-muted">Time remaining: </span>
+                        <span id="timer" class="fw-bold" style="color: #6658dd;">02:00</span>
+                    </div>
+                    
+                    <!-- Buttons -->
+                    <div class="d-grid gap-2">
+                        <button type="button" 
+                            class="btn btn-primary btn-lg" 
+                            id="sendInitialOtp"
+                            style="border-radius: 8px; background-color: #6658dd; border: none;">
+                            Send OTP
+                        </button>
+                        <button type="button" 
+                            class="btn btn-success btn-lg" 
+                            id="verifyOtp" 
+                            style="display: none; border-radius: 8px;">
+                            Verify OTP
+                        </button>
+                        <button type="button" 
+                            class="btn btn-warning btn-lg" 
+                            id="resendOtpBtn" 
+                            style="display: none; border-radius: 8px; background-color: #f7b84b; border: none; color: white;">
+                            Resend OTP
+                        </button>
+                        <button type="button" 
+                            class="btn btn-light btn-lg" 
+                            data-bs-dismiss="modal"
+                            style="border-radius: 8px;">
+                            Close
+                        </button>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="verifyOtp" disabled>Verify OTP</button>
-                </div>
             </div>
         </div>
     </div>
 
-    <!-- OTP Expiration Modal -->
-    <div class="modal fade" id="otpExpirationModal" tabindex="-1" aria-labelledby="otpExpirationModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="otpExpirationModalLabel">OTP Expired</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p id="expirationMessage"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Success Message Modal -->
+    <!-- Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-sm">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="successModalLabel">Success</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-body text-center">
+                    <i class="mdi mdi-check-circle text-success" style="font-size: 48px;"></i>
+                    <p id="successMessage" class="mt-3"></p>
+                    <button type="button" class="btn btn-success mt-2" data-bs-dismiss="modal">OK</button>
                 </div>
-                <div class="modal-body">
-                    <p id="successMessage"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
 
-                    <button type="button" class="btn btn-primary" id="verifyOtp">Verify OTP</button>
-
+    <!-- Error Modal -->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <i class="mdi mdi-alert-circle text-danger" style="font-size: 48px;"></i>
+                    <p id="errorMessage" class="mt-3"></p>
+                    <button type="button" class="btn btn-danger mt-2" data-bs-dismiss="modal">OK</button>
                 </div>
             </div>
         </div>
@@ -300,9 +321,15 @@
             });
         });
 
-        // Add Send Initial OTP handler
+        // Add OTP input masking
+        document.getElementById('otp').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            document.getElementById('verifyOtp').style.display = this.value.length === 6 ? 'block' : 'none';
+        });
+
+        // Send Initial OTP handler
         document.getElementById('sendInitialOtp').addEventListener('click', function() {
-            this.disabled = true; // Disable the send button
+            this.disabled = true;
             const encIdField = document.getElementById("encryptedIdentity");
             const encPwdField = document.getElementById("encryptedPassword");
             
@@ -321,40 +348,93 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Show success modal
-                    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                    document.getElementById('successMessage').textContent = 'OTP has been sent successfully.';
-                    successModal.show();
+                    // Show success message
+                    const otpMessage = document.getElementById('otpMessage');
+                    otpMessage.className = 'alert alert-success';
+                    otpMessage.textContent = 'OTP sent successfully!';
+                    otpMessage.style.display = 'block';
                     
-                    // Show timer and enable verify button
+                    // Enable OTP input
+                    const otpInput = document.getElementById('otp');
+                    otpInput.disabled = false;
+                    otpInput.value = '';
+                    otpInput.focus();
+                    
+                    // Show timer and hide send button
                     document.getElementById('otpTimer').style.display = 'block';
-                    document.getElementById('verifyOtp').disabled = false;
+                    this.style.display = 'none';
+                    
+                    // Start timer
+                    timeLeft = 120;
                     startOtpTimer();
                 } else {
-                    // Show error
-                    const expirationModal = new bootstrap.Modal(document.getElementById('otpExpirationModal'));
-                    document.getElementById('expirationMessage').textContent = data.message || 'Failed to send OTP. Please try again.';
-                    expirationModal.show();
+                    // Show error message
+                    const otpMessage = document.getElementById('otpMessage');
+                    otpMessage.className = 'alert alert-danger';
+                    otpMessage.textContent = data.message || 'Failed to send OTP';
+                    otpMessage.style.display = 'block';
                     this.disabled = false;
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                const expirationModal = new bootstrap.Modal(document.getElementById('otpExpirationModal'));
-                document.getElementById('expirationMessage').textContent = 'An error occurred while sending OTP. Please try again.';
-                expirationModal.show();
+                const otpMessage = document.getElementById('otpMessage');
+                otpMessage.className = 'alert alert-danger';
+                otpMessage.textContent = 'An error occurred. Please try again.';
+                otpMessage.style.display = 'block';
                 this.disabled = false;
             });
         });
 
-        // Add OTP verification handler
+        // Timer functionality
+        let otpTimer;
+        let timeLeft = 120; // 2 minutes
+        let resendAttempts = 0;
+        const MAX_RESEND_ATTEMPTS = 3;
+
+        function startOtpTimer() {
+            const timerDisplay = document.getElementById('timer');
+            const resendBtn = document.getElementById('resendOtpBtn');
+            const otpInput = document.getElementById('otp');
+            
+            clearInterval(otpTimer);
+            resendBtn.style.display = 'none';
+            
+            otpTimer = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(otpTimer);
+                    if (resendAttempts < MAX_RESEND_ATTEMPTS) {
+                        resendBtn.style.display = 'block';
+                        resendBtn.disabled = false;
+                        otpInput.disabled = true;
+                        document.getElementById('verifyOtp').style.display = 'none';
+                    } else {
+                        const otpMessage = document.getElementById('otpMessage');
+                        otpMessage.className = 'alert alert-danger';
+                        otpMessage.textContent = 'Maximum resend attempts reached. Please try logging in again.';
+                        otpMessage.style.display = 'block';
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 3000);
+                    }
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        // Verify OTP handler
         document.getElementById('verifyOtp').addEventListener('click', function() {
             const otpInput = document.getElementById('otp');
-            const enteredOtp = otpInput.value;
+            const enteredOtp = otpInput.value.trim(); // Trim any whitespace
             const encIdField = document.getElementById("encryptedIdentity");
             const encPwdField = document.getElementById("encryptedPassword");
 
-            // Verify OTP and complete login
+            console.log('Verifying OTP:', enteredOtp); // Debug log
+
             fetch('{{ route("admin.verify.otp") }}', {
                 method: 'POST',
                 headers: {
@@ -371,21 +451,47 @@
             })
             .then(response => response.json())
             .then(data => {
+                console.log('OTP verification response:', data); // Debug log
                 if (data.success) {
-                    // Redirect to the appropriate route
                     window.location.href = data.redirect;
                 } else {
-                    const expirationModal = new bootstrap.Modal(document.getElementById('otpExpirationModal'));
-                    document.getElementById('expirationMessage').textContent = data.message || 'Invalid OTP. Please try again.';
-                    expirationModal.show();
+                    const otpMessage = document.getElementById('otpMessage');
+                    otpMessage.className = 'alert alert-danger';
+                    otpMessage.textContent = data.message || 'Invalid OTP';
+                    otpMessage.style.display = 'block';
+                    
+                    // Clear OTP input on error
+                    otpInput.value = '';
+                    otpInput.focus();
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                const expirationModal = new bootstrap.Modal(document.getElementById('otpExpirationModal'));
-                document.getElementById('expirationMessage').textContent = 'An error occurred. Please try again.';
-                expirationModal.show();
+                const otpMessage = document.getElementById('otpMessage');
+                otpMessage.className = 'alert alert-danger';
+                otpMessage.textContent = 'An error occurred. Please try again.';
+                otpMessage.style.display = 'block';
             });
+        });
+
+        // Clear timer and reset state when modal is closed
+        document.getElementById('otpModal').addEventListener('hidden.bs.modal', function () {
+            clearInterval(otpTimer);
+            const otpInput = document.getElementById('otp');
+            const otpMessage = document.getElementById('otpMessage');
+            const resendBtn = document.getElementById('resendOtpBtn');
+            
+            // Reset all states
+            otpInput.value = '';
+            otpInput.disabled = true;
+            otpMessage.style.display = 'none';
+            resendBtn.style.display = 'none';
+            resendBtn.disabled = false;
+            document.getElementById('verifyOtp').style.display = 'none';
+            document.getElementById('sendInitialOtp').style.display = 'block';
+            document.getElementById('sendInitialOtp').disabled = false;
+            timeLeft = 120;
+            resendAttempts = 0;
         });
 
         document.addEventListener("DOMContentLoaded", function () {
@@ -400,125 +506,62 @@
                 });
             });
         });
-
-
-        // Add OTP timer functionality
-        let otpTimer;
-        let timeLeft = 120; // 2 minutes in seconds
-        let resendAttempts = 0;
-        const MAX_RESEND_ATTEMPTS = 3;
-
-        function startOtpTimer() {
-            const timerDisplay = document.getElementById('timer');
-            const resendBtn = document.getElementById('resendOtpBtn');
-            
-            timeLeft = 120;
-            resendBtn.style.display = 'none';
-            
-            otpTimer = setInterval(() => {
-                const minutes = Math.floor(timeLeft / 60);
-                const seconds = timeLeft % 60;
-                timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                
-                if (timeLeft <= 0) {
-                    clearInterval(otpTimer);
-                    if (resendAttempts < MAX_RESEND_ATTEMPTS) {
-                        resendBtn.style.display = 'inline-block';
-                        // Show expiration modal instead of alert
-                        const expirationModal = new bootstrap.Modal(document.getElementById('otpExpirationModal'));
-                        document.getElementById('expirationMessage').textContent = 'OTP has expired. Please click Resend OTP to get a new one.';
-                        expirationModal.show();
-                    } else {
-                        // Show max attempts modal
-                        const expirationModal = new bootstrap.Modal(document.getElementById('otpExpirationModal'));
-                        document.getElementById('expirationMessage').textContent = 'Maximum resend attempts reached. Please try logging in again.';
-                        expirationModal.show();
-                        // Redirect after modal is closed
-                        document.getElementById('otpExpirationModal').addEventListener('hidden.bs.modal', function () {
-                            window.location.reload();
-                        }, { once: true });
-                    }
-                }
-                timeLeft--;
-            }, 1000);
-        }
-
-        // Add resend OTP functionality
-        document.getElementById('resendOtpBtn').addEventListener('click', function() {
-            const encIdField = document.getElementById("encryptedIdentity");
-            const encPwdField = document.getElementById("encryptedPassword");
-            
-            // Disable resend button temporarily
-            this.disabled = true;
-            
-            
-            fetch('{{ route("admin.resend.otp") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({
-                    encryptedIdentity: encIdField.value,
-                    encryptedPassword: encPwdField.value,
-                    _token: document.querySelector('meta[name="csrf-token"]').content
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    resendAttempts++;
-                    // Show success modal instead of alert
-                    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                    document.getElementById('successMessage').textContent = 'New OTP has been sent successfully.';
-                    successModal.show();
-                    startOtpTimer(); // Restart the timer
-                    this.disabled = false;
-                } else {
-                    // Show error in expiration modal
-                    const expirationModal = new bootstrap.Modal(document.getElementById('otpExpirationModal'));
-                    document.getElementById('expirationMessage').textContent = data.message || 'Failed to resend OTP. Please try again.';
-                    expirationModal.show();
-                    this.disabled = false;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                // Show error in expiration modal
-                const expirationModal = new bootstrap.Modal(document.getElementById('otpExpirationModal'));
-                document.getElementById('expirationMessage').textContent = 'An error occurred while resending OTP. Please try again.';
-                expirationModal.show();
-                this.disabled = false;
-            });
-        });
-
-        // Add OTP input masking
-        document.getElementById('otp').addEventListener('input', function(e) {
-            this.value = this.value.replace(/[^0-9]/g, '');
-            // Enable verify button only when 6 digits are entered
-            document.getElementById('verifyOtp').disabled = this.value.length !== 6;
-        });
-
-        // Clear timer when modal is closed
-        document.getElementById('otpModal').addEventListener('hidden.bs.modal', function () {
-            clearInterval(otpTimer);
-            // Reset the form
-            document.getElementById('otp').value = '';
-            document.getElementById('otpTimer').style.display = 'none';
-            document.getElementById('sendInitialOtp').disabled = false;
-            document.getElementById('verifyOtp').disabled = true;
-            document.getElementById('resendOtpBtn').style.display = 'none';
-        });
     </script>
 
     <style>
+        .modal-content {
+            border-radius: 12px;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        #otp:focus {
+            border-color: #6658dd;
+            box-shadow: 0 0 0 0.2rem rgba(102, 88, 221, 0.25);
+        }
+
+        .btn-primary:hover {
+            background-color: #5546d9 !important;
+        }
+
+        .btn-warning:hover {
+            background-color: #f6a933 !important;
+        }
+
         .timer-warning {
-            color: red !important;
+            color: #dc3545 !important;
+            font-weight: bold;
+        }
+
+        /* Animation for OTP input */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #otp {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Pulse animation for timer when below 30 seconds */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .timer-warning {
+            animation: pulse 1s infinite;
         }
     </style>
 
