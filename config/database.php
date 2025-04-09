@@ -36,15 +36,17 @@ return [
     'connections' => [
         'oracle' => [
             'driver'   => 'oracle',
-            'tns'      => env('DB_TNS', ''),
-            'host'     => env('DB_HOST', '10.80.221.254'),
+            'tns'      => env('DB_TNS', '(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = 80.225.235.125)(PORT = 1521)) (CONNECT_DATA = (SID = esg)))'),
+            'host'     => env('DB_HOST', '80.225.235.125'),
             'port'     => env('DB_PORT', '1521'),
-            'database' => env('DB_DATABASE', 'ciisdms'),
-            'username' => env('DB_USERNAME', 'oracleesg'),
-            'password' => env('DB_PASSWORD', 'esg123'),
+            'database' => env('DB_DATABASE', 'esg'),
+            'username' => env('DB_USERNAME', 'C##ESG_ADMIN'),
+            'password' => env('DB_PASSWORD', 'SecurePass456#$'),
             'charset'  => 'AL32UTF8',
             'prefix'   => '',
-            'sid'      => env('DB_SID', 'ciisdms'),
+            'prefix_schema' => '',
+            'server_version' => '12c',
+            'sid'      => env('DB_SID', 'esg'),
         ],
         'sqlite' => [
             'driver' => 'sqlite',

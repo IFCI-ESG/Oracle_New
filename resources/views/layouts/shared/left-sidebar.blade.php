@@ -47,7 +47,7 @@
                     </form>
                 </div>
             </div>
-            <p class="text-muted mb-0">Admin</p>
+            <p class="text-muted mb-0">{{ auth()->user()->designation }}</p>
         </div>
 
         <!--- Sidemenu -->
