@@ -316,7 +316,7 @@
                                                             <input type="checkbox" class="services margin-right"
                                                                 id="service_{{ $serve->id }}" name="services[]"
                                                                 value="{{ $serve->id }}"
-                                                                {{ in_array($serve->id, $storedServices) ? 'checked' : '' }}>
+                                                                {{ in_array($serve->id, is_array($storedServices) ? $storedServices : []) ? 'checked' : '' }}>
                                                         </td>
                                                     </tr>
                                                     @endforeach

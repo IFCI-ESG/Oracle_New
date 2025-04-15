@@ -292,7 +292,7 @@ class BankBranchController extends Controller
                 \Log::info("Processing row $i: " . json_encode($value));
 
                 // Check if required columns exist
-                if ((!isset($value['email'])) || (!isset($value['contact_person'])) || (!isset($value['designation'])) || (!isset($value['mobile'])) || (!isset($value['ifsc_code'])) || (!isset($value['pincode']))) {
+                if ((!isset($value['email'])) || (!isset($value['contactperson'])) || (!isset($value['designation'])) || (!isset($value['mobile'])) || (!isset($value['ifsccode'])) || (!isset($value['pincode']))) {
                     \Log::error("Missing columns in row $i: " . json_encode($value)); // Log the problematic row
                     $validator->errors()->add('customError', 'The column names "Email", "ContactPerson", "Designation", "Mobile", "IfscCode" and "PinCode" should appear in the first row of the CSV.');
                     return redirect()->back()->withErrors($validator);
@@ -305,7 +305,7 @@ class BankBranchController extends Controller
                 }
 
                 // Validate ContactPerson
-                if (empty(trim($value['contact_person']))) {
+                if (empty(trim($value['contactperson']))) {
                     $validator->errors()->add('customError', 'Column "ContactPerson" cannot be null. Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
@@ -330,13 +330,13 @@ class BankBranchController extends Controller
                 }
 
                 // Validate IFSC Code
-                if (empty($value['ifsc_code'])) {
+                if (empty($value['ifsccode'])) {
                     $validator->errors()->add('customError', 'Column "IfscCode" cannot be null!. Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
 
                 // Fetch IFSC code data
-                $ifscCode = $value['ifsc_code'];
+                $ifscCode = $value['ifsccode'];
                 $userBankCode = Auth::user()->bank_code;
                 $response = Http::get("https://ifsc.razorpay.com/{$ifscCode}");
 
@@ -357,10 +357,10 @@ class BankBranchController extends Controller
                 DB::table('users_temp')->insert([
                     'name' => 'NA',
                     'email' => trim($value['email']),
-                    'contact_person' => trim($value['contact_person']),
+                    'contact_person' => trim($value['contactperson']),
                     'designation' => trim($value['designation']),
                     'mobile' => trim($value['mobile']),
-                    'ifsc_code' => trim($value['ifsc_code']),
+                    'ifsc_code' => trim($value['ifsccode']),
                     'pincode' => trim($value['pincode']),
                     'created_by' => Auth::user()->id,
                     'created_at' => Carbon::now(),
@@ -566,31 +566,35 @@ class BankBranchController extends Controller
     }
 
     public function submit(Request $request)
-{
-    $loggedInUserEmail = Auth::user()->email;
-    $corporate = DB::table('corporate_master')->where('email', $loggedInUserEmail)->first();
-    if (!$corporate) {
-        alert()->error('Corporate does not exist!')->persistent('Close');
+    {
+        $bank = AdminUser::find(Auth::user()->id);
+        $branch = AdminUser::find($request->user_id);
+        
+        // Get bank codes from IFSC
+        $bankCode = substr($bank->ifsc_code, 0, 4);
+        $branchCode = substr($branch->ifsc_code, 0, 4);
+        
+        // Validate branch belongs to same bank
+        if ($bankCode !== $branchCode) {
+            alert()->error('Branch IFSC code does not belong to your bank!')->persistent('Close');
+            return redirect()->route('admin.bank_branch.index');
+        }
+
+        DB::transaction(function () use ($request) {
+            $user = AdminUser::find($request->user_id);
+            $user->isactive = 'Y';
+            $user->status = 'S';
+            $user->profileid = 3;
+            $user->password_changed = 0;  // First login
+            $user->password = Hash::make('India@1234');
+            $user->save();
+            $data_role2 = ['role_id' => 3, 'model_type' => 'App\Models\AdminUser', 'model_id' => $user->id];
+            DB::table('model_has_roles')->insert([$data_role2]);
+        });
+
+        alert()->success('New Branch Created', 'Success!')->persistent('Close');
         return redirect()->route('admin.bank_branch.index');
     }
-    DB::transaction(function () use ($request, $corporate) {
-
-        $user = AdminUser::find($request->user_id);
-        $user->isactive = 'Y';
-        $user->status = 'S';
-        $user->profileid = 3;
-        $user->password_changed = 0;  // First login
-        $user->password = Hash::make('India@1234');
-        $user->corporateid = $corporate->id;
-        $user->save();
-        $data_role2 = ['role_id' => 3, 'model_type' => 'App\Models\AdminUser', 'model_id' => $user->id];
-        DB::table('model_has_roles')->insert([$data_role2]);
-    });
-
-
-    alert()->success('New Branch Created', 'Success!')->persistent('Close');
-    return redirect()->route('admin.bank_branch.index');
-}
 
 
     // Additional helper function to validate each row of data
