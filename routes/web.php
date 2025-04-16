@@ -54,7 +54,9 @@ Route::get('/hyperlink-policy', function () {
     return view('landing.hyperlink-policy');
 })->name('hyperlink-policy');
 
-
+Route::get('/flash-card', function () {
+    return view('landing.flash_card');
+})->name('flash-card');
 
 Route::get('/landing', [\App\Http\Controllers\HomeController::class, 'home'])
 ->name('landing');
@@ -72,7 +74,8 @@ Route::get('/faq', [\App\Http\Controllers\HomeController::class, 'faq'])
     ->name('tool');
 
 Route::post('inquiryMail',  [\App\Http\Controllers\HomeController::class, 'inquiryMail'])->name('inquiry');
-
+Route::get('/explore', [\App\Http\Controllers\HomeController::class, 'explore'])
+->name('explore');
 
 
 Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'create'])
