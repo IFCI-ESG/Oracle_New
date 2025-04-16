@@ -397,15 +397,26 @@
                         <div class="row">
                             <div class="col-md-12 mb-3">
                                 <label for="ifsc_code" style="color:black;">IFSC Code</label>
-                                <input type="text" name="ifsc_code" class="form-control" id="ifsc_code" value="{{ isset($users) ? $users->ifsc_code : 'NA' }}" required readonly>
+                                <div class="position-relative">
+                                    <input type="text" name="ifsc_code" class="form-control" id="ifsc_code" 
+                                        value="{{ isset($users) ? $users->ifsc_code : 'NA' }}" required readonly
+                                        style="border-radius: 8px; border: 1px solid #ddd; padding-right: 2.5rem;">
+                                    <i class="fas fa-lock position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #888;"></i>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 mb-3">
                                 <label for="name" style="color:black;">Name</label>
-                                <input type="text" name="name" class="form-control" id="name" value="{{ isset($users) ? $users->name : 'NA' }}" required readonly>
+                                <div class="position-relative">
+                                    <input type="text" name="name" class="form-control" id="name" 
+                                        value="{{ isset($users) ? $users->name : 'NA' }}" required readonly
+                                        style="border-radius: 8px; border: 1px solid #ddd; padding-right: 2.5rem;">
+                                    <i class="fas fa-lock position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #888;"></i>
+                                </div>
                             </div>
                         </div>
+                        
 
                         <div class="row">
                             <div class="col-md-12 mb-3">

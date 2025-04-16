@@ -30,11 +30,11 @@
                     <i class="fe-maximize font-22 textcolor"></i>
                 </a>
              </li>
-            <li class="d-none d-sm-inline-block">
+            {{-- <li class="d-none d-sm-inline-block">
                 <div class="nav-link waves-effect waves-light" id="light-dark-mode">
                     <i class="ri-moon-line font-22 textcolor"></i>
                 </div>
-            </li>
+            </li> --}}
             <li class="dropdown">
                 <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown"
                     href="#" role="button" aria-haspopup="false" aria-expanded="false">
@@ -73,12 +73,12 @@
                 </div>
             </li>
 
-            <li>
+            {{-- <li>
                 <a href="#theme-settings-offcanvas" class="nav-link waves-effect waves-light"
                     data-bs-toggle="offcanvas">
                     <i class="fe-settings font-22"></i>
                 </a>
-            </li>
+            </li> --}}
         </ul>
     </div>
 </div>
@@ -125,13 +125,16 @@
                 
  
 
-
                     <div class="mb-4">
                         <label for="name" class="form-label font-weight-bold" style="color: #333;">Name</label>
-                        <input type="text" class="form-control" id="name" name="name"
-                            value="{{ auth()->user()->name }}" readonly
-                            style="border-radius: 8px; border: 1px solid #ddd;">
+                        <div class="position-relative">
+                            <input type="text" class="form-control" id="name" name="name"
+                                value="{{ auth()->user()->name }}" readonly
+                                style="border-radius: 8px; border: 1px solid #ddd; padding-right: 2.5rem;">
+                            <i class="fas fa-lock position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #888;"></i>
+                        </div>
                     </div>
+                    
 
 
                     <div class="mb-4">
