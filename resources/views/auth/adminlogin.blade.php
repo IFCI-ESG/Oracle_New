@@ -160,7 +160,7 @@
     <!-- OTP Modal -->
     <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
-            <div class="modal-content border-0 shadow">
+            <div class="modal-content border-0 shadow" style="border-radius: 16px;">
                 <div class="modal-header border-0 pb-0">
                     <h5 class="modal-title fw-bold" id="otpModalLabel">Enter OTP</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -169,33 +169,41 @@
                     <!-- Success/Error Messages -->
                     <div id="otpMessage" class="alert mb-3" style="display: none; border-radius: 8px;"></div>
                     
-                    <!-- OTP Input -->
-                    <div class="mb-4">
-                        <input type="text" 
+                    <!-- OTP Input - Initially Hidden -->
+                    <div class="mb-4" id="otpInputContainer" style="display: none;">
+                        <input type="password" 
                             class="form-control form-control-lg text-center fw-bold" 
                             id="otp" 
                             maxlength="6" 
-                            placeholder="Enter 6-digit OTP" 
+                            placeholder="• • • • • •" 
                             pattern="[0-9]*" 
                             inputmode="numeric" 
-                            disabled
-                            style="letter-spacing: 8px; font-size: 20px; border-radius: 8px;">
+                            style="letter-spacing: 15px; font-size: 24px; border-radius: 8px;">
                     </div>
                     
-                    <!-- Timer -->
+                    <!-- Timer - Initially Hidden -->
                     <div id="otpTimer" class="text-center mb-3" style="display: none;">
                         <span class="text-muted">Time remaining: </span>
-                        <span id="timer" class="fw-bold" style="color: #6658dd;">02:00</span>
+                        <span id="timer" class="fw-bold">02:00</span>
                     </div>
                     
                     <!-- Buttons -->
                     <div class="d-grid gap-2">
+                        <!-- Initial State Buttons -->
                         <button type="button" 
                             class="btn btn-primary btn-lg" 
                             id="sendInitialOtp"
                             style="border-radius: 8px; background-color: #6658dd; border: none;">
                             Send OTP
                         </button>
+                        <button type="button" 
+                            class="btn btn-light btn-lg" 
+                            data-bs-dismiss="modal"
+                            style="border-radius: 8px;">
+                            Cancel
+                        </button>
+
+                        <!-- Post OTP Send Buttons - Initially Hidden -->
                         <button type="button" 
                             class="btn btn-success btn-lg" 
                             id="verifyOtp" 
@@ -207,12 +215,6 @@
                             id="resendOtpBtn" 
                             style="display: none; border-radius: 8px; background-color: #f7b84b; border: none; color: white;">
                             Resend OTP
-                        </button>
-                        <button type="button" 
-                            class="btn btn-light btn-lg" 
-                            data-bs-dismiss="modal"
-                            style="border-radius: 8px;">
-                            Close
                         </button>
                     </div>
                 </div>
@@ -321,13 +323,7 @@
             });
         });
 
-        // Add OTP input masking
-        document.getElementById('otp').addEventListener('input', function(e) {
-            this.value = this.value.replace(/[^0-9]/g, '');
-            document.getElementById('verifyOtp').style.display = this.value.length === 6 ? 'block' : 'none';
-        });
-
-        // Send Initial OTP handler
+        // Modified Send Initial OTP handler
         document.getElementById('sendInitialOtp').addEventListener('click', function() {
             this.disabled = true;
             const encIdField = document.getElementById("encryptedIdentity");
@@ -354,7 +350,9 @@
                     otpMessage.textContent = 'OTP sent successfully!';
                     otpMessage.style.display = 'block';
                     
-                    // Enable OTP input
+                    // Show OTP input and enable it
+                    const otpInputContainer = document.getElementById('otpInputContainer');
+                    otpInputContainer.style.display = 'block';
                     const otpInput = document.getElementById('otp');
                     otpInput.disabled = false;
                     otpInput.value = '';
@@ -386,16 +384,10 @@
             });
         });
 
-        // Timer functionality
-        let otpTimer;
-        let timeLeft = 120; // 2 minutes
-        let resendAttempts = 0;
-        const MAX_RESEND_ATTEMPTS = 3;
-
+        // Modified Timer functionality
         function startOtpTimer() {
             const timerDisplay = document.getElementById('timer');
             const resendBtn = document.getElementById('resendOtpBtn');
-            const otpInput = document.getElementById('otp');
             
             clearInterval(otpTimer);
             resendBtn.style.display = 'none';
@@ -405,12 +397,19 @@
                 const seconds = timeLeft % 60;
                 timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
                 
+                // Add warning class when timer reaches 30 seconds
+                if (timeLeft <= 30) {
+                    timerDisplay.classList.add('warning');
+                } else {
+                    timerDisplay.classList.remove('warning');
+                }
+                
                 if (timeLeft <= 0) {
                     clearInterval(otpTimer);
                     if (resendAttempts < MAX_RESEND_ATTEMPTS) {
                         resendBtn.style.display = 'block';
                         resendBtn.disabled = false;
-                        otpInput.disabled = true;
+                        document.getElementById('otp').disabled = true;
                         document.getElementById('verifyOtp').style.display = 'none';
                     } else {
                         const otpMessage = document.getElementById('otpMessage');
@@ -426,14 +425,46 @@
             }, 1000);
         }
 
-        // Verify OTP handler
+        // Update OTP input handler
+        document.getElementById('otp').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            // Show/hide verify button based on length
+            document.getElementById('verifyOtp').style.display = this.value.length === 6 ? 'block' : 'none';
+        });
+
+        // Reset modal state when closed
+        document.getElementById('otpModal').addEventListener('hidden.bs.modal', function () {
+            clearInterval(otpTimer);
+            const otpInput = document.getElementById('otp');
+            const otpMessage = document.getElementById('otpMessage');
+            const resendBtn = document.getElementById('resendOtpBtn');
+            const otpInputContainer = document.getElementById('otpInputContainer');
+            
+            // Reset all states
+            otpInput.value = '';
+            otpInput.disabled = true;
+            otpMessage.style.display = 'none';
+            otpInputContainer.style.display = 'none';
+            resendBtn.style.display = 'none';
+            resendBtn.disabled = false;
+            document.getElementById('verifyOtp').style.display = 'none';
+            document.getElementById('sendInitialOtp').style.display = 'block';
+            document.getElementById('sendInitialOtp').disabled = false;
+            document.getElementById('timer').classList.remove('warning');
+            timeLeft = 120;
+            resendAttempts = 0;
+        });
+
+        // Add Verify OTP handler
         document.getElementById('verifyOtp').addEventListener('click', function() {
             const otpInput = document.getElementById('otp');
-            const enteredOtp = otpInput.value.trim(); // Trim any whitespace
+            const enteredOtp = otpInput.value.trim();
             const encIdField = document.getElementById("encryptedIdentity");
             const encPwdField = document.getElementById("encryptedPassword");
 
-            console.log('Verifying OTP:', enteredOtp); // Debug log
+            // Disable verify button and show loading state
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Verifying...';
 
             fetch('{{ route("admin.verify.otp") }}', {
                 method: 'POST',
@@ -451,18 +482,33 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log('OTP verification response:', data); // Debug log
+                console.log('Verify OTP Response:', data); // Debug log
+
                 if (data.success) {
-                    window.location.href = data.redirect;
+                    // Show success message
+                    const otpMessage = document.getElementById('otpMessage');
+                    otpMessage.className = 'alert alert-success';
+                    otpMessage.textContent = 'OTP verified successfully!';
+                    otpMessage.style.display = 'block';
+
+                    // Redirect after a short delay
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 1000);
                 } else {
+                    // Show error message
                     const otpMessage = document.getElementById('otpMessage');
                     otpMessage.className = 'alert alert-danger';
                     otpMessage.textContent = data.message || 'Invalid OTP';
                     otpMessage.style.display = 'block';
-                    
-                    // Clear OTP input on error
+
+                    // Reset OTP input
                     otpInput.value = '';
                     otpInput.focus();
+
+                    // Reset verify button
+                    this.disabled = false;
+                    this.innerHTML = 'Verify OTP';
                 }
             })
             .catch(error => {
@@ -471,28 +517,88 @@
                 otpMessage.className = 'alert alert-danger';
                 otpMessage.textContent = 'An error occurred. Please try again.';
                 otpMessage.style.display = 'block';
+
+                // Reset verify button
+                this.disabled = false;
+                this.innerHTML = 'Verify OTP';
             });
         });
 
-        // Clear timer and reset state when modal is closed
-        document.getElementById('otpModal').addEventListener('hidden.bs.modal', function () {
-            clearInterval(otpTimer);
-            const otpInput = document.getElementById('otp');
-            const otpMessage = document.getElementById('otpMessage');
-            const resendBtn = document.getElementById('resendOtpBtn');
+        // Add Resend OTP handler
+        document.getElementById('resendOtpBtn').addEventListener('click', function() {
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Resending...';
             
-            // Reset all states
-            otpInput.value = '';
-            otpInput.disabled = true;
-            otpMessage.style.display = 'none';
-            resendBtn.style.display = 'none';
-            resendBtn.disabled = false;
-            document.getElementById('verifyOtp').style.display = 'none';
-            document.getElementById('sendInitialOtp').style.display = 'block';
-            document.getElementById('sendInitialOtp').disabled = false;
-            timeLeft = 120;
-            resendAttempts = 0;
+            const encIdField = document.getElementById("encryptedIdentity");
+            const encPwdField = document.getElementById("encryptedPassword");
+            
+            fetch('{{ route("admin.resend.otp") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    encryptedIdentity: encIdField.value,
+                    encryptedPassword: encPwdField.value,
+                    _token: document.querySelector('meta[name="csrf-token"]').content
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    const otpMessage = document.getElementById('otpMessage');
+                    otpMessage.className = 'alert alert-success';
+                    otpMessage.textContent = 'OTP resent successfully!';
+                    otpMessage.style.display = 'block';
+                    
+                    // Reset and enable OTP input
+                    const otpInput = document.getElementById('otp');
+                    otpInput.value = '';
+                    otpInput.disabled = false;
+                    otpInput.focus();
+                    
+                    // Hide resend button and verify button
+                    this.style.display = 'none';
+                    document.getElementById('verifyOtp').style.display = 'none';
+                    
+                    // Increment resend attempts
+                    resendAttempts++;
+                    
+                    // Reset and start timer
+                    timeLeft = 120;
+                    startOtpTimer();
+                } else {
+                    // Show error message
+                    const otpMessage = document.getElementById('otpMessage');
+                    otpMessage.className = 'alert alert-danger';
+                    otpMessage.textContent = data.message || 'Failed to resend OTP';
+                    otpMessage.style.display = 'block';
+                    
+                    // Reset button state
+                    this.disabled = false;
+                    this.innerHTML = 'Resend OTP';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const otpMessage = document.getElementById('otpMessage');
+                otpMessage.className = 'alert alert-danger';
+                otpMessage.textContent = 'An error occurred. Please try again.';
+                otpMessage.style.display = 'block';
+                
+                // Reset button state
+                this.disabled = false;
+                this.innerHTML = 'Resend OTP';
+            });
         });
+
+        // Initialize variables for OTP timer
+        let otpTimer;
+        let timeLeft = 120; // 2 minutes
+        let resendAttempts = 0;
+        const MAX_RESEND_ATTEMPTS = 3;
 
         document.addEventListener("DOMContentLoaded", function () {
             const togglePasswordButtons = document.querySelectorAll("#toggle-password");
@@ -510,7 +616,7 @@
 
     <style>
         .modal-content {
-            border-radius: 12px;
+            border-radius: 16px;
         }
         
         .alert-success {
@@ -523,6 +629,19 @@
             background-color: #f8d7da;
             border-color: #f5c6cb;
             color: #721c24;
+        }
+
+        #otp {
+            -webkit-text-security: disc;
+            color: #6658dd;
+            letter-spacing: 15px;
+            font-size: 24px;
+        }
+        
+        #otp::placeholder {
+            color: #ccc;
+            letter-spacing: 15px;
+            font-size: 24px;
         }
 
         #otp:focus {
@@ -538,30 +657,31 @@
             background-color: #f6a933 !important;
         }
 
-        .timer-warning {
-            color: #dc3545 !important;
-            font-weight: bold;
+        /* Timer styles */
+        #timer {
+            color: #6658dd;
+            transition: color 0.3s ease;
         }
 
-        /* Animation for OTP input */
+        #timer.warning {
+            color: #dc3545 !important;
+            animation: pulse 1s infinite;
+        }
+
+        /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        #otp {
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        /* Pulse animation for timer when below 30 seconds */
         @keyframes pulse {
             0% { opacity: 1; }
             50% { opacity: 0.5; }
             100% { opacity: 1; }
         }
 
-        .timer-warning {
-            animation: pulse 1s infinite;
+        #otpInputContainer {
+            animation: fadeIn 0.3s ease-out;
         }
     </style>
 

@@ -112,6 +112,14 @@ Route::name('admin.')->prefix('admin')->middleware(['auth:admin','role:SuperAdmi
      Route::get('dash',[\App\Http\Controllers\Admin\UserController::class, 'dash'])->name('dash');
     Route::get('env_mis', [\App\Http\Controllers\Admin\UserController::class, 'env_mis'])->name('env_mis');
 
+    Route::get('bank_env_mis', [\App\Http\Controllers\Admin\UserController::class, 'bank_env_mis'])->name('bank_env_mis');
+ 
+    Route::get('bank_dash_environment',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_environment'])->name('bank_dash_environment');
+    Route::get('bank_dash_social',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_social'])->name('bank_dash_social');
+    Route::get('bank_dash_governance',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_governance'])->name('bank_dash_governance');
+    Route::get('bank_dash_scoring',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_scoring'])->name('bank_dash_scoring');
+
+
     Route::get('dash_environment',[\App\Http\Controllers\Admin\UserController::class, 'dash_environment'])->name('dash_environment');
     Route::get('dash_social',[\App\Http\Controllers\Admin\UserController::class, 'dash_social'])->name('dash_social');
     Route::get('dash_governance',[\App\Http\Controllers\Admin\UserController::class, 'dash_governance'])->name('dash_governance');
