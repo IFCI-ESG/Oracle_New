@@ -84,7 +84,7 @@ Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'store
 
 Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'destroy'])
     ->middleware('auth')
-    ->name('logout');
+    ->name('logout');  
 
 //Route::get('/', [\App\Http\Controllers\Admin\LoginController::class, 'showLoginForm'])->name('/');
 
