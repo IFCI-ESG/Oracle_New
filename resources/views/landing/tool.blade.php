@@ -1,12 +1,8 @@
-@extends('layouts.master')
+@extends('layouts.master_march')
 
-@push('style')
-
-<style>
-
-</style>
-
-@endpush
+@section('title')
+    ESG Prakrit
+@endsection
 
 @section('content')
     <!--====== Know Your Carbon Footprint PART START ======-->
@@ -22,7 +18,7 @@
             <div class="row justify-content-center calculator-box">
                 <div class="col-lg-8">
                     <div class="table-responsive">
-                        <table class="individual-calculator-table">
+                        <table class="individual-calculator-table table-bordered">
                             <tbody>
                                 <tr>
                                     <td data-label="Award" class="heading-sec">
@@ -40,6 +36,8 @@
                                     <td data-label="Platform" class="text-right">
                                         <input type="number" placeholder="Percentage" class="form-control form-control-sm"
                                             min="0" max="100" id="trained_staff">
+
+                                       <span class="small" >(Value must be a number between 0 and 100)</span>  
                                     </td>
                                 </tr>
                                 <tr>
@@ -49,21 +47,18 @@
                                     <td data-label="Platform" class="text-right">
                                         <input type="number" placeholder="Percentage" class="form-control form-control-sm"
                                             min="0" max="100" id="grievance">
+                                             <span class="small" >(Value must be a number between 0 and 100)</span> 
                                     </td>
                                 </tr>
 
                                 <tr>
-                                    <td class="text-left">
-                                        <b> Click Here to Preview
-                                    </td>
-                                    <td class="text-center animation-btn-css">
+                                    {{-- <td class="text-left">
+                                        <b> Click Here to Preview</b>
+                                    </td> --}}
+                                    <td colspan="2" class="text-center animation-btn-css" style="background-color: #D6FFEA;">
 
                                         <div class="button-icon tool-icon">
-                                            <button class="button" onclick="Total(this)">
-                                                <p class="title">Submit </p>
-                                                <img src="assets/images/calculator-icon.png" alt="">
-                                                <p class="description">Submit </p>
-                                            </button>
+                                            <button class="button" onclick="Total(this)">Submit</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -88,7 +83,7 @@
                         <h1>ESG Snapshot</h1>
                     </div>
                 </div> --}}
-                <div class="row mt-40">
+                <div class="row mt-4">
                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                         <div class="card">
                             <div class="card-header border-0">
@@ -141,7 +136,7 @@
                         </div>
                     </div> --}}
                 </div>
-                <div class="row mt-40">
+                <div class="row mt-4">
                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                         <div class="card">
                             <div class="card-header border-0">

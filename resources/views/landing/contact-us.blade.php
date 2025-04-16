@@ -81,7 +81,7 @@
                                 </div>
                             </div>
                         </li>
-                        <li>
+                      <!--   <li>
                             <div class="single-address">
                                 <div class="icon">
                                     <i class="fa fa-phone"></i>
@@ -91,7 +91,7 @@
                                     <p>+91 9560969186</p>
                                 </div>
                             </div>
-                        </li>
+                        </li> -->
                         <li>
                             <div class="single-address">
                                 <div class="icon">
@@ -207,7 +207,7 @@
 
                                 <div class="col-md-6">
                                     <div class="single-form form-group">
-                                        <input type="text" placeholder="Phone" required="required" name="mobile">
+                                        <input type="tel" placeholder="Phone" required="required" name="mobile"   pattern="[1-9]{1}[0-9]{9}">
                                         @error('mobile')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
