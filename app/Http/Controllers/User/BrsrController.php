@@ -256,7 +256,7 @@ class BrsrController extends Controller
 
     $transpostData = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' => $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X6'
@@ -277,7 +277,7 @@ class BrsrController extends Controller
 
     $transpostData1 = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' => $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X14'
@@ -297,7 +297,7 @@ class BrsrController extends Controller
     }
     $transpostData2 = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' => $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X22'
@@ -317,7 +317,7 @@ class BrsrController extends Controller
     }
     $transpostData3 = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' => $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X30'
@@ -337,7 +337,7 @@ class BrsrController extends Controller
     }
     $transpostData4 = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' => $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X38'
@@ -357,7 +357,7 @@ class BrsrController extends Controller
     }
     $transpostData5 = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' => $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X46'
@@ -380,7 +380,7 @@ class BrsrController extends Controller
 
     $transpostData5 = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' => $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X46'
@@ -403,7 +403,7 @@ class BrsrController extends Controller
 
     $transpostData6 = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' => $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X7'
@@ -424,7 +424,7 @@ class BrsrController extends Controller
     
     $transpostData7 = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' =>  $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X15'
@@ -445,7 +445,7 @@ class BrsrController extends Controller
     
     $transpostData8 = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' => $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X23'
@@ -466,7 +466,7 @@ class BrsrController extends Controller
     
     $transpostData9 = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' => $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X31'
@@ -487,7 +487,7 @@ class BrsrController extends Controller
     
    $transpostData10 = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' => $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X39'
@@ -508,7 +508,7 @@ class BrsrController extends Controller
 
     $transpostData11 = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' => $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X47'
@@ -531,7 +531,7 @@ class BrsrController extends Controller
 
     $transpostData12 = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' => $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X8'
@@ -552,7 +552,7 @@ class BrsrController extends Controller
     
     $transpostData13 = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' => $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X16'
@@ -573,7 +573,7 @@ class BrsrController extends Controller
     
     $transpostData14 = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' => $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X24'
@@ -594,7 +594,7 @@ class BrsrController extends Controller
     
     $transpostData15 = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' => $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X32'
@@ -613,9 +613,9 @@ class BrsrController extends Controller
         }
     }
     
-   $transpostData16 = [
+    $transpostData16 = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' => $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X40'
@@ -633,10 +633,10 @@ class BrsrController extends Controller
             $previous_remarks4 = $firstVal;
         }
     }
-
+    
     $transpostData17 = [
         'cin' => Auth::user()->cin_llpin,
-        'year' => 2023,
+        'year' => $previous_year,
         'Section' => 'GN',
         'Question' => 'E23',
         'BRSR_ID' => 'X48'
