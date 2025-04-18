@@ -10,8 +10,7 @@ use App\Models\ModelHasRoles;
 use GuzzleHttp\Client;
 use Auth;
 use Alert;
-
-
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -22,9 +21,6 @@ class HomeController extends Controller
 
     public function index()
     {
-
-        //$arr_financial_year=getfy_masters();
-        //dd($arr_financial_year['sort_year']);
         $user = Auth::user();
 
         $user_details = DB::table('users')
@@ -34,15 +30,52 @@ class HomeController extends Controller
                                 ->where('created_by',$user->id)
                                 ->orderby('id')->get();
 
+        // Dashboard statistics
+        $totalBanks = DB::table('users')->where('profileid', 2)->count();
+        
+        $activeBanksCount = DB::table('users')
+            ->where('isactive', 'Y')
+            ->where('profileid', 2)
+            ->count();
+            
+        $publicSectorBanksCount = DB::table('users')
+            ->where('bank_sector_type', 'public')
+            ->where('profileid', 2)
+            ->count();
+            
+        $privateSectorBanksCount = DB::table('users')
+            ->where('bank_sector_type', 'private')
+            ->where('profileid', 2)
+            ->count();
+            
+        $totalCompanies = DB::table('users')->where('profileid', 4)->count();
+        
+        // Calculate percentages
+        $publicPercentage = ($totalBanks > 0) ? round(($publicSectorBanksCount / $totalBanks) * 100) : 0;
+        $privatePercentage = ($totalBanks > 0) ? round(($privateSectorBanksCount / $totalBanks) * 100) : 0;
+        $activePercentage = ($totalBanks > 0) ? round(($activeBanksCount / $totalBanks) * 100) : 0;
+        
+        // Current date
+        $currentDate = Carbon::now()->format('l, F d, Y');
 
-            // dd($user,$user_details);
+        $mode = 'dark';
+        $demo = 'modern';
 
-           $mode='dark';
-            $demo='modern';
-
-        return view('admin.home', ['mode' => $mode, 'demo' => $demo,'user_details'=>$user_details,'user'=>$user]);
+        return view('admin.home', [
+            'mode' => $mode, 
+            'demo' => $demo,
+            'user_details' => $user_details,
+            'user' => $user,
+            // Dashboard statistics
+            'totalBanks' => $totalBanks,
+            'activeBanksCount' => $activeBanksCount,
+            'publicSectorBanksCount' => $publicSectorBanksCount,
+            'privateSectorBanksCount' => $privateSectorBanksCount,
+            'totalCompanies' => $totalCompanies,
+            'publicPercentage' => $publicPercentage,
+            'privatePercentage' => $privatePercentage,
+            'activePercentage' => $activePercentage,
+            'currentDate' => $currentDate
+        ]);
     }
-
-
-
 }
