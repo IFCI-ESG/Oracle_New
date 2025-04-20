@@ -32,7 +32,7 @@
         </div>
     @endif
 
-    <div class="container  py-4 px-2 col-lg-12">
+    <div class="container  py-6 px-2 col-lg-12">
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <form action="{{ route('user.brsr.store') }}" id="social_store" role="form" method="post"
@@ -158,12 +158,12 @@
                <tbody id="additional_data_rows">
                 <tr>
                   <td class="text-center">1</td>
-                  <td><input type="text" class="form-control form-control-sm" name="additional[1][text_a]" required></td>
-                  <td><input type="text" class="form-control form-control-sm" name="additional[1][text_b]" required></td>
-                  <td><input type="text" class="form-control form-control-sm" name="additional[1][text_c]" required></td>
+                  <td><textarea class="form-control form-control-sm auto-grow" name="additional[1][text_a]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                  <td><textarea class="form-control form-control-sm auto-grow" name="additional[1][text_b]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                  <td><textarea class="form-control form-control-sm auto-grow" name="additional[1][text_c]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
                   <td class="text-center">
-                   <button type="button" class="btn btn-danger btn-sm remove-row"><i class="fas fa-minus"></i></button>
-                 </td>
+                    <button type="button" class="btn btn-danger btn-sm remove-row"><i class="fas fa-minus"></i></button>
+                  </td>
              </tr>
           </tbody>
           </table>
@@ -193,10 +193,10 @@
                <tbody id="additional_data_rows1">
                 <tr>
                   <td class="text-center">1</td>
-                  <td><input type="text" class="form-control form-control-sm" name="additionals[1][text_d]" required></td>
-                  <td><input type="text" class="form-control form-control-sm" name="additionals[1][text_e]" required></td>
-                  <td><input type="text" class="form-control form-control-sm" name="additionals[1][text_f]" required></td>
-                  <td class="text-center">
+                  <td><textarea class="form-control form-control-sm auto-grow" name="additionals[1][text_d]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                  <td><textarea class="form-control form-control-sm auto-grow" name="additionals[1][text_e]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                  <td><textarea class="form-control form-control-sm auto-grow" name="additionals[1][text_f]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                 <td class="text-center">
                    <button type="button" class="btn btn-danger btn-sm remove-row"><i class="fas fa-minus"></i></button>
                  </td>
              </tr>
@@ -571,7 +571,7 @@
 <!-- Turnover rate for permanent employees and workers Start End -->
 
  <!-- Holding, Subsidiary and Associate Companies (including joint ventures) - start -->
-   <div class="card card-success card-outline mt-4">
+    <div class="card card-success card-outline mt-4">
           <div class="card-header">
                      <b><u>Holding, Subsidiary and Associate Companies (including joint ventures)</u></b><br/><br/>
                      <b> 23. (a) Names of holding / subsidiary / associate companies / joint ventures </b>
@@ -591,11 +591,11 @@
                <tbody id="holding_data_rows">
                  <tr>
                   <td class="text-center">1</td>
-                  <td><input type="text" class="form-control form-control-sm" name="holding[1][text_a]" required></td>
-                  <td><input type="text" class="form-control form-control-sm" name="holding[1][text_b]" required></td>
-                  <td><input type="text" class="form-control form-control-sm" name="holding[1][text_c]" required></td>
-                  <td><input type="text" class="form-control form-control-sm" name="holding[1][text_d]" required></td>
-                  <td class="text-center">
+                  <td><textarea class="form-control form-control-sm auto-grow" name="holding[1][text_a]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                  <td><textarea class="form-control form-control-sm auto-grow" name="holding[1][text_b]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                  <td><textarea class="form-control form-control-sm auto-grow" name="holding[1][text_c]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                  <td><textarea class="form-control form-control-sm auto-grow" name="holding[1][text_d]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                 <td class="text-center">
                    <button type="button" class="btn btn-danger btn-sm remove-row"><i class="fas fa-minus"></i></button>
                  </td>
              </tr>
@@ -685,53 +685,75 @@
                        </td>
 
                        <td class="text-center">
-                            <input type="text" style="text-align: left; width: 100px;" class="form-control form-control-sm emp_{{$a}} t_emp" name="emp[{{ $a }}][grievance_redressal]" id="grievance_redressal_{{$a}}" 
-                                 required>
+                        <textarea style="text-align: left; width: 100px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                          name="emp[{{ $a }}][grievance_redressal]" id="grievance_redressal_{{$a}}" oninput="autoResize(this)" required>{{ old('emp.' . $a . '.grievance_redressal') }}</textarea>
                         </td>
 
                         <td class="text-center">
-                            <input type="text" style="text-align: left; width: 100px;" class="form-control form-control-sm emp_{{$a}} t_emp" name="emp[{{ $a }}][current_fy_no_of_compliants]" id="current_fy_no_of_compliants_{{$a}}" 
-                                 required>
+                            <textarea style="text-align: left; width: 100px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                              name="emp[{{ $a }}][current_fy_no_of_compliants]" id="current_fy_no_of_compliants_{{$a}}" oninput="autoResize(this)" required>{{ old('emp.' . $a . '.current_fy_no_of_compliants') }}</textarea>
                         </td>
                         <td class="text-center">
-                            <input type="text" style="text-align: left; width: 100px;"  class="form-control form-control-sm emp_{{$a}} t_emp" name="emp[{{ $a }}][current_no_of_pending_compliants]" id="current_no_of_pending_compliants_{{$a}}" 
-                                 required>
+                            <textarea style="text-align: left; width: 100px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                                 name="emp[{{ $a }}][current_no_of_pending_compliants]" id="current_no_of_pending_compliants_{{$a}}" oninput="autoResize(this)" required>{{ old('emp.' . $a . '.current_no_of_pending_compliants') }}</textarea>
                         </td>
                         <td class="text-center">
-                            <input type="text" style="text-align: left; width: 100px;" class="form-control form-control-sm emp_{{$a}} t_emp" name="emp[{{ $a }}][current_fy_remarks]" id="current_fy_remarks_{{$a}}" 
-                                 required>
+                           <textarea style="text-align: left; width: 100px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                                 name="emp[{{ $a }}][current_fy_remarks]" id="current_fy_remarks_{{$a}}" oninput="autoResize(this)" required>{{ old('emp.' . $a . '.current_fy_remarks') }}</textarea>
                         </td>
 
                         <td class="text-center">
-                            <input type="text" style="text-align: left; width: 100px;" class="form-control form-control-sm emp_{{$a}} m_emp" name="emp[{{ $a }}][previous_fy_no_of_compliants]" id="previous_fy_no_of_compliants_{{$a}}"  
-                              @if($a==36) value = "{{ $previous_fy_no_of_compliants }}"
-                               @elseif ($a==37)   value = "{{ $previous_fy_no_of_compliants1 }}" 
-                               @elseif ($a==38)   value = "{{ $previous_fy_no_of_compliants2 }}" 
-                               @elseif ($a==39)   value = "{{ $previous_fy_no_of_compliants3 }}"
-                               @elseif ($a==40)   value = "{{ $previous_fy_no_of_compliants4 }}"
-                               @elseif ($a==41)   value = "{{ $previous_fy_no_of_compliants5 }}"
-                               @elseif ($a==42)   value = "{{ $previous_fy_no_of_compliants6 }}" @endif required>
-                        </td>
-                        <td class="text-center">
-                            <input type="text" style="text-align: left; width: 100px;"  class="form-control form-control-sm emp_{{$a}} m_emp" name="emp[{{ $a }}][previous_no_of_pending_compliants]" id="previous_no_of_pending_compliants_{{$a}}"  
-                            @if($a==36) value = "{{ $previous_pending_compliants }}"
-                               @elseif ($a==37)   value = "{{ $previous_pending_compliants1 }}" 
-                               @elseif ($a==38)   value = "{{ $previous_pending_compliants2 }}" 
-                               @elseif ($a==39)   value = "{{ $previous_pending_compliants3 }}"
-                               @elseif ($a==40)   value = "{{ $previous_pending_compliants4 }}"
-                               @elseif ($a==41)   value = "{{ $previous_pending_compliants5 }}"
-                               @elseif ($a==42)   value = "{{ $previous_pending_compliants6 }}" @endif  required>
-                        </td>
-                        <td class="text-center">
-                            <input type="text" style="text-align: left; width: 100px;" class="form-control form-control-sm emp_{{$a}} m_emp" name="emp[{{ $a }}][previous_fy_remarks]" id="previous_fy_remarks_{{$a}}"  
-                            @if($a==36) value = "{{ $previous_remarks }}"
-                               @elseif ($a==37)   value = "{{ $previous_remarks1 }}" 
-                               @elseif ($a==38)   value = "{{ $previous_remarks2 }}" 
-                               @elseif ($a==39)   value = "{{ $previous_remarks3 }}"
-                               @elseif ($a==40)   value = "{{ $previous_remarks4 }}"
-                               @elseif ($a==41)   value = "{{ $previous_remarks5 }}"
-                               @elseif ($a==42)   value = "{{ $previous_remarks6 }}" @endif required>
-                        </td>
+    <textarea 
+        style="text-align: left; width: 100px; overflow: hidden; resize: none;" 
+        class="form-control form-control-sm emp_{{$a}} m_emp auto-grow" 
+        name="emp[{{ $a }}][previous_fy_no_of_compliants]" 
+        id="previous_fy_no_of_compliants_{{$a}}" 
+        oninput="autoResize(this)" 
+        required>
+        @if($a==36) {{ $previous_fy_no_of_compliants }}
+        @elseif($a==37) {{ $previous_fy_no_of_compliants1 }}
+        @elseif($a==38) {{ $previous_fy_no_of_compliants2 }}
+        @elseif($a==39) {{ $previous_fy_no_of_compliants3 }}
+        @elseif($a==40) {{ $previous_fy_no_of_compliants4 }}
+        @elseif($a==41) {{ $previous_fy_no_of_compliants5 }}
+        @elseif($a==42) {{ $previous_fy_no_of_compliants6 }}
+        @endif
+    </textarea>
+</td>
+
+                  
+                  <td class="text-center">
+                    <textarea 
+                   style="text-align: left; width: 100px; overflow: hidden; resize: none;"  
+        class="form-control form-control-sm emp_{{$a}} m_emp auto-grow" 
+        name="emp[{{ $a }}][previous_no_of_pending_compliants]" 
+        id="previous_no_of_pending_compliants_{{$a}}" 
+        oninput="autoResize(this)" 
+        required>@if($a==36){{ $previous_pending_compliants }}
+@elseif ($a==37){{ $previous_pending_compliants1 }} 
+@elseif ($a==38){{ $previous_pending_compliants2 }} 
+@elseif ($a==39){{ $previous_pending_compliants3 }}
+@elseif ($a==40){{ $previous_pending_compliants4 }}
+@elseif ($a==41){{ $previous_pending_compliants5 }}
+@elseif ($a==42){{ $previous_pending_compliants6 }}@endif</textarea>
+</td>
+
+<td class="text-center">
+    <textarea 
+        style="text-align: left; width: 100px; overflow: hidden; resize: none;"  
+        class="form-control form-control-sm emp_{{$a}} m_emp auto-grow" 
+        name="emp[{{ $a }}][previous_fy_remarks]" 
+        id="previous_fy_remarks_{{$a}}" 
+        oninput="autoResize(this)" 
+        required>@if($a==36){{ $previous_remarks }}
+@elseif ($a==37){{ $previous_remarks1 }} 
+@elseif ($a==38){{ $previous_remarks2 }} 
+@elseif ($a==39){{ $previous_remarks3 }}
+@elseif ($a==40){{ $previous_remarks4 }}
+@elseif ($a==41){{ $previous_remarks5 }}
+@elseif ($a==42){{ $previous_remarks6 }}@endif</textarea>
+</td>
+
  
                     @php
                         $a++;
@@ -772,12 +794,12 @@
                <tbody id="material_data_rows">
                  <tr>
                   <td class="text-center">1</td>
-                  <td><input type="text" class="form-control form-control-sm" name="material[1][text_a]" required></td>
-                  <td><input type="text" class="form-control form-control-sm" name="material[1][text_b]" required></td>
-                  <td><input type="text" class="form-control form-control-sm" name="material[1][text_c]" required></td>
-                  <td><input type="text" class="form-control form-control-sm" name="material[1][text_d]" required></td>
-                  <td><input type="text" class="form-control form-control-sm" name="material[1][text_e]" required></td>
-                  <td class="text-center">
+                  <td><textarea class="form-control form-control-sm auto-grow" name="material[1][text_a]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                  <td><textarea class="form-control form-control-sm auto-grow" name="material[1][text_b]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                  <td><textarea class="form-control form-control-sm auto-grow" name="material[1][text_c]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                  <td><textarea class="form-control form-control-sm auto-grow" name="material[1][text_d]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                  <td><textarea class="form-control form-control-sm auto-grow" name="material[1][text_e]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                 <td class="text-center">
                    <button type="button" class="btn btn-danger btn-sm remove-row"><i class="fas fa-minus"></i></button>
                  </td>
              </tr>
@@ -813,6 +835,7 @@
                         </div>
                         <!-- /.card -->
                     </div>
+</div>
                 </form>
             </div>
         </div>
@@ -831,9 +854,10 @@
             let newRow = `
                 <tr>
                     <td class="text-center">${rowCount}</td>
-                    <td><input type="text" class="form-control form-control-sm" name="additional[${rowCount}][text_a]" required></td>
-                    <td><input type="text" class="form-control form-control-sm" name="additional[${rowCount}][text_b]" required></td>
-                     <td><input type="text" class="form-control form-control-sm" name="additional[${rowCount}][text_c]" required></td>
+                    <td><textarea class="form-control form-control-sm auto-grow" name="additional[${rowCount}][text_a]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                     <td><textarea class="form-control form-control-sm auto-grow" name="additional[${rowCount}][text_b]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                      <td><textarea class="form-control form-control-sm auto-grow" name="additional[${rowCount}][text_c]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                  
                     <td class="text-center">
                         <button type="button" class="btn btn-danger btn-sm remove-row"><i class="fas fa-minus"></i></button>
                     </td>
@@ -861,9 +885,11 @@
             let newRow = `
                 <tr>
                     <td class="text-center">${rowCount}</td>
-                    <td><input type="text" class="form-control form-control-sm" name="additionals[${rowCount}][text_d] required"></td>
-                    <td><input type="text" class="form-control form-control-sm" name="additionals[${rowCount}][text_e]" required></td>
-                    <td><input type="text" class="form-control form-control-sm" name="additionals[${rowCount}][text_f]" required></td>
+                     <td><textarea class="form-control form-control-sm auto-grow" name="additionals[${rowCount}][text_d]" style=" overflow:hidden; resize:none;" oninput="autoResize(this)" required></textarea></td>
+                     <td><textarea class="form-control form-control-sm auto-grow" name="additionals[${rowCount}][text_e]" style=" overflow:hidden; resize:none;" oninput="autoResize(this)" required></textarea></td>
+                      <td><textarea class="form-control form-control-sm auto-grow" name="additionals[${rowCount}][text_f]" style=" overflow:hidden; resize:none;" oninput="autoResize(this)" required></textarea></td>
+                  
+                    
                     <td class="text-center">
                         <button type="button" class="btn btn-danger btn-sm remove-row1"><i class="fas fa-minus"></i></button>
                     </td>
@@ -891,11 +917,11 @@
             let newRow = `
                 <tr>
                     <td class="text-center">${rowCount}</td>
-                    <td><input type="text" class="form-control form-control-sm" name="holding[${rowCount}][text_a]" required></td>
-                    <td><input type="text" class="form-control form-control-sm" name="holding[${rowCount}][text_b]" required></td>
-                    <td><input type="text" class="form-control form-control-sm" name="holding[${rowCount}][text_c]" required></td>
-                    <td><input type="text" class="form-control form-control-sm" name="holding[${rowCount}][text_d]" required></td>
-                    <td class="text-center">
+                      <td><textarea class="form-control form-control-sm auto-grow" name="holding[${rowCount}][text_a]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                      <td><textarea class="form-control form-control-sm auto-grow" name="holding[${rowCount}][text_b]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                      <td><textarea class="form-control form-control-sm auto-grow" name="holding[${rowCount}][text_c]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                      <td><textarea class="form-control form-control-sm auto-grow" name="holding[${rowCount}][text_d]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                     <td class="text-center">
                         <button type="button" class="btn btn-danger btn-sm remove-row"><i class="fas fa-minus"></i></button>
                     </td>
                 </tr>
@@ -922,11 +948,11 @@
             let newRow = `
                 <tr>
                     <td class="text-center">${rowCount}</td>
-                    <td><input type="text" class="form-control form-control-sm" name="material[${rowCount}][text_a]" required></td>
-                    <td><input type="text" class="form-control form-control-sm" name="material[${rowCount}][text_b]" required></td>
-                    <td><input type="text" class="form-control form-control-sm" name="material[${rowCount}][text_c]" required></td>
-                    <td><input type="text" class="form-control form-control-sm" name="material[${rowCount}][text_d]" required></td>
-                    <td><input type="text" class="form-control form-control-sm" name="material[${rowCount}][text_e]" required></td>
+                      <td><textarea class="form-control form-control-sm auto-grow" name="material[${rowCount}][text_a]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                      <td><textarea class="form-control form-control-sm auto-grow" name="material[${rowCount}][text_b]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                      <td><textarea class="form-control form-control-sm auto-grow" name="material[${rowCount}][text_c]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                      <td><textarea class="form-control form-control-sm auto-grow" name="material[${rowCount}][text_d]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                      <td><textarea class="form-control form-control-sm auto-grow" name="material[${rowCount}][text_e]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>  
                     <td class="text-center">
                         <button type="button" class="btn btn-danger btn-sm remove-row"><i class="fas fa-minus"></i></button>
                     </td>
@@ -1095,5 +1121,15 @@
    }
 </script> 
 
+<script>
+    function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px'; 
+    }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.auto-grow').forEach(autoResize);
+    });
+</script>
 
 @endpush

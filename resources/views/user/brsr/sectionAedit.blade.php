@@ -141,13 +141,13 @@
                         <td class="text-center">{{ $key + 1 }} </td>
                         <input type="hidden" value="{{ $brsr_prod_serv_value->where('id',$productService->id)->first()->id }}" name="additional[{{ $rowCount }}][row_id]">
                         <td>
-                            <input type="text" class="form-control form-control-sm" name="additional[{{ $rowCount }}][text_a]" value="{{ $productService->main_activity_description }}" required>
+                          <textarea class="form-control form-control-sm auto-grow" name="additional[{{ $rowCount }}][text_a]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required>{{  $productService->main_activity_description  }}</textarea>
                         </td>
                         <td>
-                            <input type="text" class="form-control form-control-sm" name="additional[{{ $rowCount }}][text_b]" value="{{ $productService->business_activity_description }}" required>
+                          <textarea class="form-control form-control-sm auto-grow" name="additional[{{ $rowCount }}][text_b]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required>{{ $productService->business_activity_description }}</textarea>
                         </td>
                         <td>
-                            <input type="text" class="form-control form-control-sm" name="additional[{{ $rowCount }}][text_c]" value="{{ $productService->turnover_percent_entity }}" required>
+                          <textarea class="form-control form-control-sm auto-grow" name="additional[{{ $rowCount }}][text_c]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required>{{  $productService->turnover_percent_entity }}</textarea>
                         </td>
                        
                     </tr>
@@ -190,13 +190,13 @@
                         <td class="text-center">{{ $key + 1 }} </td>
                         <input type="hidden" value="{{ $brsr_nic_prod_serv_value->where('id',$productService->id)->first()->id }}" name="additionals[{{ $rowCount }}][row_id]">
                         <td>
-                            <input type="text" class="form-control form-control-sm" name="additionals[{{ $rowCount }}][text_d]" value="{{ $productService->product_service }}" required>
+                          <textarea class="form-control form-control-sm auto-grow" name="additionals[{{ $rowCount }}][text_d]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required>{{ $productService->product_service }}</textarea>
                         </td>
                         <td>
-                            <input type="text" class="form-control form-control-sm" name="additionals[{{ $rowCount }}][text_e]" value="{{ $productService->nic_code }}" required>
+                            <textarea class="form-control form-control-sm auto-grow" name="additionals[{{ $rowCount }}][text_e]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required>{{ $productService->nic_code }}</textarea>
                         </td>
                         <td>
-                            <input type="text" class="form-control form-control-sm" name="additionals[{{ $rowCount }}][text_f]" value="{{ $productService->total_turnover_contributed }}" required>
+                         <textarea class="form-control form-control-sm auto-grow" name="additionals[{{ $rowCount }}][text_f]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required>{{ $productService->total_turnover_contributed }}</textarea>
                         </td>
                     </tr>
                     @php
@@ -622,16 +622,18 @@
                  <td class="text-center">{{ $key + 1 }} </td>
                    <input type="hidden" value="{{ $brsr_holding_value->where('id',$holding->id)->first()->id }}" name="holding[{{ $rowCount }}][row_id]">
                    <td>
-                      <input type="text" class="form-control form-control-sm" name="holding[{{ $rowCount }}][text_a]" value="{{ $holding->name_of_holding }}" required>
+                     <textarea class="form-control form-control-sm auto-grow" name="holding[{{ $rowCount }}][text_a]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required>{{ $holding->name_of_holding }}</textarea>
                    </td>
                    <td>
-                   <input type="text" class="form-control form-control-sm" name="holding[{{ $rowCount }}][text_b]" value="{{ $holding->indicate_holding }}" required>
+                   
+                   <textarea class="form-control form-control-sm auto-grow" name="holding[{{ $rowCount }}][text_b]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required>{{ $holding->indicate_holding }}</textarea>
                    </td>
                    <td>
-                   <input type="text" class="form-control form-control-sm" name="holding[{{ $rowCount }}][text_c]" value="{{ $holding->percent_shares }}" required>
+                  
+                   <textarea class="form-control form-control-sm auto-grow" name="holding[{{ $rowCount }}][text_c]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required>{{ $holding->percent_shares }}</textarea>
                    </td>
                    <td>
-                   <input type="text" class="form-control form-control-sm" name="holding[{{ $rowCount }}][text_d]" value="{{ $holding->business_responsibility }}" required>
+                     <textarea class="form-control form-control-sm auto-grow" name="holding[{{ $rowCount }}][text_d]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required>{{ $holding->business_responsibility }}</textarea>
                    </td>
                  </tr>
               @php
@@ -732,39 +734,61 @@
                             <input type="hidden" value="{{ $brsr_compliace_value->where('ques_id',$emp->id)->first()->id }}" name="empss[{{ $a }}][row_id]">
                        </td>
 
-                    
+                     <td class="text-center">
+                       <textarea style="text-align: left; width: 100px; overflow: hidden; resize: none;" class="form-control form-control-sm empss_{{$a}} t_emp auto-grow" 
+                        name="empss[{{ $a }}][grievance_redressal]" id="grievance_redressal_{{$a}}" oninput="autoResize(this)" required>{{ $compliace_value_for_current_question->grievance_redressal ?? 'NA' }}</textarea>
+                     </td>
 
-                       <td class="text-center">
-                            <input type="text" style="text-align: left; width: 100px;" class="form-control form-control-sm empss_{{$a}} t_emp" name="empss[{{ $a }}][grievance_redressal]" id="grievance_redressal_{{$a}}" 
-                              value = '{{ $compliace_value_for_current_question->grievance_redressal ?? NA}}'
-                                 required>
-                        </td>
+                     <td class="text-center">
+    <textarea style="text-align: left; width: 100px; overflow: hidden; resize: none;" 
+        class="form-control form-control-sm empss_{{$a}} t_emp auto-grow" 
+        name="empss[{{ $a }}][current_fy_no_of_compliants]" 
+        id="current_fy_no_of_compliants_{{$a}}" 
+        oninput="autoResize(this)" 
+        required>{{ $compliace_value_for_current_question->current_fy_no_of_compliants ?? 'NA' }}</textarea>
+</td>
+<td class="text-center">
+    <textarea style="text-align: left; width: 100px; overflow: hidden; resize: none;" 
+        class="form-control form-control-sm empss_{{$a}} t_emp auto-grow" 
+        name="empss[{{ $a }}][current_no_of_pending_compliants]" 
+        id="current_no_of_pending_compliants_{{$a}}" 
+        oninput="autoResize(this)" 
+        required>{{ $compliace_value_for_current_question->current_no_of_pending_compliants ?? 'NA' }}</textarea>
+</td>
+<td class="text-center">
+    <textarea style="text-align: left; width: 100px; overflow: hidden; resize: none;" 
+        class="form-control form-control-sm empss_{{$a}} t_emp auto-grow" 
+        name="empss[{{ $a }}][current_fy_remarks]" 
+        id="current_fy_remarks_{{$a}}" 
+        oninput="autoResize(this)" 
+        required>{{ $compliace_value_for_current_question->current_fy_remarks ?? 'NA' }}</textarea>
+</td>
 
-                        <td class="text-center">
-                            <input type="text" style="text-align: left; width: 100px;" class="form-control form-control-sm empss_{{$a}} t_emp" name="empss[{{ $a }}][current_fy_no_of_compliants]" id="current_fy_no_of_compliants_{{$a}}" 
-                            value = '{{ $compliace_value_for_current_question->current_fy_no_of_compliants ?? NA}}'  required>
-                        </td>
-                        <td class="text-center">
-                            <input type="text" style="text-align: left; width: 100px;"  class="form-control form-control-sm empss_{{$a}} t_emp" name="empss[{{ $a }}][current_no_of_pending_compliants]" id="current_no_of_pending_compliants_{{$a}}" 
-                            value = '{{ $compliace_value_for_current_question->current_no_of_pending_compliants ?? NA}}'  required>
-                        </td>
-                        <td class="text-center">
-                            <input type="text" style="text-align: left; width: 100px;" class="form-control form-control-sm empss_{{$a}} t_emp" name="empss[{{ $a }}][current_fy_remarks]" id="current_fy_remarks_{{$a}}" 
-                            value = '{{ $compliace_value_for_current_question->current_fy_remarks ?? NA}}'  required>
-                        </td>
+<td class="text-center">
+    <textarea style="text-align: left; width: 100px; overflow: hidden; resize: none;" 
+        class="form-control form-control-sm empss_{{$a}} m_emp auto-grow" 
+        name="empss[{{ $a }}][previous_fy_no_of_compliants]" 
+        id="previous_fy_no_of_compliants_{{$a}}" 
+        oninput="autoResize(this)" 
+        required>{{ $compliace_value_for_current_question->previous_fy_no_of_compliants ?? 'NA' }}</textarea>
+</td>
+<td class="text-center">
+    <textarea style="text-align: left; width: 100px; overflow: hidden; resize: none;" 
+        class="form-control form-control-sm empss_{{$a}} m_emp auto-grow" 
+        name="empss[{{ $a }}][previous_no_of_pending_compliants]" 
+        id="previous_no_of_pending_compliants_{{$a}}" 
+        oninput="autoResize(this)" 
+        required>{{ $compliace_value_for_current_question->previous_no_of_pending_compliants ?? 'NA' }}</textarea>
+</td>
+<td class="text-center">
+    <textarea style="text-align: left; width: 100px; overflow: hidden; resize: none;" 
+        class="form-control form-control-sm empss_{{$a}} m_emp auto-grow" 
+        name="empss[{{ $a }}][previous_fy_remarks]" 
+        id="previous_fy_remarks_{{$a}}" 
+        oninput="autoResize(this)" 
+        required>{{ $compliace_value_for_current_question->previous_fy_remarks ?? 'NA' }}</textarea>
+</td>
 
-                        <td class="text-center">
-                            <input type="text" style="text-align: left; width: 100px;" class="form-control form-control-sm empss_{{$a}} m_emp" name="empss[{{ $a }}][previous_fy_no_of_compliants]" id="previous_fy_no_of_compliants_{{$a}}"  
-                            value = '{{ $compliace_value_for_current_question->previous_fy_no_of_compliants ?? NA}}'  required>
-                        </td>
-                        <td class="text-center">
-                            <input type="text" style="text-align: left; width: 100px;"  class="form-control form-control-sm empss_{{$a}} m_emp" name="empss[{{ $a }}][previous_no_of_pending_compliants]" id="previous_no_of_pending_compliants_{{$a}}"  
-                            value = '{{ $compliace_value_for_current_question->previous_no_of_pending_compliants ?? NA}}'  required>
-                        </td>
-                        <td class="text-center">
-                            <input type="text" style="text-align: left; width: 100px;" class="form-control form-control-sm empss_{{$a}} m_emp" name="empss[{{ $a }}][previous_fy_remarks]" id="previous_fy_remarks_{{$a}}"  
-                            value = '{{ $compliace_value_for_current_question->previous_fy_remarks ?? NA}}'  required>
-                        </td>
  
                     @php
                         $a++;
@@ -810,27 +834,22 @@
                  <tr>
                  <td class="text-center">{{ $key + 1 }} </td>
                   <input type="hidden" value="{{ $brsr_material_value->where('id',$material->id)->first()->id }}" name="material[{{ $rowCount }}][row_id]">
-                 
-                  <td><input type="text" class="form-control form-control-sm" name="material[{{ $rowCount }}][text_a]" value="{{ $material->material_issue }}" required></td>
-                  <td><input type="text" class="form-control form-control-sm" name="material[{{ $rowCount }}][text_b]" value="{{ $material->indicate_risk }}" required></td>
-                  <td><input type="text" class="form-control form-control-sm" name="material[{{ $rowCount }}][text_c]" value="{{ $material->identify_risk }}" required></td>
-                  <td><input type="text" class="form-control form-control-sm" name="material[{{ $rowCount }}][text_d]" value="{{ $material->approach_adapt }}" required></td>
-                  <td><input type="text" class="form-control form-control-sm" name="material[{{ $rowCount }}][text_e]" value="{{ $material->financial_implications }}" required></td>
-                </tr>
+                  <td><textarea class="form-control form-control-sm auto-grow" name="material[{{ $rowCount }}][text_a]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required>{{ $material->material_issue }}</textarea></td>
+                  <td><textarea class="form-control form-control-sm auto-grow" name="material[{{ $rowCount }}][text_b]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required>{{ $material->indicate_risk }}</textarea></td>
+                  <td><textarea class="form-control form-control-sm auto-grow" name="material[{{ $rowCount }}][text_c]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required>{{ $material->identify_risk }}</textarea></td>
+                  <td><textarea class="form-control form-control-sm auto-grow" name="material[{{ $rowCount }}][text_d]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required>{{ $material->approach_adapt }}</textarea></td>
+                  <td><textarea class="form-control form-control-sm auto-grow" name="material[{{ $rowCount }}][text_e]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required>{{ $material->financial_implications }}</textarea></td>
+                 </tr>
                 @php
                 $rowCount++;
               @endphp
              @endforeach
           </tbody>
           </table>
-          
-        </div>
+          </div>
       </div>
        <!-- Overview of the entity’s material responsible business conduct issues Table end -->
-
- 
- 
-                    </div>
+                        </div>
                             </div>
                         </div>
 
@@ -1084,4 +1103,16 @@
        document.querySelector("#female_percent_27").value = femalePercent3.toFixed(2) + '%';
    }
 </script> 
+<script>
+    function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px'; 
+    }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.auto-grow').forEach(autoResize);
+    });
+</script>
+
+
 @endpush

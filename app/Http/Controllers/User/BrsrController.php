@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BrsrSectionAQuestionMaster;
+use App\Models\BrsrSectionBQuestionMaster;
 use App\Models\BrsrMast;
 use App\Models\BrsrQuestionValue;
 use App\Models\BrsrSectionAProdServQuestionValue;
@@ -13,6 +14,9 @@ use App\Models\BrsrSectionATurnoverQuestionValue;
 use App\Models\BrsrSectionAHoldingQuestionValue;
 use App\Models\BrsrSectionACompliaceQuestionValue;
 use App\Models\BrsrSectionAMaterialQuestionValue;
+use App\Models\BrsrSectionBPolicyQuestionValue;
+use App\Models\BrsrSectionBGovernanceQuestionValue;
+use App\Models\BrsrSectionBNgrbcQuestionValue;
 use Illuminate\Support\Facades\Http;
 use Auth;
 use DB;
@@ -32,12 +36,13 @@ class BrsrController extends Controller
         
         $quesMast = BrsrSectionAQuestionMaster::where('status', 1)->orderby('id')->get();
         $brsr_value = BrsrQuestionValue::where('com_id', $user->id)->orderby('id')->get();
+        $brsr_sectionb = BrsrSectionBPolicyQuestionValue::where('com_id', $user->id)->orderby('id')->get();
         
         $fys = DB::table('fy_masters')->orderBy('id', 'desc')->limit(1)->get();
 
         $social_mast = BrsrMast::where('com_id', $user->id)->orderby('id')->get();
          
-        return view('user.brsr.index', compact('fys','quesMast','brsr_value','social_mast'));
+        return view('user.brsr.index', compact('brsr_sectionb','fys','quesMast','brsr_value','social_mast'));
     }
 
     public function create($fy_id) {
@@ -662,6 +667,158 @@ class BrsrController extends Controller
     'previous_fy_no_of_compliants1','previous_fy_no_of_compliants2','previous_fy_no_of_compliants3','previous_fy_no_of_compliants4','previous_fy_no_of_compliants5','previous_fy_no_of_compliants6','current_fy','previous_fy', 'prior_previous_fy','prior_previous_turnover_total','prior_previous_turnover_total1','prior_previous_turnover_female1','prior_previous_turnover_male','prior_previous_turnover_male1','prior_previous_turnover_female','previous_turnover_total','previous_turnover_total1','previous_turnover_female1','previous_turnover_male','previous_turnover_male1','previous_turnover_female', 'quesMast','user','fys','fy_id','employees_quesMast','participation_quesMast','turnover_quesMast','compliance_quesMast'));
 
     }
+
+    public function sectionBcreate($fy_id) {
+       
+        $fy_id = decrypt($fy_id);
+       
+        $user = Auth::user();
+
+        $social_mast = BrsrMast::where('com_id', $user->id)->where('fy_id',$fy_id)->first();
+        DB::transaction(function () use ($fy_id,$user,$social_mast)
+        {
+            if(!$social_mast)
+            {
+                $social = new BrsrMast;
+                    $social->com_id = $user->id;
+                    $social->status = 'D';
+                    $social->fy_id = $fy_id;
+                $social->save();
+            }
+        });
+      
+       
+        $policy_quesMast = BrsrSectionBQuestionMaster::where('status', 1)->where('question_section', 'SectionBPolicy')->orderby('id')->get();
+        $entity_quesMast = BrsrSectionBQuestionMaster::where('status', 1)->where('question_section', 'SectionBentity')->orderby('id')->get();
+        $ngrbc_quesMast = BrsrSectionBQuestionMaster::where('status', 1)->where('question_section', 'SectionBngrbc')->orderby('id')->get();
+        $state_quesMast = BrsrSectionBQuestionMaster::where('status', 1)->where('question_section', 'SectionBstate')->orderby('id')->get();
+       
+        $fys = DB::table('fy_masters')->where('id',$fy_id)->first();
+        $current_fy = $fys->fy;
+        $startYear = (int)substr($current_fy, 0, 4);
+        $previous_fy = ($startYear - 1) . '-' . substr($startYear, 2, 2);
+        $prior_previous_fy = ($startYear - 2) . '-' . substr($startYear - 1, 2, 2);
+      
+        $previous_year = substr($fys->fy, 0, 4);
+        $prior_previous_year = substr($previous_fy, 0, 4);
+       
+        return view('user.brsr.sectionBcreate', compact('state_quesMast','entity_quesMast','ngrbc_quesMast','current_fy','previous_fy', 'prior_previous_fy', 'quesMast','user','fys','fy_id','employees_quesMast','participation_quesMast','turnover_quesMast','policy_quesMast'));
+
+    }
+
+    public function sectionbstore(Request $request)
+    {
+      //dd($request->all());
+        $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+             
+             foreach ($request->emp as $val) {
+                    
+                    $policy_data = new BrsrSectionBPolicyQuestionValue;
+                    $policy_data->com_id = $request->com_id;
+                    $policy_data->brsr_mast_id = $brsr_mast->id;
+                    $policy_data->fy_id = $request->fy_id;
+                    $policy_data->ques_id = $val['ques_id'];  
+                    $policy_data->policy_p1 = $val['policy_p1'] ? $val['policy_p1'] : 'NaN'; 
+                    $policy_data->policy_p2 = $val['policy_p2'] ? $val['policy_p2'] : 'NaN'; 
+                    $policy_data->policy_p3 = $val['policy_p3'] ? $val['policy_p3'] : 'NaN'; 
+                    $policy_data->policy_p4 = $val['policy_p4'] ? $val['policy_p4'] : 'NaN'; 
+                    $policy_data->policy_p5 = $val['policy_p5'] ? $val['policy_p5'] : 'NaN'; 
+                    $policy_data->policy_p6 = $val['policy_p6'] ? $val['policy_p6'] : 'NaN'; 
+                    $policy_data->policy_p7 = $val['policy_p7'] ? $val['policy_p7'] : 'NaN'; 
+                    $policy_data->policy_p8 = $val['policy_p8'] ? $val['policy_p8'] : 'NaN'; 
+                    $policy_data->policy_p9 = $val['policy_p9'] ? $val['policy_p9'] : 'NaN'; 
+                    $policy_data->save();
+               }
+        
+               if (isset($request->governance)) {
+                foreach ($request->governance as $key => $data) {
+                    $prod_serv_data = new BrsrSectionBGovernanceQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->director_statement = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->authority_details = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->committee = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->save();
+                }
+            }
+
+            foreach ($request->emps as $val) {
+                    
+                $policy1_data = new BrsrSectionBNgrbcQuestionValue;
+                $policy1_data->com_id = $request->com_id;
+                $policy1_data->brsr_mast_id = $brsr_mast->id;
+                $policy1_data->fy_id = $request->fy_id;
+                $policy1_data->ques_id = $val['ques_id'];  
+                $policy1_data->review_p1 = $val['review_p1'] ? $val['review_p1'] : 'NaN';
+                $policy1_data->review_p2 = $val['review_p2'] ? $val['review_p2'] : 'NaN';
+                $policy1_data->review_p3 = $val['review_p3'] ? $val['review_p3'] : 'NaN';
+                $policy1_data->review_p4 = $val['review_p4'] ? $val['review_p4'] : 'NaN';
+                $policy1_data->review_p5 = $val['review_p5'] ? $val['review_p5'] : 'NaN';
+                $policy1_data->review_p6 = $val['review_p6'] ? $val['review_p6'] : 'NaN';
+                $policy1_data->review_p7 = $val['review_p7'] ? $val['review_p7'] : 'NaN';
+                $policy1_data->review_p8 = $val['review_p8'] ? $val['review_p8'] : 'NaN';
+                $policy1_data->review_p9 = $val['review_p9'] ? $val['review_p9'] : 'NaN'; 
+                $policy1_data->frequency_p1 = $val['frequency_p1'] ? $val['frequency_p1'] : 'NaN';
+                $policy1_data->frequency_p2 = $val['frequency_p2'] ? $val['frequency_p2'] : 'NaN';
+                $policy1_data->frequency_p3 = $val['frequency_p3'] ? $val['frequency_p3'] : 'NaN';
+                $policy1_data->frequency_p4 = $val['frequency_p4'] ? $val['frequency_p4'] : 'NaN';
+                $policy1_data->frequency_p5 = $val['frequency_p5'] ? $val['frequency_p5'] : 'NaN';
+                $policy1_data->frequency_p6 = $val['frequency_p6'] ? $val['frequency_p6'] : 'NaN';
+                $policy1_data->frequency_p7 = $val['frequency_p7'] ? $val['frequency_p7'] : 'NaN';
+                $policy1_data->frequency_p8 = $val['frequency_p8'] ? $val['frequency_p8'] : 'NaN';
+                $policy1_data->frequency_p9 = $val['frequency_p9'] ? $val['frequency_p9'] : 'NaN';
+             
+                $policy1_data->save();
+           }
+
+           foreach ($request->emp1 as $val) {
+                    
+            $policy_data = new BrsrSectionBPolicyQuestionValue;
+            $policy_data->com_id = $request->com_id;
+            $policy_data->brsr_mast_id = $brsr_mast->id;
+            $policy_data->fy_id = $request->fy_id;
+            $policy_data->ques_id = $val['ques_id'];  
+            $policy_data->policy_p1 = $val['policy_p1'] ? $val['policy_p1'] : 'NaN'; 
+            $policy_data->policy_p2 = $val['policy_p2'] ? $val['policy_p2'] : 'NaN'; 
+            $policy_data->policy_p3 = $val['policy_p3'] ? $val['policy_p3'] : 'NaN'; 
+            $policy_data->policy_p4 = $val['policy_p4'] ? $val['policy_p4'] : 'NaN'; 
+            $policy_data->policy_p5 = $val['policy_p5'] ? $val['policy_p5'] : 'NaN'; 
+            $policy_data->policy_p6 = $val['policy_p6'] ? $val['policy_p6'] : 'NaN'; 
+            $policy_data->policy_p7 = $val['policy_p7'] ? $val['policy_p7'] : 'NaN'; 
+            $policy_data->policy_p8 = $val['policy_p8'] ? $val['policy_p8'] : 'NaN'; 
+            $policy_data->policy_p9 = $val['policy_p9'] ? $val['policy_p9'] : 'NaN'; 
+            $policy_data->save();
+       }
+
+       foreach ($request->emp2 as $val) {
+                    
+        $policy_data = new BrsrSectionBPolicyQuestionValue;
+        $policy_data->com_id = $request->com_id;
+        $policy_data->brsr_mast_id = $brsr_mast->id;
+        $policy_data->fy_id = $request->fy_id;
+        $policy_data->ques_id = $val['ques_id'];  
+        $policy_data->policy_p1 = $val['policy_p1'] ? $val['policy_p1'] : 'NaN'; 
+        $policy_data->policy_p2 = $val['policy_p2'] ? $val['policy_p2'] : 'NaN'; 
+        $policy_data->policy_p3 = $val['policy_p3'] ? $val['policy_p3'] : 'NaN'; 
+        $policy_data->policy_p4 = $val['policy_p4'] ? $val['policy_p4'] : 'NaN'; 
+        $policy_data->policy_p5 = $val['policy_p5'] ? $val['policy_p5'] : 'NaN'; 
+        $policy_data->policy_p6 = $val['policy_p6'] ? $val['policy_p6'] : 'NaN'; 
+        $policy_data->policy_p7 = $val['policy_p7'] ? $val['policy_p7'] : 'NaN'; 
+        $policy_data->policy_p8 = $val['policy_p8'] ? $val['policy_p8'] : 'NaN'; 
+        $policy_data->policy_p9 = $val['policy_p9'] ? $val['policy_p9'] : 'NaN'; 
+        $policy_data->save();
+   }
+        
+        
+        });
+    
+        alert()->success('Record Inserted', 'Success!')->persistent('Close');
+        return redirect()->route('user.brsr.sectionBedit', encrypt($brsr_mast->id));
+    }
+    
     
     public function store(Request $request)
     {
@@ -898,6 +1055,38 @@ class BrsrController extends Controller
         $compliance_quesMast = BrsrSectionAQuestionMaster::where('status', 1)->where('question_section', 'Section A - Compliace')->orderby('id')->get(); 
         return view('user.brsr.sectionAedit', compact('current_fy', 'previous_fy', 'prior_previous_fy','quesMast','brsr_value','fys','user','brsr_prod_serv_value','brsr_mast','brsr_nic_prod_serv_value','brsr_operations_value','employees_quesMast','participation_quesMast','turnover_quesMast','brsr_turnover_value','brsr_holding_value','brsr_holdings_value','compliance_quesMast','brsr_compliace_value','brsr_material_value'));
     }
+
+
+    public function sectionBedit($id)
+    {
+        $id = decrypt($id);
+        
+        $user = Auth::user();
+        $brsr_mast = BrsrMast::where('com_id', $user->id)->where('id', $id)->first();
+        $policy_quesMast = BrsrSectionBQuestionMaster::where('status', 1)->where('question_section', 'SectionBPolicy')->orderby('id')->get();
+        $entity_quesMast = BrsrSectionBQuestionMaster::where('status', 1)->where('question_section', 'SectionBentity')->orderby('id')->get();
+        $ngrbc_quesMast = BrsrSectionBQuestionMaster::where('status', 1)->where('question_section', 'SectionBngrbc')->orderby('id')->get();
+        $state_quesMast = BrsrSectionBQuestionMaster::where('status', 1)->where('question_section', 'SectionBstate')->orderby('id')->get();
+       
+       
+        
+        $policy_value = BrsrSectionBPolicyQuestionValue::where('brsr_mast_id', $id)->get();
+     
+       
+        
+
+     
+        $fys = DB::table('fy_masters')->where('id',$brsr_mast->fy_id)->first();
+        $current_fy = $fys->fy;
+        $startYear = (int)substr($current_fy, 0, 4);
+        $previous_fy = ($startYear - 1) . '-' . substr($startYear, 2, 2);
+        $prior_previous_fy = ($startYear - 2) . '-' . substr($startYear - 1, 2, 2);
+    
+        return view('user.brsr.sectionBedit', compact('current_fy', 'previous_fy', 'prior_previous_fy','fys','user',
+        'brsr_mast','policy_quesMast','entity_quesMast','ngrbc_quesMast','state_quesMast','policy_value'));
+    }
+
+
 
     public function update(Request $request)
     {

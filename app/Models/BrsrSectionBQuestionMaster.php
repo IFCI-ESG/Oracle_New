@@ -4,10 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class BrsrSectionAQuestionMaster extends Model
+class BrsrSectionBQuestionMaster extends Model
 {
-    protected $table = 'brsr_sectiona_question_master';
-    
+    protected $table = 'brsr_sectionb_ques_master';
     protected $fillable = [
         'id',
         'question',

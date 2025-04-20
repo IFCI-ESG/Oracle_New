@@ -130,7 +130,8 @@
    
     let fyId = null;
     let mastid = null;
-    let brsrValue = @json($brsr_value);   
+    let brsrValue = @json($brsr_value);
+    let brsrValue1 = @json($brsr_sectionb);   
     let fyData = @json($fys);  
    
 
@@ -152,11 +153,16 @@
             return item.fy_id == fyid;   
         });
 
+        const fyExists1 = brsrValue1.some(item => {
+            console.log("Checking if item.fy_id:", item.fy_id, "matches fyId:", fyId);
+            return item.fy_id == fyid;   
+        });
+
         console.log("fyExists:", fyExists);
-        updateSectionButtons(fyExists);
+        updateSectionButtons(fyExists,fyExists1);
     }
 
-    function updateSectionButtons(fyExists) {
+    function updateSectionButtons(fyExists,fyExists1) {
         
         const sectionAButton = document.getElementById('sectionA');
         if (fyExists) {
@@ -169,8 +175,8 @@
             sectionAButton.classList.add('btn-primary');
         }
 
-       const sectionBButton = document.getElementById('sectionBb');
-        if (fyExists) {
+       const sectionBButton = document.getElementById('sectionB');
+        if (fyExists1) {
             sectionBButton.innerHTML = '<i>Edit</i>';
             sectionBButton.classList.remove('btn-primary');
             sectionBButton.classList.add('btn-warning');
@@ -207,14 +213,15 @@
 
     document.getElementById('sectionB').addEventListener('click', function() {
         if (fyId) {
-            if (brsrValue.some(item => item.fy_id == fyid)) {
+            if (brsrValue1.some(item => item.fy_id == fyid)) {
                 
-                window.location.href = `/user/social/edit/${fyId}/B`;
-            } else {
+                window.location.href = `/user/brsr/sectionBedit/${mastid}`;
+            } 
+            else {
                
-                window.location.href = `/user/social/create/${fyId}/B`;
-            }
-        }
+                window.location.href = `/user/brsr/sectionBcreate/${fyId}`;
+           }
+       }
     });
 
     document.getElementById('sectionC').addEventListener('click', function() {
