@@ -57,10 +57,13 @@
                                             IFSC Code <span style="color: red;">*</span>
                                         </th>
                                         <td>
-                                            <input type="text" id="ifsc_code" name="ifsc_code"
-                                                value="{{ $bank_details->ifsc_code }}"
-                                                class="form-control form-control-sm text-right" style="width:50%"
-                                                oninput="validateIFSC()" placeholder="ABCD0123456" readonly required />
+                                            <div class="position-relative" style="width:50%">
+                                                <input type="text" id="ifsc_code" name="ifsc_code"
+                                                    value="{{ $bank_details->ifsc_code }}"
+                                                    class="form-control form-control-sm text-right"
+                                                    oninput="validateIFSC()" placeholder="ABCD0123456" readonly required />
+                                                <i class="fas fa-lock position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #888;"></i>
+                                            </div>
                                             <div id="ifsc-error-message"
                                                 style="color: red; display: none; font-size: 0.9rem;"></div>
                                         </td>
@@ -71,77 +74,95 @@
                                             Bank Name <span style="color: red;">*</span>
                                         </th>
                                         <td>
-                                            <input type="text" id="bank_name" name="bank_name"
-                                                value="{{ $bank_details->name }}" readonly
-                                                class="form-control form-control-sm text-right" style="width:50%"
-                                                oninput="restrictBankNameInput(event)" placeholder="Enter Bank Name"
-                                                 required />
+                                            <div class="position-relative" style="width:50%">
+                                                <input type="text" id="bank_name" name="bank_name"
+                                                    value="{{ $bank_details->name }}" readonly
+                                                    class="form-control form-control-sm text-right"
+                                                    oninput="restrictBankNameInput(event)" placeholder="Enter Bank Name"
+                                                    required />
+                                                <i class="fas fa-lock position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #888;"></i>
+                                            </div>
                                             <!-- <span
                                                     style="color: #888; font-size: 0.8rem; display: block; margin-top: 5px;">(Bank
                                                     Name - Special Characters And Integers Are Not Allowed)</span> -->
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 2. </th>
+                                        <th class="text-center" style="font-size: 0.9rem"> 3. </th>
                                         <th style="font-size: 0.9rem">
                                             Bank Code <span style="color: red;">*</span>
                                         </th>
                                         <td>
-                                            <input type="text" id="bank_code" name="bank_code"
-                                                class="form-control form-control-sm text-right" style="width:50%"
-                                                value="{{ $bank_details->bank_code }}"
-                                                readonly required />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 3. </th>
-                                        <th style="font-size: 0.9rem">
-                                            MICR <span style="color: red;">*</span>
-                                        </th>
-                                        <td>
-                                            <input type="text" id="micr_code" name="micr_code"
-                                                value="{{ $bank_details->micr_code }}"
-                                                class="form-control form-control-sm text-right" style="width:50%"
-                                                 required />
+                                            <div class="position-relative" style="width:50%">
+                                                <input type="text" id="bank_code" name="bank_code"
+                                                    class="form-control form-control-sm text-right"
+                                                    value="{{ $bank_details->bank_code }}"
+                                                    readonly required />
+                                                <i class="fas fa-lock position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #888;"></i>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="text-center" style="font-size: 0.9rem"> 4. </th>
                                         <th style="font-size: 0.9rem">
-                                            State <span style="color: red;">*</span>
+                                            MICR <span style="color: red;">*</span>
                                         </th>
                                         <td>
-                                            <input type="text" id="state" name="state"
-                                                value="{{ $bank_details->state }}" readonly
-                                                class="form-control form-control-sm text-right" style="width:50%"
-                                                 required />
+                                            <div class="position-relative" style="width:50%">
+                                                <input type="text" id="micr_code" name="micr_code"
+                                                    value="{{ $bank_details->micr_code }}"
+                                                    class="form-control form-control-sm text-right"
+                                                    readonly required />
+                                                <i class="fas fa-lock position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #888;"></i>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="text-center" style="font-size: 0.9rem"> 5. </th>
                                         <th style="font-size: 0.9rem">
-                                            District <span style="color: red;">*</span>
+                                            State <span style="color: red;">*</span>
                                         </th>
                                         <td>
-                                            <input type="text" id="district" name="district"
-                                                value="{{ $bank_details->district }}" readonly
-                                                class="form-control form-control-sm text-right" style="width:50%"
-                                                 required />
+                                            <div class="position-relative" style="width:50%">
+                                                <input type="text" id="state" name="state"
+                                                    value="{{ $bank_details->state }}" readonly
+                                                    class="form-control form-control-sm text-right"
+                                                    required />
+                                                <i class="fas fa-lock position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #888;"></i>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="text-center" style="font-size: 0.9rem"> 6. </th>
                                         <th style="font-size: 0.9rem">
-                                            City <span style="color: red;">*</span>
+                                            District <span style="color: red;">*</span>
                                         </th>
                                         <td>
-                                            <input type="text" id="city" name="city" value="{{ $bank_details->city }}"
-                                                class="form-control form-control-sm text-right" style="width:50%" readonly
-                                                 required />
+                                            <div class="position-relative" style="width:50%">
+                                                <input type="text" id="district" name="district"
+                                                    value="{{ $bank_details->district }}" readonly
+                                                    class="form-control form-control-sm text-right"
+                                                    required />
+                                                <i class="fas fa-lock position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #888;"></i>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="text-center" style="font-size: 0.9rem"> 7. </th>
+                                        <th style="font-size: 0.9rem">
+                                            City <span style="color: red;">*</span>
+                                        </th>
+                                        <td>
+                                            <div class="position-relative" style="width:50%">
+                                                <input type="text" id="city" name="city" value="{{ $bank_details->city }}"
+                                                    class="form-control form-control-sm text-right" readonly
+                                                    required />
+                                                <i class="fas fa-lock position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #888;"></i>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-center" style="font-size: 0.9rem"> 8. </th>
                                         <th style="font-size: 0.9rem">
                                             Address <span style="color: red;">*</span>
                                         </th>
@@ -153,7 +174,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                     <th class="text-center" style="font-size: 0.9rem">8.</th>
+                                     <th class="text-center" style="font-size: 0.9rem">9.</th>
                                         <th style="font-size: 0.9rem">
                                           Type of Sector <span style="color: red;">*</span>
                                       </th>
@@ -166,7 +187,7 @@
                                      </td>
                                     </tr>
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 9. </th>
+                                        <th class="text-center" style="font-size: 0.9rem"> 10. </th>
                                         <th style="font-size: 0.9rem">
                                             PAN <span style="color: red;">*</span>
                                         </th>
@@ -180,7 +201,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 10. </th>
+                                        <th class="text-center" style="font-size: 0.9rem"> 11. </th>
                                         <th style="font-size: 0.9rem">
                                             License Key <span style="color: red;">*</span>
                                         </th>
@@ -193,7 +214,7 @@
                                     </tr>
 
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 11. </th>
+                                        <th class="text-center" style="font-size: 0.9rem"> 12. </th>
                                         <th style="font-size: 0.9rem">
                                             Valid From <span style="color: red;">*</span>
                                         </th>
@@ -205,7 +226,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 12. </th>
+                                        <th class="text-center" style="font-size: 0.9rem"> 13. </th>
                                         <th style="font-size: 0.9rem">
                                             Valid To <span style="color: red;">*</span>
                                         </th>
@@ -217,7 +238,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 13. </th>
+                                        <th class="text-center" style="font-size: 0.9rem"> 14. </th>
                                         <th style="font-size: 0.9rem"> Email <span style="color: red;">*</span></th>
                                         <td>
                                             <input type="email" id="email" name="email"
@@ -230,7 +251,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 14. </th>
+                                        <th class="text-center" style="font-size: 0.9rem"> 15. </th>
                                         <th style="font-size: 0.9rem"> Contact Person <span style="color: red;">*</span>
                                         </th>
                                         <td>
@@ -245,7 +266,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 15. </th>
+                                        <th class="text-center" style="font-size: 0.9rem"> 16. </th>
                                         <th style="font-size: 0.9rem"> Designation <span style="color: red;">*</span>
                                         </th>
                                         <td>
@@ -260,7 +281,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 16. </th>
+                                        <th class="text-center" style="font-size: 0.9rem"> 17. </th>
                                         <th style="font-size: 0.9rem"> Mobile No. <span style="color: red;">*</span>
                                         </th>
                                         <td>
@@ -280,7 +301,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 17. </th>
+                                        <th class="text-center" style="font-size: 0.9rem"> 18. </th>
                                         <th style="font-size: 0.9rem"> Alternate Mobile No. </th>
                                         <td>
                                             <div style="display: flex; align-items: center;">
@@ -300,7 +321,7 @@
                                     </tr>
 
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem">18.</th>
+                                        <th class="text-center" style="font-size: 0.9rem">19.</th>
                                         <th style="font-size: 0.9rem">Services <span style="color: red;">*</span></th>
                                         <td colspan="2">
                                             <table>
@@ -316,8 +337,8 @@
                                                             <input type="checkbox" class="services margin-right"
                                                                 id="service_{{ $serve->id }}" name="services[]"
                                                                 value="{{ $serve->id }}"
-                                                                {{ in_array($serve->id, is_array($storedServices) ? $storedServices : []) ? 'checked' : '' }}>
-                                                        </td>
+ {{ in_array($serve->id, is_array($storedServices) ? $storedServices : []) ? 'checked' : '' }}>							
+</td>
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
@@ -636,3 +657,4 @@ function enableValidToDate() {
 }
 </script>
 @endpush
+

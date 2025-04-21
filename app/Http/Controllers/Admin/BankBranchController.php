@@ -566,35 +566,31 @@ class BankBranchController extends Controller
     }
 
     public function submit(Request $request)
-    {
-        $bank = AdminUser::find(Auth::user()->id);
-        $branch = AdminUser::find($request->user_id);
-        
-        // Get bank codes from IFSC
-        $bankCode = substr($bank->ifsc_code, 0, 4);
-        $branchCode = substr($branch->ifsc_code, 0, 4);
-        
-        // Validate branch belongs to same bank
-        if ($bankCode !== $branchCode) {
-            alert()->error('Branch IFSC code does not belong to your bank!')->persistent('Close');
-            return redirect()->route('admin.bank_branch.index');
-        }
-
-        DB::transaction(function () use ($request) {
-            $user = AdminUser::find($request->user_id);
-            $user->isactive = 'Y';
-            $user->status = 'S';
-            $user->profileid = 3;
-            $user->password_changed = 0;  // First login
-            $user->password = Hash::make('India@1234');
-            $user->save();
-            $data_role2 = ['role_id' => 3, 'model_type' => 'App\Models\AdminUser', 'model_id' => $user->id];
-            DB::table('model_has_roles')->insert([$data_role2]);
-        });
-
-        alert()->success('New Branch Created', 'Success!')->persistent('Close');
+{
+    $loggedInUserEmail = Auth::user()->email;
+    $corporate = DB::table('corporate_master')->where('email', $loggedInUserEmail)->first();
+    if (!$corporate) {
+        alert()->error('Corporate does not exist!')->persistent('Close');
         return redirect()->route('admin.bank_branch.index');
     }
+    DB::transaction(function () use ($request, $corporate) {
+
+        $user = AdminUser::find($request->user_id);
+        $user->isactive = 'Y';
+        $user->status = 'S';
+        $user->profileid = 3;
+        $user->password_changed = 0;  // First login
+        $user->password = Hash::make('India@1234');
+        $user->corporateid = $corporate->id;
+        $user->save();
+        $data_role2 = ['role_id' => 3, 'model_type' => 'App\Models\AdminUser', 'model_id' => $user->id];
+        DB::table('model_has_roles')->insert([$data_role2]);
+    });
+
+
+    alert()->success('New Branch Created', 'Success!')->persistent('Close');
+    return redirect()->route('admin.bank_branch.index');
+}
 
 
     // Additional helper function to validate each row of data
@@ -905,3 +901,4 @@ class BankBranchController extends Controller
 }
 
 }
+

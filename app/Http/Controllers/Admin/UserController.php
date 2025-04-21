@@ -1030,6 +1030,275 @@ class UserController extends Controller
     }
 
 
+
+     public function bank_env_mis()
+    {
+        $client = new Client();
+
+        $response = $client->request('POST', 'https://login.microsoftonline.com/common/oauth2/token', [
+            'form_params' => [
+                'grant_type' => 'password',
+                'username' => 'pbview@ifciltd.com',
+                'password' => 'C^943719345517ay',
+                'client_id' => '3646f7fa-262f-48ae-8fef-6c6b9213ee76',
+                'client_secret' => 'Aqt8Q~ykKKoX1YUj2z97F.NVaXbvULVzECbFvcOh',
+                'resource' => 'https://analysis.windows.net/powerbi/api'
+            ]
+        ]);
+
+
+        $access_token = json_decode($response->getBody()->getContents())->access_token;
+        // dd($access_token);
+
+       // https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/cd77e76a-99e6-4d68-ba5c-45e160bac5a1/cbad1e4fbe9798916933?experience=power-bi&clientSideAuth=0
+
+
+       $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/bb2cc86e-04c8-4b91-b2a3-7075a87e87e6', [
+
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $access_token
+            ],
+            'json' => [
+                'accessLevel' => 'View',
+                'allowSaveAs' => 'false'
+            ]
+        ]);
+
+//https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/bb2cc86e-04c8-4b91-b2a3-7075a87e87e6/cbad1e4fbe9798916933?experience=power-bi&clientSideAuth=0
+        $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
+            // dd($embed_url);
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/bb2cc86e-04c8-4b91-b2a3-7075a87e87e6/GenerateToken', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $access_token
+            ],
+            'json' => [
+                'accessLevel' => 'View',
+                'allowSaveAs' => 'false'
+            ]
+        ]);
+
+        $user=Auth::user()->id;
+
+        $embed_token = json_decode($response->getBody()->getContents())->token;
+        // return view('user.report', compact('embed_url', 'embed_token','repemp'));
+        // return view('admin.dashboard', compact('embed_url', 'embed_token','user'));
+        // dd('d');
+        return view('admin.bank_env_mis',compact('embed_url', 'embed_token','user'));
+    }
+    public function bank_dash_environment()
+    {
+
+        $client = new Client();
+        // dd($client);
+
+        $response = $client->request('POST', 'https://login.microsoftonline.com/common/oauth2/token', [
+            'form_params' => [
+                'grant_type' => 'password',
+                'username' => 'pbview@ifciltd.com',
+                'password' => 'C^943719345517ay',
+                'client_id' => '3646f7fa-262f-48ae-8fef-6c6b9213ee76',
+                'client_secret' => 'Aqt8Q~ykKKoX1YUj2z97F.NVaXbvULVzECbFvcOh',
+                'resource' => 'https://analysis.windows.net/powerbi/api'
+            ]
+        ]);
+            // dd($response);
+        $access_token = json_decode($response->getBody()->getContents())->access_token;
+
+        // https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/ad1ce0c1-eea5-450d-bd7b-546206d05629/d39c028cb03c480460d3?experience=power-bi
+
+        $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/ad1ce0c1-eea5-450d-bd7b-546206d05629', [
+
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $access_token
+            ],
+            'json' => [
+                'accessLevel' => 'View',
+                'allowSaveAs' => 'false'
+            ]
+        ]);
+
+        $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
+            // dd($embed_url);
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/ad1ce0c1-eea5-450d-bd7b-546206d05629/GenerateToken', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $access_token
+            ],
+            'json' => [
+                'accessLevel' => 'View',
+                'allowSaveAs' => 'false'
+            ]
+        ]);
+
+        $user=Auth::user()->id;
+        $type='Environment';
+
+        $embed_token = json_decode($response->getBody()->getContents())->token;
+
+        return view('admin.bank_dashboard', compact('embed_url', 'embed_token','user'));
+    }
+    public function bank_dash_social()
+    {
+
+        $client = new Client();
+
+        $response = $client->request('POST', 'https://login.microsoftonline.com/common/oauth2/token', [
+            'form_params' => [
+                'grant_type' => 'password',
+                'username' => 'pbview@ifciltd.com',
+                'password' => 'C^943719345517ay',
+                'client_id' => '3646f7fa-262f-48ae-8fef-6c6b9213ee76',
+                'client_secret' => 'Aqt8Q~ykKKoX1YUj2z97F.NVaXbvULVzECbFvcOh',
+                'resource' => 'https://analysis.windows.net/powerbi/api'
+            ]
+        ]);
+
+        $access_token = json_decode($response->getBody()->getContents())->access_token;
+
+        // https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/32936f5b-0175-4ae4-b56b-1c34f4c7ed26/b88b0a105e08ab465888?experience=power-bi
+
+        $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/32936f5b-0175-4ae4-b56b-1c34f4c7ed26', [
+
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $access_token
+            ],
+            'json' => [
+                'accessLevel' => 'View',
+                'allowSaveAs' => 'false'
+            ]
+        ]);
+
+        $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
+            // dd($embed_url);
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/32936f5b-0175-4ae4-b56b-1c34f4c7ed26/GenerateToken', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $access_token
+            ],
+            'json' => [
+                'accessLevel' => 'View',
+                'allowSaveAs' => 'false'
+            ]
+        ]);
+
+        $user=Auth::user()->id;
+        $type='Social';
+
+        $embed_token = json_decode($response->getBody()->getContents())->token;
+        // return view('user.report', compact('embed_url', 'embed_token','repemp'));
+        return view('admin.bank_dashboard', compact('user', 'type','embed_url', 'embed_token',));
+    }
+    public function bank_dash_governance()
+    {
+
+        $client = new Client();
+
+        $response = $client->request('POST', 'https://login.microsoftonline.com/common/oauth2/token', [
+            'form_params' => [
+                'grant_type' => 'password',
+                'username' => 'pbview@ifciltd.com',
+                'password' => 'C^943719345517ay',
+                'client_id' => '3646f7fa-262f-48ae-8fef-6c6b9213ee76',
+                'client_secret' => 'Aqt8Q~ykKKoX1YUj2z97F.NVaXbvULVzECbFvcOh',
+                'resource' => 'https://analysis.windows.net/powerbi/api'
+            ]
+        ]);
+
+        $access_token = json_decode($response->getBody()->getContents())->access_token;
+
+        // https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/e25e9b6a-17cf-42fa-8f65-42b6240497fc/ec424857d636d9141ddd?experience=power-bi
+
+
+       $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/e25e9b6a-17cf-42fa-8f65-42b6240497fc', [
+
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $access_token
+            ],
+            'json' => [
+                'accessLevel' => 'View',
+                'allowSaveAs' => 'false'
+            ]
+        ]);
+
+        $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
+            // dd($embed_url);
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/e25e9b6a-17cf-42fa-8f65-42b6240497fc/GenerateToken', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $access_token
+            ],
+            'json' => [
+                'accessLevel' => 'View',
+                'allowSaveAs' => 'false'
+            ]
+        ]);
+
+        $user=Auth::user()->id;
+        $type='Governance';
+
+        $embed_token = json_decode($response->getBody()->getContents())->token;
+        // return view('user.report', compact('embed_url', 'embed_token','repemp'));
+        return view('admin.bank_dashboard', compact('user','type','embed_url', 'embed_token'));
+    }
+    public function bank_dash_scoring()
+    {
+
+        $client = new Client();
+
+        $response = $client->request('POST', 'https://login.microsoftonline.com/common/oauth2/token', [
+            'form_params' => [
+                'grant_type' => 'password',
+                'username' => 'pbview@ifciltd.com',
+                'password' => 'C^943719345517ay',
+                'client_id' => '3646f7fa-262f-48ae-8fef-6c6b9213ee76',
+                'client_secret' => 'Aqt8Q~ykKKoX1YUj2z97F.NVaXbvULVzECbFvcOh',
+                'resource' => 'https://analysis.windows.net/powerbi/api'
+            ]
+        ]);
+
+        $access_token = json_decode($response->getBody()->getContents())->access_token;
+
+        // https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/510a1842-089f-4649-80f5-129140a9481b/9b0ee07cb4e45a3056e6?experience=power-bi&clientSideAuth=0
+
+       $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/510a1842-089f-4649-80f5-129140a9481b', [
+
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $access_token
+            ],
+            'json' => [
+                'accessLevel' => 'View',
+                'allowSaveAs' => 'false'
+            ]
+        ]);
+
+        $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
+            // dd($embed_url);
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/510a1842-089f-4649-80f5-129140a9481b/GenerateToken', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $access_token
+            ],
+            'json' => [
+                'accessLevel' => 'View',
+                'allowSaveAs' => 'false'
+            ]
+        ]);
+
+        $user=Auth::user()->id;
+        $type='Scoring';
+
+        $embed_token = json_decode($response->getBody()->getContents())->token;
+        // return view('user.report', compact('embed_url', 'embed_token','repemp'));
+
+        return view('admin.bank_dashboard', compact('user','type','embed_url', 'embed_token'));
+    }
+
     private function generateRandomString($length = 5)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()';

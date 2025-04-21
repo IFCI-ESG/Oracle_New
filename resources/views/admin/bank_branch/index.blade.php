@@ -140,13 +140,19 @@
 @section('script')
     @vite(['resources/js/pages/dashboard-4.init.js', 'resources/js/pages/datatables.init.js'])
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
     <script>
         $(document).ready(function() {
             // Function to check if column counts match
             function checkColumnCount() {
                 var headerColumnCount = $('#branchTable thead tr th').length;
                 var bodyColumnCount = $('#branchTable tbody tr:first td').length;
-
                 return headerColumnCount === bodyColumnCount;
             }
 
@@ -154,18 +160,72 @@
             if (!$.fn.dataTable.isDataTable('#branchTable')) {
                 // Verify that the column count matches
                 if (checkColumnCount()) {
-                    // Initialize DataTable only if the column count is correct
-                    $('#branchTable').DataTable({
+                    // Initialize DataTable with all features
+                    var table = $('#branchTable').DataTable({
                         dom: 'Bfrtip',
-                        buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+                        buttons: [
+                            {
+                                extend: 'copy',
+                                className: 'btn btn-secondary me-1',
+                                text: '<i class="fa fa-copy"></i> Copy'
+                            },
+                            {
+                                extend: 'csv',
+                                className: 'btn btn-secondary me-1',
+                                text: '<i class="fa fa-file-csv"></i> CSV'
+                            },
+                            {
+                                extend: 'print',
+                                className: 'btn btn-secondary me-1',
+                                text: '<i class="fa fa-print"></i> Print'
+                            }
+                        ],
                         responsive: true,
-                        paging: true,
+                        processing: true,
+                        pageLength: 10,
+                        lengthChange: false,
                         searching: true,
                         ordering: true,
-                        info: true
+                        info: true,
+                        paging: true,
+                        columnDefs: [
+                            { 
+                                targets: -1, // Last column (Action)
+                                orderable: false // Disable sorting
+                            }
+                        ],
+                        language: {
+                            search: "_INPUT_",
+                            searchPlaceholder: "Search...",
+                            info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                            infoEmpty: "Showing 0 to 0 of 0 entries",
+                            infoFiltered: "(filtered from _MAX_ total entries)",
+                            paginate: {
+                                first: "First",
+                                last: "Last",
+                                next: "Next",
+                                previous: "Previous"
+                            }
+                        }
                     });
+
+                    // Add custom styling to the search input
+                    $('.dataTables_filter input')
+                        .addClass('form-control')
+                        .css({
+                            'width': '250px',
+                            'display': 'inline-block',
+                            'margin-left': '10px'
+                        });
+
+                    // Add custom styling to the buttons
+                    $('.dt-buttons')
+                        .addClass('mb-2')
+                        .css({
+                            'display': 'inline-block',
+                            'margin-right': '20px'
+                        });
                 } else {
-                    // Log error and do not initialize DataTable if column count mismatch
                     console.error("DataTable Error: Column count mismatch between header and rows.");
                 }
             }
