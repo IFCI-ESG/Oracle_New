@@ -16,6 +16,9 @@ require __DIR__ . '/auth.php';
 //     Route::get('{first}/{second}', [RoutingController::class, 'secondLevel'])->name('second');
 //     Route::get('{any}', [RoutingController::class, 'root'])->name('any');
 //  });
+Route::get('/test', function () {
+    echo "ok";
+});
 
 Route::get('/', function () {
     return view('landing.home');
