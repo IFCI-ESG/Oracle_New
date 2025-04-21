@@ -2,12 +2,12 @@
 <div class="app-menu sidebgcolor">
 
     <div class="logo-box">
-        <a href="{{ route('admin.home') }}" class="logo-light">
+        <a href="#" class="logo-light">
              <img src="/images/logo/home-logo2.png" alt="dark logo" class="logo-lg" style="height: 40px;">
             <img src="/images/ifci-icon.png" alt="small logo" class="logo-sm"style="height: 40px;">
 
         </a>
-        <a href="{{ route('admin.home') }}" class="logo-dark">
+        <a href="#" class="logo-dark">
               <img src="/images/logo/home-logo2.png" alt="dark logo" class="logo-lg" style="height: 40px;">
             <img src="/images/ifci-icon.png" alt="small logo" class="logo-sm"style="height: 40px;">
         </a>
