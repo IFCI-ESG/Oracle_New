@@ -22,7 +22,7 @@ use Auth;
 use DB;
 use Carbon\Carbon;
 use Log;
-ini_set('max_execution_time', 180);
+ini_set('max_execution_time', 300);
 
 
 class BrsrController extends Controller
@@ -1420,7 +1420,7 @@ class BrsrController extends Controller
            }
     
            foreach ($request->emp2 as $val) {
-                        
+            
             $policy_data = BrsrSectionBPolicyQuestionValue::find($val['row_id']);
             $policy_data->policy_p1 = $val['policy_p1'] ? $val['policy_p1'] : 'NaN'; 
             $policy_data->policy_p2 = $val['policy_p2'] ? $val['policy_p2'] : 'NaN'; 

@@ -227,11 +227,9 @@
     document.getElementById('sectionC').addEventListener('click', function() {
         if (fyId) {
             if (brsrValue.some(item => item.fy_id == fyid)) {
-                
-                window.location.href = `/user/social/edit/${fyId}/C`;
+                window.location.href = `/user/brsr/sectionCedit/${mastid }`;
             } else {
-                
-                window.location.href = `/user/social/create/${fyId}/C`;
+                window.location.href = `/user/brsr/sectionCcreate/${fyId}`;
             }
         }
     });
