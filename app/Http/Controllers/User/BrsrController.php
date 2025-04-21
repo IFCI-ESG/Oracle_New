@@ -22,6 +22,8 @@ use Auth;
 use DB;
 use Carbon\Carbon;
 use Log;
+ini_set('max_execution_time', 180);
+
 
 class BrsrController extends Controller
 {
@@ -671,7 +673,7 @@ class BrsrController extends Controller
     public function sectionBcreate($fy_id) {
        
         $fy_id = decrypt($fy_id);
-       
+        
         $user = Auth::user();
 
         $social_mast = BrsrMast::where('com_id', $user->id)->where('fy_id',$fy_id)->first();
@@ -687,7 +689,6 @@ class BrsrController extends Controller
             }
         });
       
-       
         $policy_quesMast = BrsrSectionBQuestionMaster::where('status', 1)->where('question_section', 'SectionBPolicy')->orderby('id')->get();
         $entity_quesMast = BrsrSectionBQuestionMaster::where('status', 1)->where('question_section', 'SectionBentity')->orderby('id')->get();
         $ngrbc_quesMast = BrsrSectionBQuestionMaster::where('status', 1)->where('question_section', 'SectionBngrbc')->orderby('id')->get();
@@ -702,7 +703,7 @@ class BrsrController extends Controller
         $previous_year = substr($fys->fy, 0, 4);
         $prior_previous_year = substr($previous_fy, 0, 4);
        
-        return view('user.brsr.sectionBcreate', compact('state_quesMast','entity_quesMast','ngrbc_quesMast','current_fy','previous_fy', 'prior_previous_fy', 'quesMast','user','fys','fy_id','employees_quesMast','participation_quesMast','turnover_quesMast','policy_quesMast'));
+        return view('user.brsr.sectionBcreate', compact('state_quesMast','entity_quesMast','ngrbc_quesMast','current_fy','previous_fy', 'prior_previous_fy','user','fys','fy_id','policy_quesMast'));
 
     }
 
@@ -1068,14 +1069,12 @@ class BrsrController extends Controller
         $ngrbc_quesMast = BrsrSectionBQuestionMaster::where('status', 1)->where('question_section', 'SectionBngrbc')->orderby('id')->get();
         $state_quesMast = BrsrSectionBQuestionMaster::where('status', 1)->where('question_section', 'SectionBstate')->orderby('id')->get();
        
-       
-        
         $policy_value = BrsrSectionBPolicyQuestionValue::where('brsr_mast_id', $id)->get();
-     
-       
+        $governance_value = BrsrSectionBGovernanceQuestionValue::where('brsr_mast_id', $id)->get();
+        $ngrbc_value = BrsrSectionBNgrbcQuestionValue::where('brsr_mast_id', $id)->get();
+        $entity_value = BrsrSectionBPolicyQuestionValue::where('brsr_mast_id', $id)->get();
+        $state_value = BrsrSectionBPolicyQuestionValue::where('brsr_mast_id', $id)->get();
         
-
-     
         $fys = DB::table('fy_masters')->where('id',$brsr_mast->fy_id)->first();
         $current_fy = $fys->fy;
         $startYear = (int)substr($current_fy, 0, 4);
@@ -1083,12 +1082,10 @@ class BrsrController extends Controller
         $prior_previous_fy = ($startYear - 2) . '-' . substr($startYear - 1, 2, 2);
     
         return view('user.brsr.sectionBedit', compact('current_fy', 'previous_fy', 'prior_previous_fy','fys','user',
-        'brsr_mast','policy_quesMast','entity_quesMast','ngrbc_quesMast','state_quesMast','policy_value'));
+        'brsr_mast','policy_quesMast','entity_quesMast','ngrbc_quesMast','state_quesMast','policy_value','governance_value','ngrbc_value','entity_value','state_value'));
     }
 
-
-
-    public function update(Request $request)
+   public function update(Request $request)
     {
         
         $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
@@ -1342,14 +1339,106 @@ class BrsrController extends Controller
                 }
             }
 
-           
-                
-            });
+           });
 
             alert()->success('Data Updated Successfully', 'Success!')->persistent('Close');
             return redirect()->back();
         }
     
+
+    public function sectionbupdate(Request $request)
+     {
+            $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+            DB::transaction(function () use ($request)
+                {
+                    foreach ($request->emp as $val) {
+                    
+                        $policy_data = BrsrSectionBPolicyQuestionValue::find($val['row_id']);
+                        $policy_data->policy_p1 = $val['policy_p1'] ? $val['policy_p1'] : 'NaN'; 
+                        $policy_data->policy_p2 = $val['policy_p2'] ? $val['policy_p2'] : 'NaN'; 
+                        $policy_data->policy_p3 = $val['policy_p3'] ? $val['policy_p3'] : 'NaN'; 
+                        $policy_data->policy_p4 = $val['policy_p4'] ? $val['policy_p4'] : 'NaN'; 
+                        $policy_data->policy_p5 = $val['policy_p5'] ? $val['policy_p5'] : 'NaN'; 
+                        $policy_data->policy_p6 = $val['policy_p6'] ? $val['policy_p6'] : 'NaN'; 
+                        $policy_data->policy_p7 = $val['policy_p7'] ? $val['policy_p7'] : 'NaN'; 
+                        $policy_data->policy_p8 = $val['policy_p8'] ? $val['policy_p8'] : 'NaN'; 
+                        $policy_data->policy_p9 = $val['policy_p9'] ? $val['policy_p9'] : 'NaN'; 
+                        $policy_data->updated_at = Carbon::now();
+                        $policy_data->save();
+                   }
+
+                   if (isset($request->governance)) {
+                    foreach ($request->governance as $key => $data) {
+                        $prod_serv_data = BrsrSectionBGovernanceQuestionValue::find($data['row_id']);
+                        $prod_serv_data->director_statement = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                        $prod_serv_data->authority_details = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                        $prod_serv_data->committee = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                        $prod_serv_data->updated_at = Carbon::now();
+                        $prod_serv_data->save();
+                    }
+                }
+
+                foreach ($request->emps as $val) {
+                    
+                    $policy1_data = BrsrSectionBNgrbcQuestionValue::find($val['row_id']);
+                    $policy1_data->review_p1 = $val['review_p1'] ? $val['review_p1'] : 'NaN';
+                    $policy1_data->review_p2 = $val['review_p2'] ? $val['review_p2'] : 'NaN';
+                    $policy1_data->review_p3 = $val['review_p3'] ? $val['review_p3'] : 'NaN';
+                    $policy1_data->review_p4 = $val['review_p4'] ? $val['review_p4'] : 'NaN';
+                    $policy1_data->review_p5 = $val['review_p5'] ? $val['review_p5'] : 'NaN';
+                    $policy1_data->review_p6 = $val['review_p6'] ? $val['review_p6'] : 'NaN';
+                    $policy1_data->review_p7 = $val['review_p7'] ? $val['review_p7'] : 'NaN';
+                    $policy1_data->review_p8 = $val['review_p8'] ? $val['review_p8'] : 'NaN';
+                    $policy1_data->review_p9 = $val['review_p9'] ? $val['review_p9'] : 'NaN'; 
+                    $policy1_data->frequency_p1 = $val['frequency_p1'] ? $val['frequency_p1'] : 'NaN';
+                    $policy1_data->frequency_p2 = $val['frequency_p2'] ? $val['frequency_p2'] : 'NaN';
+                    $policy1_data->frequency_p3 = $val['frequency_p3'] ? $val['frequency_p3'] : 'NaN';
+                    $policy1_data->frequency_p4 = $val['frequency_p4'] ? $val['frequency_p4'] : 'NaN';
+                    $policy1_data->frequency_p5 = $val['frequency_p5'] ? $val['frequency_p5'] : 'NaN';
+                    $policy1_data->frequency_p6 = $val['frequency_p6'] ? $val['frequency_p6'] : 'NaN';
+                    $policy1_data->frequency_p7 = $val['frequency_p7'] ? $val['frequency_p7'] : 'NaN';
+                    $policy1_data->frequency_p8 = $val['frequency_p8'] ? $val['frequency_p8'] : 'NaN';
+                    $policy1_data->frequency_p9 = $val['frequency_p9'] ? $val['frequency_p9'] : 'NaN';
+                    $policy1_data->updated_at = Carbon::now();
+                    $policy1_data->save();
+               }
+    
+               foreach ($request->emp1 as $val) {
+                    
+                $policy_data = BrsrSectionBPolicyQuestionValue::find($val['row_id']);
+                $policy_data->policy_p1 = $val['policy_p1'] ? $val['policy_p1'] : 'NaN'; 
+                $policy_data->policy_p2 = $val['policy_p2'] ? $val['policy_p2'] : 'NaN'; 
+                $policy_data->policy_p3 = $val['policy_p3'] ? $val['policy_p3'] : 'NaN'; 
+                $policy_data->policy_p4 = $val['policy_p4'] ? $val['policy_p4'] : 'NaN'; 
+                $policy_data->policy_p5 = $val['policy_p5'] ? $val['policy_p5'] : 'NaN'; 
+                $policy_data->policy_p6 = $val['policy_p6'] ? $val['policy_p6'] : 'NaN'; 
+                $policy_data->policy_p7 = $val['policy_p7'] ? $val['policy_p7'] : 'NaN'; 
+                $policy_data->policy_p8 = $val['policy_p8'] ? $val['policy_p8'] : 'NaN'; 
+                $policy_data->policy_p9 = $val['policy_p9'] ? $val['policy_p9'] : 'NaN'; 
+                $policy_data->updated_at = Carbon::now();
+                $policy_data->save();
+           }
+    
+           foreach ($request->emp2 as $val) {
+                        
+            $policy_data = BrsrSectionBPolicyQuestionValue::find($val['row_id']);
+            $policy_data->policy_p1 = $val['policy_p1'] ? $val['policy_p1'] : 'NaN'; 
+            $policy_data->policy_p2 = $val['policy_p2'] ? $val['policy_p2'] : 'NaN'; 
+            $policy_data->policy_p3 = $val['policy_p3'] ? $val['policy_p3'] : 'NaN'; 
+            $policy_data->policy_p4 = $val['policy_p4'] ? $val['policy_p4'] : 'NaN'; 
+            $policy_data->policy_p5 = $val['policy_p5'] ? $val['policy_p5'] : 'NaN'; 
+            $policy_data->policy_p6 = $val['policy_p6'] ? $val['policy_p6'] : 'NaN'; 
+            $policy_data->policy_p7 = $val['policy_p7'] ? $val['policy_p7'] : 'NaN'; 
+            $policy_data->policy_p8 = $val['policy_p8'] ? $val['policy_p8'] : 'NaN'; 
+            $policy_data->policy_p9 = $val['policy_p9'] ? $val['policy_p9'] : 'NaN'; 
+            $policy_data->updated_at = Carbon::now();
+            $policy_data->save();
+          }
+            
+        });
+            alert()->success('Data Updated Successfully', 'Success!')->persistent('Close');
+            return redirect()->back();
+    }
 
 
     

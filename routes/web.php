@@ -470,6 +470,7 @@ Route::name('user.')->prefix('user')->middleware(['role:ActiveUser', 'verified',
     Route::get('/brsr/sectionBcreate/{fy_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionBcreate'])->name('brsr.sectionBcreate');
     Route::get('/brsr/sectionBedit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionBedit'])->name('brsr.sectionBedit');
     Route::post('/brsr/sectionbstore', [\App\Http\Controllers\User\BrsrController::class,'sectionbstore'])->name('brsr.sectionbstore');
+    Route::post('/brsr/sectionbupdate', [\App\Http\Controllers\User\BrsrController::class,'sectionbupdate'])->name('brsr.sectionbupdate');
 
 //  Route::resource('brsr', 'User\BrsrController', ['except' => 'create','update']);
 //     Route::get('/brsr/create/{fy_id}', 'User\BrsrController@create')->name('brsr.create');
