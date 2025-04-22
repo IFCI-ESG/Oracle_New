@@ -143,13 +143,7 @@ td.shadow-none .form-control{
 }
 
 
-input[readonly], input[type="number"][readonly], textarea[readonly] {
-    background-color: #f0f0f0; 
-    color: #6c757d;            
-    border-color: #ced4da;     
-    cursor: not-allowed;      
-}
- 
+
 
 
 
@@ -197,13 +191,13 @@ ol.breadcrumb li.breadcrumb-item.active{
     font-weight: 600;
 }
 
-/* .card-body table tbody tr td input::placeholder {
+.card-body table tbody tr td input::placeholder {
     color: #262626;
     opacity: 1;
 }
 .card-body table tbody tr td input::-ms-input-placeholder {
     color: #262626;
-} */
+}
 
 table.dataTable thead > tr > th.sorting{
     font-size: 14px;

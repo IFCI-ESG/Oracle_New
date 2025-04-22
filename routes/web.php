@@ -204,27 +204,6 @@ Route::name('admin.')->prefix('admin')->middleware(['auth:admin','role:SuperAdmi
     Route::post('/new_admin/bank/generate-otp', [\App\Http\Controllers\Admin\BankController::class, 'generateOtp'])
     ->name('new_admin.bank.generateOtp');
 
-
-    Route::get('corp_admin', [\App\Http\Controllers\Admin\CorporateController::class,'index'])->name('corp_admin.index');
-    Route::get('corp_admin/api/{pan}', [\App\Http\Controllers\Admin\CorporateController::class,'apidata'])->name('corp_admin.api');
-    Route::get('corp_admin/create', [\App\Http\Controllers\Admin\CorporateController::class,'create'])->name('corp_admin.create');
-    Route::post('corp_admin/store', [\App\Http\Controllers\Admin\CorporateController::class,'store'])->name('corp_admin.store');
-    Route::get('corp_admin/edit/{id}', [\App\Http\Controllers\Admin\CorporateController::class,'edit'])->name('corp_admin.edit');
-    Route::post('corp_admin/update', [\App\Http\Controllers\Admin\CorporateController::class,'update'])->name('corp_admin.update');
-    Route::post('corp_admin/submit', [\App\Http\Controllers\Admin\CorporateController::class,'submit'])->name('corp_admin.submit');
-    Route::get('corp_admin/com_list/{bank_id}', [\App\Http\Controllers\Admin\CorporateController::class,'com_list'])->name('corp_admin.com_list');
-
-
-    Route::get('/corp_admin/bank/activate/{id}', [\App\Http\Controllers\Admin\CorporateController::class, 'activate'])->name('corp_admin.bank.activate');
-    Route::get('/corp_admin/bank/deactivate/{id}', [\App\Http\Controllers\Admin\CorporateController::class, 'deactivate'])->name('corp_admin.bank.deactivate');
-    //Route::post('/corp_admin/update-account', [\App\Http\Controllers\Admin\CorporateController::class, 'updateAccount'])->name('corp_admin.updateAccount');
-    Route::post('/corp_admin/bank/update-account', [\App\Http\Controllers\Admin\CorporateController::class, 'updateAccount'])
-    ->name('corp_admin.bank.updateAccount');
-    Route::get('corp_admin/edit/{id}', [\App\Http\Controllers\Admin\CorporateController::class, 'edit'])->name('corp_admin.edit');
-    Route::get('corp_admin/view/{id}', [\App\Http\Controllers\Admin\CorporateController::class, 'view'])->name('corp_admin.view');
-    Route::post('/corp_admin/bank/generate-otp', [\App\Http\Controllers\Admin\CorporateController::class, 'generateOtp'])
-    ->name('corp_admin.bank.generateOtp');
-
     // end here
 
      //Route::get('companies', 'Admin\UserController@companies')->name('companies');
@@ -235,7 +214,7 @@ Route::name('admin.')->prefix('admin')->middleware(['auth:admin','role:SuperAdmi
    Route::post('company_bulk/corp/store', 'Admin\CompanyBulkUploadController@storeCorp')->name('company_bulk.corp.store');
    Route::post('company_bulk/retail/store', 'Admin\CompanyBulkUploadController@storeRetail')->name('company_bulk.retail.store');
     Route::get('locuz', 'Admin\UserController@locuz')->name('locuz');
-    Route::get('retail/add', 'Admin\UserController@retail_adduser')->name('retail.adduser');
+      Route::get('retail/add', 'Admin\UserController@retail_adduser')->name('retail.adduser');
     Route::get('user/retail_apidata', 'Admin\UserController@retail_apidata')->name('retail.apidata');
     Route::post('retail/store', 'Admin\UserController@retail_store')->name('retail.store');
     Route::get('retail_edit/{id}', 'Admin\UserController@retail_edituser')->name('retail.edituser');
@@ -269,11 +248,11 @@ Route::group(['middleware' => ['role:ActiveUser', 'verified', 'IsApproved', 'pre
         Route::get('/verifyuser',[\App\Http\Controllers\HomeController::class,'verifyUser'])->name('verifyUser');
 });
 
-// Route::group(['middleware' => ['role:ActiveUser|Admin', 'verified', 'IsApproved']], function () {
-//     /*** AJAX Routes ***/
-// });
-Route::get('/cities/{state}', [\App\Http\Controllers\User\AjaxController::class,'getCity']);
-Route::get('/pincodes/{pincode}',  [\App\Http\Controllers\User\AjaxController::class,'getPin']);
+Route::group(['middleware' => ['role:ActiveUser|Admin', 'verified', 'IsApproved']], function () {
+    /*** AJAX Routes ***/
+    Route::get('/cities/{state}', [\App\Http\Controllers\User\AjaxController::class,'getCity']);
+    Route::get('/pincodes/{pincode}',  [\App\Http\Controllers\User\AjaxController::class,'getPin']);
+});
 
 Route::name('user.')->prefix('user')->middleware(['role:ActiveUser', 'verified', 'IsApproved', 'preventBackHistory'])->group(function () {
 

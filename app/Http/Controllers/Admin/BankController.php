@@ -299,15 +299,15 @@ class BankController extends Controller
         $newuser->save();
 
         // Insert data into corporate_master table
-        // $corporateData = [
-        //     'name' => $request->bank_name, // Name from bank_name in the form
-        //     'email' => $request->email,
-        //     'ifsc_code' => $request->ifsc_code,
-        //     'pan' => $request->pan,
-        //     'mobile' => $request->mobile,
-        // ];
+        $corporateData = [
+            'name' => $request->bank_name, // Name from bank_name in the form
+            'email' => $request->email,
+            'ifsc_code' => $request->ifsc_code,
+            'pan' => $request->pan,
+            'mobile' => $request->mobile,
+        ];
 
-        // DB::table('corporate_master')->insert($corporateData);
+        DB::table('corporate_master')->insert($corporateData);
     });
 
     session()->flash('success', 'Data saved successfully!');

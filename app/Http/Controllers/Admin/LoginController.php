@@ -24,7 +24,6 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        // dd($request);
         $key = hex2bin("0123456789abcdef0123456789abcdef");
         $iv = hex2bin("abcdef9876543210abcdef9876543210");
 
@@ -35,10 +34,8 @@ class LoginController extends Controller
 
         $isEmail = filter_var($decryptedId, FILTER_VALIDATE_EMAIL);
         $isPan = preg_match('/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/', $decryptedId);
-        $isUniqueId = preg_match('/^ESG[A-Z0-9]{5,}$/', $decryptedId);
 
-            // dd($isPan);
-        if (!$isEmail && !$isPan && $isUniqueId) {
+        if (!$isEmail && !$isPan) {
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
@@ -53,14 +50,9 @@ class LoginController extends Controller
         // Find user by email or PAN
         $user = null;
         if ($isEmail) {
-            $user = AdminUser::where('email', $decryptedId)->first();
-        } elseif ($isPan) {
-            $user = AdminUser::where('pan', $decryptedId)->first();
-        } elseif ($isUniqueId) {
-            $user = AdminUser::where('unique_login_id', $decryptedId)->first();
+            $user = DB::table('users')->where('email', $decryptedId)->first();
         } else {
-            // fallback or error
-            return response()->json(['message' => 'Invalid login identifier'], 400);
+            $user = DB::table('users')->where('pan', $decryptedId)->first();
         }
 
         if ($user) {
@@ -115,7 +107,7 @@ class LoginController extends Controller
                 }
                 return redirect()->route('home');
             }
-        } elseif($isEmail) {
+        } else {
             $request->merge([
                 'identity' => $decryptedId,
                 'email' => $decryptedId,
@@ -123,34 +115,6 @@ class LoginController extends Controller
             ]);
 
             $credentials = $request->only('email', 'password');
-
-            if (Auth::guard('admin')->attempt($credentials, $remember)) {
-                // Reset login attempts on successful login
-                DB::table('users')->where('id', $user->id)->update(['login_attempts' => 0]);
-                
-                if ($request->ajax()) {
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Credentials validated successfully'
-                    ]);
-                }
-
-                $user = Auth::guard('admin')->user();
-                if ($user->password_changed == '0') {
-                    session(['force_password_change' => true]);
-                } else {
-                    session(['force_password_change' => false]);
-                }
-                return redirect()->route('admin.home');
-            }
-        }elseif($isUniqueId) {
-            $request->merge([
-                'identity' => $decryptedId,
-                'unique_login_id' => $decryptedId,
-                'password' => $decryptedPwd,
-            ]);
-
-            $credentials = $request->only('unique_login_id', 'password');
 
             if (Auth::guard('admin')->attempt($credentials, $remember)) {
                 // Reset login attempts on successful login
@@ -261,7 +225,6 @@ class LoginController extends Controller
 
     public function validateCredentials(Request $request)
     {
-        // dd($request);
         $key = hex2bin("0123456789abcdef0123456789abcdef");
         $iv = hex2bin("abcdef9876543210abcdef9876543210");
 
@@ -272,30 +235,21 @@ class LoginController extends Controller
 
         $isEmail = filter_var($decryptedId, FILTER_VALIDATE_EMAIL);
         $isPan = preg_match('/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/', $decryptedId);
-        $isUniqueId = preg_match('/^ESG[A-Z0-9]{5,}$/', $decryptedId);
-      
 
-        if (!$isEmail && !$isPan && !$isUniqueId) {
+        if (!$isEmail && !$isPan) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid email or PAN or Unique ID format'
+                'message' => 'Invalid email or PAN format'
             ]);
         }
 
         // Find user by email or PAN
         $user = null;
-
         if ($isEmail) {
-            $user = AdminUser::where('email', $decryptedId)->first();
-        } elseif ($isPan) {
-            $user = AdminUser::where('pan', $decryptedId)->first();
-        } elseif ($isUniqueId) {
-            $user = AdminUser::where('unique_login_id', $decryptedId)->first();
+            $user = DB::table('users')->where('email', $decryptedId)->first();
         } else {
-            // fallback or error
-            return response()->json(['message' => 'Invalid login identifier'], 400);
+            $user = DB::table('users')->where('pan', $decryptedId)->first();
         }
-
 
         if ($user) {
             // Check if user is blocked and attempt to unblock if 10 minutes have passed
@@ -318,27 +272,11 @@ class LoginController extends Controller
             'identity' => $decryptedId,
             'email' => $isEmail ? $decryptedId : null,
             'pan' => $isPan ? $decryptedId : null,
-            'unique_login_id' => $isUniqueId ? $decryptedId : null,
             'password' => $decryptedPwd,
         ]);
 
-        // $credentials = $isEmail ? $request->only('email', 'password') : $request->only('pan', 'password');
-        if ($isEmail) {
-            $credentials = $request->only('email', 'password');
-        } elseif ($isPan) {
-            $credentials = $request->only('pan', 'password');
-        } elseif ($isUniqueId) {
-            $credentials = $request->only('unique_login_id', 'password');
-        } else {
-            // fallback in case no valid identity is matched
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid login credentials format.'
-            ]);
-        }
-        
-        // $guard = $isEmail ? 'admin' : 'web';
-        $guard = ($isEmail || $isUniqueId) ? 'admin' : 'web';
+        $credentials = $isEmail ? $request->only('email', 'password') : $request->only('pan', 'password');
+        $guard = $isEmail ? 'admin' : 'web';
 
         if (Auth::guard($guard)->validate($credentials)) {
             // Reset login attempts on successful validation
@@ -407,27 +345,20 @@ class LoginController extends Controller
 
         $isEmail = filter_var($decryptedId, FILTER_VALIDATE_EMAIL);
         $isPan = preg_match('/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/', $decryptedId);
-        $isUniqueId = preg_match('/^ESG[A-Z0-9]{5,}$/', $decryptedId);
 
-
-        if (!$isEmail && !$isPan && !$isUniqueId) {
+        if (!$isEmail && !$isPan) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid email or PAN or Unique ID format'
+                'message' => 'Invalid email or PAN format'
             ]);
         }
 
         // Find user by email or PAN
         $user = null;
         if ($isEmail) {
-            $user = AdminUser::where('email', $decryptedId)->first();
-        } elseif ($isPan) {
-            $user = AdminUser::where('pan', $decryptedId)->first();
-        } elseif ($isUniqueId) {
-            $user = AdminUser::where('unique_login_id', $decryptedId)->first();
+            $user = DB::table('users')->where('email', $decryptedId)->first();
         } else {
-            // fallback or error
-            return response()->json(['message' => 'Invalid login identifier'], 400);
+            $user = DB::table('users')->where('pan', $decryptedId)->first();
         }
 
         if (!$user) {
@@ -485,7 +416,7 @@ class LoginController extends Controller
                 'identity' => $decryptedId,
                 'password' => $decryptedPwd,
                 'remember' => $request->remember,
-                'guard' => ($isEmail || $isUniqueId) ? 'admin' : 'web',
+                'guard' => $isEmail ? 'admin' : 'web',
                 'userid' => $user->id // Store user ID in session
             ]]);
 
@@ -545,22 +476,11 @@ class LoginController extends Controller
             // Clear the session data
             session()->forget(['login_otp', 'login_credentials']);
 
-            $key = hex2bin("0123456789abcdef0123456789abcdef");
-            $iv = hex2bin("abcdef9876543210abcdef9876543210");
-    
-            $decryptedId = openssl_decrypt($request->encryptedIdentity, 'AES-128-CBC', $key, OPENSSL_ZERO_PADDING, $iv);
-            $decryptedId = trim($decryptedId);
-            $decryptedPwd = openssl_decrypt($request->encryptedPassword, 'AES-128-CBC', $key, OPENSSL_ZERO_PADDING, $iv);
-            $decryptedPwd = trim($decryptedPwd);
-
-            $isEmail     = filter_var($decryptedId, FILTER_VALIDATE_EMAIL);
-            
+            // Perform the actual login
             if (Auth::guard($credentials['guard'])->attempt([
-                $credentials['guard'] === 'admin' ? ($isEmail ? 'email' : 'unique_login_id') : 'pan' => $credentials['identity'],
+                $credentials['guard'] === 'admin' ? 'email' : 'pan' => $credentials['identity'],
                 'password' => $credentials['password']
-            ]))
-
-            {
+            ])) {
                 $user = Auth::guard($credentials['guard'])->user();
                 
                 if ($user->password_changed == '0') {
