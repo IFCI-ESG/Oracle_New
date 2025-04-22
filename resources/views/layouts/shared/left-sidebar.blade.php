@@ -2,6 +2,7 @@
 <div class="app-menu sidebgcolor">
 
     <div class="logo-box">
+
         <a href="{{ route('admin.home') }}" class="logo-light">
             <img src="/images/logo/home-logo2.png" alt="dark logo" class="logo-lg" style="height: 40px;">
             <img src="/images/ifci-icon.png" alt="small logo" class="logo-sm"style="height: 40px;">
@@ -9,6 +10,15 @@
         </a>
         <a href="{{ route('admin.home') }}" class="logo-dark">
             <img src="/images/logo/home-logo2.png" alt="dark logo" class="logo-lg" style="height: 40px;">
+
+        <a href="#" class="logo-light">
+             <img src="/images/logo/home-logo2.png" alt="dark logo" class="logo-lg" style="height: 40px;">
+            <img src="/images/ifci-icon.png" alt="small logo" class="logo-sm"style="height: 40px;">
+
+        </a>
+        <a href="#" class="logo-dark">
+              <img src="/images/logo/home-logo2.png" alt="dark logo" class="logo-lg" style="height: 40px;">
+
             <img src="/images/ifci-icon.png" alt="small logo" class="logo-sm"style="height: 40px;">
         </a>
     </div>
@@ -56,6 +66,7 @@
         <ul id="side-menu" class="menu">
             {{-- <li class="menu-title">Navigation</li> --}}
             @if (Auth::user()->hasRole('SuperAdmin'))
+
                 <li class="menu-item">
                     <a class="menu-link {{ Request::routeIs('admin.user.adminhome') ? 'active' : '' }}"
                         href="{{ route('admin.home') }}">
@@ -119,15 +130,66 @@
                         <span class="menu-text"> Bank </span>
                     </a>
                 </li> --}}
+
+
+            <li class="menu-item">
+                <a class="menu-link {{ Request::routeIs('admin.user.adminhome') ? 'active' : '' }}"
+                    href="{{ route('admin.home') }}">
+                    <span class="menu-icon">
+                        <i class="fa fa-home"></i>
+                    </span>
+                    <span class="menu-text">Home</span>
+                </a>
+            </li>
+                <li class="menu-item">
+                    <a class="menu-link {{ Request::routeIs('admin.user.adminhome') ? 'active' : '' }}" href="{{ route('admin.user.adminhome') }}">
+                    <span class="menu-icon">
+                        <i class="fa fa-user"></i>
+                    </span>
+                 <span class="menu-text">Profile</span>
+                </a>
+            </li>
+                {{-- <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span class="menu-icon"><i data-feather="calendar"></i></span>
+                        <span class="menu-text"> MIS </span>
+                    </a>
+                </li> --}}
+                <!-- <li class="menu-title">Management</li> -->
+                <li class="menu-item ">
+                    <a class="menu-link textcolor" href="#Banksidebar" data-bs-toggle="collapse">
+                        <span class="menu-icon"><i data-feather="globe"></i></span>
+                        <span class="menu-text"> Manage Bank </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="Banksidebar">
+                        <ul class="sub-menu">
+                            <li class="menu-item">
+                                <a href="{{ route('admin.new_admin.index') }}" class="menu-link"><span
+                                        class="menu-text">View Bank List</span></a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="{{ route('admin.new_admin.create') }}" class="menu-link"><span
+                                        class="menu-text">Add Bank</span></a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </li>
+
             @elseif (Auth::user()->hasRole('Admin') && Auth::user()->hasRole('SubAdmin'))
                 <!-- <li class="menu-title">Reports</li> -->
-                <li class="menu-item ">
-                    <a href="{{ route('admin.dash') }}" class="menu-link">
-                        <span class="menu-icon"><i data-feather="airplay"></i></span>
-                        <span class="menu-text"> Dashboard </span>
+                <li class="menu-item">
+                    <a class="menu-link {{ Request::routeIs('admin.user.adminhome') ? 'active' : '' }}"
+                        href="{{ route('admin.home') }}">
+                        <span class="menu-icon">
+                            <i class="fa fa-home"></i>
+                        </span>
+                        <span class="menu-text">Home</span>
                     </a>
                 </li>
                 <li class="menu-item">
+
                     <a class="menu-link {{ Request::routeIs('admin.user.adminhome') ? 'active' : '' }}"
                         href="{{ route('admin.user.adminhome') }}">
                         <span class="menu-icon">
@@ -137,11 +199,81 @@
                     </a>
                 </li>
                 <li class="menu-item">
+
+                    <a class="menu-link {{ Request::routeIs('admin.user.adminhome') ? 'active' : '' }}" href="{{ route('admin.user.adminhome') }}">
+                    <span class="menu-icon">
+                        <i class="fa fa-user"></i>
+                    </span>
+                 <span class="menu-text">Profile</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link" href="#sidebarDashboard" data-bs-toggle="collapse">
+                    <span class="menu-icon"><i data-feather="users"></i></span>
+                    <span class="menu-text"> Dashboard </span>
+                    <span class="menu-arrow"></span>
+                </a> 
+                <div class="collapse" id="sidebarDashboard">
+                    <ul class="sub-menu">
+                        <li class="menu-item">
+                            <a href="{{ route('admin.bank_dash_environment') }}" class="menu-link"><span
+                                    class="menu-text">Environment</span></a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="{{ route('admin.bank_dash_social') }}" class="menu-link"><span
+                                    class="menu-text">Social</span></a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="{{ route('admin.bank_dash_governance') }}" class="menu-link"><span
+                                    class="menu-text">Governance</span></a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="{{ route('admin.bank_dash_scoring') }}" class="menu-link"><span
+                                    class="menu-text">ESG Score</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link" href="#sidebarClimate" data-bs-toggle="collapse">
+                    <span class="menu-icon"><i data-feather="users"></i></span>
+                    <span class="menu-text"> Climate Risk </span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <div class="collapse" id="sidebarClimate">
+                    <ul class="sub-menu">
+                        <li class="menu-item">
+                            <a href="#" class="menu-link"><span
+                                    class="menu-text">Climate Risk Assement</span></a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#" class="menu-link"><span
+                                    class="menu-text">Check Climate Risk</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            {{-- {{ Request::routeIs('user.rbi_disclosure') ? 'active' : '' }} --}}
+            {{-- <li class="menu-item">
+                <a href="{{ route('admin.rbi_disclosure') }}" class="menu-link ">
+                    <span class="menu-icon"><i data-feather="calendar"></i></span>
+                    <span class="menu-text"> RBI Disclosure </span>
+                </a>
+            </li> --}}
+            <li class="menu-item">
+                <a href="{{ route('admin.bank_env_mis') }}" class="menu-link">
+                    <span class="menu-icon"><i data-feather="calendar"></i></span>
+                    <span class="menu-text"> MIS </span>
+                </a>
+            </li>
+
+                {{-- <li class="menu-item">
+
                     <a href="{{ route('admin.env_mis') }}" class="menu-link">
                         <span class="menu-icon"><i data-feather="calendar"></i></span>
                         <span class="menu-text"> MIS </span>
                     </a>
-                </li>
+                </li> --}}
                 <li class="menu-item">
                     <a class="menu-link textcolor" href="#sidebarBranch" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarBranch">

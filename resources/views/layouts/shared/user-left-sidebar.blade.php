@@ -143,12 +143,13 @@
                     <span class="menu-icon"><i data-feather="cloud-lightning"></i></span>
                     <span class="menu-text"> Carbon SEQ </span></a>
             </li>
-            <!-- <li class="menu-item">
+
+            <li class="menu-item">
                 <a class="menu-link {{ Request::routeIs('user.brsr.index') ? 'active' : '' }}"
                     href="{{ route('user.brsr.index') }}">
                     <span class="menu-icon"><i data-feather="layers"></i></span>
                     <span class="menu-text"> BRSR </span></a>
-            </li> -->
+            </li>
         </ul>
 
         {{-- </div> --}}

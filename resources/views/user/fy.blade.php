@@ -74,15 +74,17 @@
                                                                 href="{{ route('user.addquestionnaire', ['branch_id' => encrypt($bank_details->branch_id),'class_type'=> encrypt($bank_details->class_type_id),'fy_id'=> encrypt($fy->id)]) }}"> Create</a>
                                                         @endif
                                                     @elseif ($bank_details->class_type_id == 3)
-                                                        3
+                                                        <a class="btn btn-primary btn-sm"
+                                                            href="{{ route('user.addquestionnaire', ['branch_id' => encrypt($bank_details->branch_id),'class_type'=> encrypt($bank_details->class_type_id),'fy_id'=> encrypt($fy->id)]) }}"> Create</a>
                                                     @elseif ($bank_details->class_type_id == 4)
-                                                        4
+                                                        <a class="btn btn-primary btn-sm"
+                                                            href="{{ route('user.addquestionnaire', ['branch_id' => encrypt($bank_details->branch_id),'class_type'=> encrypt($bank_details->class_type_id),'fy_id'=> encrypt($fy->id)]) }}"> Create</a>
                                                     @elseif ($bank_details->class_type_id == 5)
-                                                        5
+                                                        <a class="btn btn-primary btn-sm"
+                                                            href="{{ route('user.addquestionnaire', ['branch_id' => encrypt($bank_details->branch_id),'class_type'=> encrypt($bank_details->class_type_id),'fy_id'=> encrypt($fy->id)]) }}"> Create</a>
                                                     @elseif ($bank_details->class_type_id == 6)
                                                         <a class="btn btn-primary btn-sm"
                                                             href="{{ route('user.motor', ['branch_id' => encrypt($bank_details->branch_id),'class_type'=> encrypt($bank_details->class_type_id),'fy_id'=> encrypt($fy->id)]) }}"> Create</a>
-
                                                     @endif
                                                 </td>
                                             </tr>

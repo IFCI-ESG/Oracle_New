@@ -111,11 +111,11 @@
                                     <tr>
                                      <th class="text-center" style="font-size: 0.9rem">9.</th>
                                         <th style="font-size: 0.9rem">
-                                          Type of Sector <span style="color: red;">*</span>
+                                          Type of Sector
                                       </th>
                                         <td>
-                                         <select id="bank_sector_type" name="bank_sector_type" class="form-control form-control-sm" style="width:50%" required>
-                                            <option value="" disabled selected>Select Sector Type</option>
+                                         <select id="bank_sector_type" name="bank_sector_type" class="form-control form-control-sm" style="width:50%" readonly disabled>
+                                            <option value="" disabled>Select Sector Type</option>
                                              <option value="public" {{ old('bank_sector_type', $bank_details->bank_sector_type) == 'public' ? 'selected' : '' }}>Public</option>
                                              <option value="private" {{ old('bank_sector_type', $bank_details->bank_sector_type) == 'private' ? 'selected' : '' }}>Private</option>
                                           </select>
@@ -139,7 +139,7 @@
                                     </tr>
                                     <tr>
                                         <th class="text-center" style="font-size: 0.9rem">12.</th>
-                                        <th style="font-size: 0.9rem">Purpose</th>
+                                        <th style="font-size: 0.9rem">Services</th>
                                         <td colspan="2">
                                             <table>
                                                 <tbody>
@@ -149,7 +149,7 @@
                                                                 <label for="environment" style="font-size: 0.9rem">{{$serve->services}} </label>&nbsp;&nbsp;
                                                             </td>
                                                             <td class="text-center" style="width: 50%;">
-                                                                <input type="checkbox" class="services margin-right" id="service_{{ $serve->id }}" name="services[]" value="{{$serve->id}}" {{ in_array($serve->id, $storedServices) ? 'checked' : '' }} disabled>
+                                                                <input type="checkbox" class="services margin-right" id="service_{{ $serve->id }}" name="services[]" value="{{$serve->id}}" {{ isset($storedServices) && is_array($storedServices) && in_array($serve->id, $storedServices) ? 'checked' : '' }} disabled>
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -174,3 +174,4 @@
         </div>
     </div>
 @endsection
+

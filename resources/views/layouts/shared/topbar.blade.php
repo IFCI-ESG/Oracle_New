@@ -125,13 +125,16 @@
                 
  
 
-
                     <div class="mb-4">
                         <label for="name" class="form-label font-weight-bold" style="color: #333;">Name</label>
-                        <input type="text" class="form-control" id="name" name="name"
-                            value="{{ auth()->user()->name }}" readonly
-                            style="border-radius: 8px; border: 1px solid #ddd;">
+                        <div class="position-relative">
+                            <input type="text" class="form-control" id="name" name="name"
+                                value="{{ auth()->user()->name }}" readonly
+                                style="border-radius: 8px; border: 1px solid #ddd; padding-right: 2.5rem;">
+                            <i class="fas fa-lock position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #888;"></i>
+                        </div>
                     </div>
+                    
 
 
                     <div class="mb-4">
