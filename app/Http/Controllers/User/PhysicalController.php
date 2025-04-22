@@ -155,26 +155,65 @@ class PhysicalController extends Controller
      */
     public function update(Request $request)
     {
-        // dd($request);
-        // try{
+        try {
+            // Check that row_id exists in the request
+            if (!$request->has('row_id')) {
+                alert()->warning('Missing required module_mast_id parameter', 'Warning!')->persistent('Close');
+                return redirect()->back();
+            }
 
-            DB::transaction(function () use ($request)
-            {
-
-                $physical_data = PhysicalValue::find($request->row_id);
-                    $physical_data->img_id = json_encode($request->img_selection);
-                    $physical_data->updated_at = Carbon::now();
+            DB::transaction(function () use ($request) {
+                // Find the existing PhysicalValue record
+                $physical_data = PhysicalValue::where('module_mast_id', $request->row_id)
+                                    ->where('com_id', Auth::user()->id)
+                                    ->first();
+                
+                if (!$physical_data) {
+                    // Create a new record if not found
+                    $physical_data = new PhysicalValue();
+                    $physical_data->com_id = Auth::user()->id;
+                    $physical_data->module_mast_id = $request->row_id;
+                    $physical_data->fy_id = $request->has('fy_id') ? $request->fy_id : 
+                                        (session()->has('fy_id') ? session('fy_id') : null);
+                    
+                    // If fy_id is still null, try to get it from the module_mast record
+                    if (!$physical_data->fy_id) {
+                        $module = ModuleMast::find($request->row_id);
+                        if ($module) {
+                            $physical_data->fy_id = $module->fy_id;
+                        } else {
+                            throw new \Exception("Cannot determine fy_id for the new record");
+                        }
+                    }
+                }
+                
+                // Process plant data using the exact same format as store method
+                if (isset($request->plant) && is_array($request->plant)) {
+                    $plt = [];
+                    foreach ($request->plant as $val) {
+                        if (isset($val['risk'])) {
+                            // Use row_id from edit form as plant_id (matching store format)
+                            $plt_temp = array($val['row_id'] => $val['risk']);
+                            $plt = $plt + $plt_temp;
+                        }
+                    }
+                    
+                    // Simply replace the existing data (to match store behavior exactly)
+                    $physical_data->plant_and_risk_id = json_encode($plt);
+                }
+                
+                // Save the record
+                $physical_data->updated_at = Carbon::now();
                 $physical_data->save();
-
             });
 
             alert()->success('Data Updated Successfully', 'Success!')->persistent('Close');
             return redirect()->back();
-        // }catch (\Exception $e)
-        // {
-        //     alert()->Warning('Something Went Wrong', 'Warning!')->persistent('Close');
-        //     return redirect()->back();
-        // }
+        } catch (\Exception $e) {
+            report($e); // Log the error
+            alert()->warning('Something Went Wrong: ' . $e->getMessage(), 'Warning!')->persistent('Close');
+            return redirect()->back();
+        }
     }
 
     /**

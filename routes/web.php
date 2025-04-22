@@ -312,7 +312,7 @@ Route::name('user.')->prefix('user')->middleware(['role:ActiveUser', 'verified',
 
     Route::get('/physical/create/{fy_id}', [\App\Http\Controllers\User\PhysicalController::class,'create'])->name('physical.create');
     Route::get('/physical/edit/{module_mast_id}', [\App\Http\Controllers\User\PhysicalController::class,'edit'])->name('physical.edit');
-    Route::get('/physical/update', [\App\Http\Controllers\User\PhysicalController::class,'update'])->name('physical.update');
+    Route::post('/physical/update', [\App\Http\Controllers\User\PhysicalController::class,'update'])->name('physical.update');
     Route::get('/physical/store', [\App\Http\Controllers\User\PhysicalController::class,'store'])->name('physical');
     Route::resource('physical', \App\Http\Controllers\User\PhysicalController::class)->except(['create','update']);
 
@@ -326,7 +326,7 @@ Route::name('user.')->prefix('user')->middleware(['role:ActiveUser', 'verified',
 
     Route::get('/transition/create/{fy_id}', [\App\Http\Controllers\User\TransitionController::class,'create'])->name('transition.create');
     Route::get('/transition/edit/{module_mast_id}', [\App\Http\Controllers\User\TransitionController::class,'edit'])->name('transition.edit');
-    Route::get('/transition/update', [\App\Http\Controllers\User\TransitionController::class,'update'])->name('transition.update');
+    Route::post('/transition/update', [\App\Http\Controllers\User\TransitionController::class,'update'])->name('transition.update');
     Route::get('/transition/store', [\App\Http\Controllers\User\TransitionController::class,'store'])->name('transition');
     Route::resource('transition', \App\Http\Controllers\User\TransitionController::class)->except(['create','update']);
 

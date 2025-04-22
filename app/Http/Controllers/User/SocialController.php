@@ -61,7 +61,7 @@ class SocialController extends Controller
                 $social->save();
             }
         });
-        $sdgMast = DB::table('sdg_master')->where('status', 1)->get();
+        $sdgMast = DB::table('sdgmaster')->where('status', 1)->get();
 
         $quesMast = SocialQuestionMaster::where('status', 1)->orderby('id')->get();
 
@@ -230,7 +230,7 @@ class SocialController extends Controller
         $social_value = SocialQuestionValue::where('social_mast_id', $id)->get();
         $quesMast = SocialQuestionMaster::where('status', 1)->orderby('id')->get();
         $fys = DB::table('fy_masters')->where('id',$social_mast->fy_id)->first();
-        $sdgMast = DB::table('sdg_master')->where('status', 1)->get();
+        $sdgMast = DB::table('sdgmaster')->where('status', 1)->get();
 
         // dd($quesMast,$social_value);
         return view('user.social.edit', compact('quesMast','social_value','fys','sdgMast'));
