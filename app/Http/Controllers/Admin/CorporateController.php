@@ -10,11 +10,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
-
 use Validator;
 use Mail;
 
-class BankController extends Controller
+class CorporateController extends Controller
 {
 
     public function adminhome() {
@@ -191,7 +190,6 @@ class BankController extends Controller
 
     public function deactivate($id)
     {
-
         $id = decrypt($id);
 
         $user = AdminUser::find($id);
@@ -207,44 +205,135 @@ class BankController extends Controller
     }
     public function index()
     {
+        // dd('d');
 
         $user = Auth::user();
-        $bank_details = DB::table('users')
-            ->where('created_by', $user->id)
-            ->orderby('id')->get();
+        $corp_details = DB::table('users')
+                        ->where('created_by', $user->id)
+                        ->where('borrower_type', 'CR')
+                        ->orderby('id','desc')->get();
 
-        return view('admin.bank.index', compact('bank_details'));
+        return view('admin.corporate.index', compact('corp_details'));
 
     }
 
     public function create()
     {
+        // dd('c');
         $services = DB::table('servicemaster')->get();
+        $sectors = DB::table('sector_master')->orderby('id')->get();
 
-        return view('admin.bank.addbank', compact('services'));
+        return view('admin.corporate.addcorporate', compact('services','sectors'));
 
     }
 
+    public function apidata($pan)
+    {
+        // dd($pan);
+        $valid = Validator::make(['pan' => $pan],[
+            'pan' => 'required|regex:/^([A-Za-z]{5})([0-9]{4})([A-Za-z]{1})$/'
+        ]);
+
+        if($valid->fails()) {
+            return back()->withErrors($valid)->withInput();
+        }
+
+        $panExists = AdminUser::where('pan', $pan)->exists();
+
+
+        if($panExists)
+        {
+            $user=AdminUser::where('pan', $pan)->first();
+
+            alert()->success('This Company is already Registered', 'Data Fetched!')->persistent('Close');
+            // return redirect()->route('admin.user.existuser',['id' => encrypt($user->id)]);
+        }
+
+
+
+        // Sandbox details
+        // $urlcin = 'https://api.probe42.in/probe_pro_sandbox/companies/'.$cin.'/base-details'
+        $url = 'https://api.probe42.in/probe_pro_sandbox/companies/'.$pan.'/comprehensive-details?identifier_type=PAN';
+        $api_key = '07wvsOWBoq9iwpjhMm2C22eKOymlpqht9WmtYEFb';
+
+        // Production Details
+        // API URL
+        // $url = 'https://api.probe42.in/probe_pro/companies/'.$pan.'/comprehensive-details?identifier_type=PAN';
+        // // API Key
+        // $api_key = '6NM20CtNSx6J22J4NgG6fH2bZN51hnt8EYmtRpRc';
+
+        // Headers
+        $headers = [
+        'Accept: application/json',
+        'x-api-key: ' . $api_key,
+        'x-api-version: 1.3'
+        ];
+
+        // Initialize cURL session
+        $ch = curl_init();
+        // dd($ch);
+
+        // Set cURL options
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        // Execute cURL session
+        $response = curl_exec($ch);
+        // dd(json_decode($response));
+        curl_close($ch);
+        // dd($response);
+        $jdecode =  json_decode($response);
+        // dd($jdecode);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid response format!'
+            ], 400); // Bad Request
+        }
+        
+        if (isset($jdecode->message) && $jdecode->message === 'Company does not exist') {
+            return response()->json([
+                'status' => false,
+                'message' => 'Company does not exist!'
+            ], 404); // Not Found
+        }
+        
+        if (!isset($jdecode->data)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No Data Found!'
+            ], 204); // No Content
+        }
+        
+        // Success case
+        return response()->json([
+            'status' => true,
+            'message' => 'Company data fetched successfully.',
+            'data' => $jdecode->data
+        ]);   
+    }
+
     public function store(Request $request)
-{
+    {
     // dd($request);
     $validator = Validator::make($request->all(), [
 
-        'ifsc_code' => 'required|string|regex:/^[A-Z]{4}0[A-Z0-9]{6}$/|unique:users,ifsc_code',
-        'bank_name' => 'required|string|regex:/^[a-zA-Z\s]+$/',
-        'micr_code' => 'required|string',
-        'state' => 'required|string',
-        'district' => 'required|string',
-        'city' => 'required|string',
-        'full_address' => 'required|string',
-        'designation' => 'required|string|regex:/^[a-zA-Z\s]+$/',
         'pan' => 'required|string',
-        'bank_sector_type' => 'required|string',
+        'corp_name' => 'required|string|regex:/^[a-zA-Z\s]+$/',
+        'cin' => 'required',
+        'corp_email' => 'required|email',
+        'reg_off_add' => 'required|string',
+        'reg_off_pin' => 'required',
+        'reg_off_state' => 'required|string',
+        'reg_off_city' => 'required|string',
+        'sector_type' => 'required',
+        'designation' => 'required|string|regex:/^[a-zA-Z\s]+$/',
         'license_key' => 'required|string',
         'valid_from' => 'required|date',
         'valid_to' => 'required|date|after_or_equal:valid_from',
         'contact_person' => 'required|string|regex:/^[a-zA-Z\s]+$/',
-        'email' => 'required|email',
         'mobile' => 'required|digits:10|regex:/^[0-9]{10}$/',
         'services' => 'nullable|array',
         'services.*' => 'exists:servicemaster,id',
@@ -272,23 +361,22 @@ class BankController extends Controller
 
     $newuser = new AdminUser;
 
-    $newuser->ifsc_code = $request->ifsc_code;
-    $newuser->name = $request->bank_name;
-    $newuser->bank_code = $request->bank_code;
-    $newuser->micr_code = $request->micr_code;
-    $newuser->state = $request->state;
-    $newuser->district = $request->district;
-    $newuser->city = $request->city;
-    $newuser->full_address = $request->full_address;
     $newuser->pan = $request->pan;
-    $newuser->bank_sector_type = $request->bank_sector_type;
+    $newuser->name = $request->corp_name;
+    $newuser->cin_llpin = $request->cin;
+    $newuser->email = $request->corp_email;
+    $newuser->reg_off_add = $request->reg_off_add;
+    $newuser->reg_off_pin = $request->reg_off_pin;
+    $newuser->reg_off_state = $request->reg_off_state;
+    $newuser->reg_off_city = $request->reg_off_city;
+    $newuser->borrower_type = 'CR';
+    $newuser->sector_id = $request->sector_type;
+    $newuser->designation = $request->designation;
     $newuser->license_key = $request->license_key;
     $newuser->valid_from = $request->valid_from;
     $newuser->valid_to = $request->valid_to;
-    $newuser->email = $request->email;
     $newuser->mobile = $request->mobile;
     $newuser->altr_mobile = $request->altr_mobile ? $request->altr_mobile : null;
-    $newuser->designation = $request->designation;
     $newuser->contact_person = $request->contact_person;
     $newuser->services = json_encode($request->services);
     $newuser->status = 'D';
@@ -310,8 +398,9 @@ class BankController extends Controller
         // DB::table('corporate_master')->insert($corporateData);
     });
 
-    session()->flash('success', 'Data saved successfully!');
-    return redirect()->route('admin.new_admin.edit', ['id' => encrypt($newuser->id)]);
+    // session()->flash('success', 'Data saved successfully!');
+    alert()->success('Data Updated Successfully', 'Success!')->persistent('Close');
+    return redirect()->route('admin.corp_admin.edit', ['id' => encrypt($newuser->id)]);
 }
 
     private function generateRandomString($length = 5)
@@ -327,14 +416,29 @@ class BankController extends Controller
         return $randomString;
     }
 
+    private function generateUserId($length = 6)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
+        }
+
+        return 'ESGADM' . strtoupper($randomString); // Prefix with ESG
+    }
+
     public function edit($id)
     {
+        // dd($id);
         $id             = decrypt($id);
         $services       = DB::table('servicemaster')->get();
-        $bank_details   = AdminUser::find($id);
-        $storedServices = json_decode($bank_details->services, true);
-        // dd($bank_details,$services);
-        return view('admin.bank.editbank', compact('bank_details', 'storedServices', 'services'));
+        $corp_details   = AdminUser::find($id);
+        $storedServices = json_decode($corp_details->services, true);
+        $sectors = DB::table('sector_master')->orderby('id')->get();
+        // dd($corp_details,$services);
+        return view('admin.corporate.editcorporate', compact('corp_details', 'storedServices', 'services','sectors'));
 
     }
     public function view($id)
@@ -344,7 +448,7 @@ class BankController extends Controller
         $bank_details   = AdminUser::find($id);
         $storedServices = json_decode($bank_details->services, true);
         // dd($bank_details,$services);
-        return view('admin.bank.viewbank', compact('bank_details', 'storedServices', 'services'));
+        return view('admin.corporate.viewcorporate', compact('bank_details', 'storedServices', 'services'));
 
     }
 
@@ -353,24 +457,23 @@ class BankController extends Controller
         // dd($request);
         // try{
             $validator = Validator::make($request->all(), [
-                'ifsc_code' => 'required|string|regex:/^[A-Z]{4}0[A-Z0-9]{6}$/',
-                'bank_name'      => 'required|string|regex:/^[a-zA-Z\s]+$/',
-                'micr_code'            => 'required|string',
-                'state'            => 'required|string',
-                'district'            => 'required|string',
-                'city'            => 'required|string',
-                'full_address'            => 'required|string',
-                'designation'    => 'required|string|regex:/^[a-zA-Z\s]+$/',
-                'pan'            => 'required|string',
-                'bank_sector_type'            => 'required|string',
-                'license_key'    => 'required|string',
-                'valid_from'     => 'required|date',
-                'valid_to'       => 'required|date|after_or_equal:valid_from',
+                'pan' => 'required|string',
+                'corp_name' => 'required|string|regex:/^[a-zA-Z\s]+$/',
+                'cin' => 'required',
+                'corp_email' => 'required|email',
+                'reg_off_add' => 'required|string',
+                'reg_off_pin' => 'required',
+                'reg_off_state' => 'required|string',
+                'reg_off_city' => 'required|string',
+                'sector_type' => 'required',
+                'designation' => 'required|string|regex:/^[a-zA-Z\s]+$/',
+                'license_key' => 'required|string',
+                'valid_from' => 'required|date',
+                'valid_to' => 'required|date|after_or_equal:valid_from',
                 'contact_person' => 'required|string|regex:/^[a-zA-Z\s]+$/',
-                'email'          => 'required|email',
-                'mobile'         => 'required|digits:10|regex:/^[0-9]{10}$/',
-                'services'       => 'nullable|array',
-                'services.*'     => 'exists:servicemaster,id',
+                'mobile' => 'required|digits:10|regex:/^[0-9]{10}$/',
+                'services' => 'nullable|array',
+                'services.*' => 'exists:servicemaster,id',
             ]);
 
         if ($validator->fails()) {
@@ -379,27 +482,25 @@ class BankController extends Controller
         }
 
         DB::transaction(function () use ($request) {
-            $user                 = AdminUser::find($request->user_id);
-            $user->ifsc_code           = $request->ifsc_code;
-            $user->name           = $request->bank_name;
-            $user->bank_code        = $request->bank_code;
-            $user->micr_code           = $request->micr_code;
-            $user->state           = $request->state;
-            $user->district           = $request->district;
-            $user->city           = $request->city;
-            $user->full_address           = $request->full_address;
-            $user->pan            = $request->pan;
-            $user->bank_sector_type            = $request->bank_sector_type;
-            $user->license_key    = $request->license_key;
-            $user->valid_from     = $request->valid_from;
-            $user->valid_to       = $request->valid_to;
-            $user->email          = $request->email;
-            $user->contact_person = $request->contact_person;
-            $user->designation    = $request->designation;
-            $user->mobile         = $request->mobile;
-            $user->altr_mobile    = $request->altr_mobile ? $request->altr_mobile : Null;
-            $user->services       = json_encode($request->input('services', []));
-          
+
+            $user = AdminUser::find($request->user_id);
+                $user->pan = $request->pan;
+                $user->name = $request->corp_name;
+                $user->cin_llpin = $request->cin;
+                $user->email = $request->corp_email;
+                $user->reg_off_add = $request->reg_off_add;
+                $user->reg_off_pin = $request->reg_off_pin;
+                $user->reg_off_state = $request->reg_off_state;
+                $user->reg_off_city = $request->reg_off_city;
+                $user->sector_id = $request->sector_type;
+                $user->designation = $request->designation;
+                $user->license_key = $request->license_key;
+                $user->valid_from = $request->valid_from;
+                $user->valid_to = $request->valid_to;
+                $user->mobile = $request->mobile;
+                $user->altr_mobile = $request->altr_mobile ? $request->altr_mobile : null;
+                $user->contact_person = $request->contact_person;
+                $user->services = json_encode($request->input('services', []));
             $user->save();
 
         });
@@ -408,32 +509,54 @@ class BankController extends Controller
         return redirect()->back()->with('success', 'Data successfully Updated');
     
 
-        return view('admin.user.edituser', compact('user'));
+        // return view('admin.user.editcorporate', compact('user'));
 
     }
 
     public function submit(Request $request)
     {
         DB::transaction(function () use ($request) {
+             // Generate random secure password
+            // $randomPassword = $this->generateRandomString(5); // length = 10
+
+            // Generate unique user ID starting with ESG
+            $uniqueLoginId = $this->generateUserId(6); // ESG + 6 random characters
+
             $randomString = 'India@1234';
 
             $user = AdminUser::find($request->user_id);
-            $user->isactive = 'Y';
-            $user->status   = 'S';
-            $user->profileid   = 2;
-
-            $user->password_changed   = 0;  //First Login
-            $user->password=Hash::make($randomString);
+                $user->isactive = 'Y';
+                $user->status   = 'S';
+                $user->profileid  = 5;
+                $user->password_changed  = 0;  //First Login
+                $user->password=Hash::make($randomString);
+                $user->unique_login_id= $uniqueLoginId;
             $user->save();
 
             $data_role1 = ['role_id' => 2, 'model_type' => 'App\Models\AdminUser', 'model_id' => $user->id];
             $data_role2 = ['role_id' => 3, 'model_type' => 'App\Models\AdminUser', 'model_id' => $user->id];
+            $data_role2 = ['role_id' => 6, 'model_type' => 'App\Models\AdminUser', 'model_id' => $user->id];
             DB::table('model_has_roles')->insert([$data_role1, $data_role2]);
 
+            //  $data = array('name'=>$user->name, 'unique_id'=>$user->email, 'password'=>$randomString, 'bank_name'=>Auth::user()->name);
+
+            //             //  dd($data);
+
+            // Mail::send('emails.email_credentials', $data, function($message) use($data) {
+            //    $message->to($data ['unique_id'],$data ['name'])
+            //             ->subject('Account Created | ESG - PRAKRIT')
+            //             ->attach(public_path('asset/images/logo/email_logo.png'), [
+            //                 'as' => 'email_logo',
+            //                 'mime' => 'image/png',
+            //             ]);
+            //         // $message->cc('esgprkrit@ifciltd.com');
+            //         // $message->bcc('tushar.agnihotri@ifciltd.com');
+            // });
+
         });
-        alert()->success('New Bank Created', 'Success!')->persistent('Close');
-        return redirect()->route('admin.new_admin.index');
-        return redirect()->back()->with('success', 'Data successfully Submitted');
+        alert()->success('New Corporate Created', 'Success!')->persistent('Close');
+        return redirect()->route('admin.corp_admin.index');
+        // return redirect()->back()->with('success', 'Data successfully Submitted');
 
     }
 
@@ -447,7 +570,7 @@ class BankController extends Controller
             ->where('status', 'S')
             ->orderby('id')->get();
         // dd($comp);
-        return view('admin.bank.company_list', compact('comp'));
+        return view('admin.corporate.company_list', compact('comp'));
 
     }
 
