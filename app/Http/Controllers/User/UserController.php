@@ -332,10 +332,10 @@ class UserController extends Controller
 
         $fys = DB::table('fy_masters')->where('id',$fy_id)->first();
 
-        $busi_mast = BusinessActivityMast::where('sector_id', $user->sector_id)->where('ques_type_id',$user->comp_type_id)->orderby('id')->get();
+        $busi_mast = BusinessActivityMast::where('SECTOR_ID', $user->sector_id)->where('QUES_TYPE_ID',$user->comp_type_id)->orderby('ID')->get();
 
         $busi_value = DB::table('business_activity_value as bav')
-                            ->join('business_activity_master as bam','bam.id','bav.acitvity_id')
+                            ->join('BUSINESSACTIVITYMASTER as bam','bam.ID','=','bav.acitvity_id')
                             ->where('bav.com_id',$user->id)
                             ->where('bav.fy_id',$fy_id)
                             ->orderby('bav.id')
@@ -591,7 +591,7 @@ class UserController extends Controller
         $user=Auth::user();
 
         $busi_acti = DB::table('business_activity_value as bav')
-                            ->join('business_activity_master as bam','bam.id','=','bav.acitvity_id')
+                            ->join('BUSINESSACTIVITYMASTER as bam','bam.ID','=','bav.acitvity_id')
                             ->where('is_checked', true)
                             ->where('bav.com_id', $user->id)
                             ->where('bav.fy_id',$fy_id)
@@ -696,10 +696,10 @@ class UserController extends Controller
 
         $fys = DB::table('fy_masters')->where('id',$fy_id)->first();
 
-        $busi_mast = BusinessActivityMast::where('sector_id', $user->sector_id)->orderby('id')->get();
+        $busi_mast = BusinessActivityMast::where('SECTOR_ID', $user->sector_id)->orderby('ID')->get();
 
         $busi_value = DB::table('business_activity_value as bav')
-                            ->join('business_activity_master as bam','bam.id','bav.acitvity_id')
+                            ->join('BUSINESSACTIVITYMASTER as bam','bam.ID','=','bav.acitvity_id')
                             ->where('is_checked', true)
                             ->where('bav.com_id',$user->id)
                             ->where('bav.fy_id',$fy_id)

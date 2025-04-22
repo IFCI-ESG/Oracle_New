@@ -287,7 +287,18 @@ public function show($id)
     $total_esg_score = round(($environment_esg_score + $social_esg_score + $governance_esg_score), 3);
 
     // Rating based on the calculated ESG score
-    $rating = DB::table('rating_master')->whereRaw('number_range @> ?', ["[$total_esg_score, $total_esg_score]"])->first();
+    $rating = DB::table('rating_master')
+        ->where(function($query) use ($total_esg_score) {
+            // Find records where total_esg_score is >= lower_bound of current row AND < lower_bound of next range
+            $query->where('lower_bound', '<=', $total_esg_score)
+                  ->whereRaw('NOT EXISTS (
+                      SELECT 1 FROM rating_master r2 
+                      WHERE r2.lower_bound > rating_master.lower_bound 
+                      AND r2.lower_bound <= ?
+                  )', [$total_esg_score]);
+        })
+        ->orderBy('lower_bound', 'desc')
+        ->first();
     $rating_name = $rating->rating_name;
     $rating_grade = $rating->rating_grade;
 

@@ -27,6 +27,26 @@
       font-size: 16px!important;
     }
 
+    /* Fix for checkbox display */
+    .form-check-input {
+        position: relative;
+        margin-top: 0.3rem;
+        margin-right: 0.5rem;
+        display: inline-block;
+    }
+
+    .form-check {
+        position: relative;
+        display: inline-block;
+        padding: 0 1rem 0 0;
+        margin-right: 1rem;
+    }
+
+    .form-check-label {
+        margin-bottom: 0;
+        display: inline-block;
+        vertical-align: middle;
+    }
 </style>
 </head>
 

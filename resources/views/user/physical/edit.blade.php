@@ -96,6 +96,8 @@
                     accept-charset="utf-8">
                     @csrf
                     {{-- <input type="hidden" value="{{ $fy_id }}" name="fy_id"> --}}
+                    <input type="hidden" name="row_id" value="{{ $module_mast->id }}">
+                    <input type="hidden" name="fy_id" value="{{ $module_mast->fy_id }}">
 
                     <div class="card card-success card-outline card-tabs shadow-lg">
                         <div class="card-header p-0 pt-3 border-bottom-0">
@@ -142,7 +144,7 @@
                                                                     </div>
                                                                     <div class="card-body">
                                                                         <div class="row">
-                                                                            <input type="hidden" value="{{ $physical_values->id }}" name="plant[{{ $key }}][row_id]">
+                                                                            <input type="hidden" value="{{ $plant->id }}" name="plant[{{ $key }}][row_id]">
 
                                                                             <!-- Plant Address -->
                                                                             <div class="form-group col-md-3">
@@ -195,22 +197,30 @@
                                                                             // Decode the stored JSON to access risks per plant
                                                                             $plantPhysicalValue = $physical_values->plant_and_risk_id ?? '{}';
                                                                             $plantRisks = json_decode($plantPhysicalValue, true);
-                                                                            $img_ids = $plantRisks[$plant->id] ?? []; // Get the risks for the current plant, or an empty array if not set
-                                                                            // dd($plantPhysicalValue,$plantRisks,$img_ids);
+                                                                            
+                                                                            // The plant ID is stored as the key in the plantRisks array
+                                                                            $img_ids = $plantRisks[$plant->id] ?? []; 
+                                                                            
+                                                                            // Make sure img_ids is flattened in case it's a nested array
+                                                                            if (is_array($img_ids) && isset($img_ids[0]) && is_array($img_ids[0])) {
+                                                                                $img_ids = array_merge(...$img_ids);
+                                                                            }
+                                                                            
+                                                                            // Convert all values to strings for consistent comparison
+                                                                            $img_ids = array_map('strval', $img_ids);
+                                                                            // dd($plantPhysicalValue, $plantRisks, $plant->id, $img_ids);
                                                                         @endphp
                                                                         <!-- Risk Section -->
                                                                         <div class="mt-4">
-                                                                            <h6 class="text-secondary mb-2">Physical Risks:
-                                                                            </h6>
+                                                                            <h6 class="text-secondary mb-2">Physical Risks:</h6>
                                                                             <div class="d-flex flex-wrap">
                                                                                 @foreach ($physical_img as $riskKey => $img)
                                                                                     <div class="form-check mr-3 mb-2">
                                                                                         <input class="form-check-input"
-                                                                                            type="checkbox" {{ in_array($img->id, $img_ids) ? 'checked' : '' }}
+                                                                                            type="checkbox" {{ in_array((string)$img->id, $img_ids) ? 'checked' : '' }}
                                                                                             name="plant[{{ $key }}][risk][]"
                                                                                             value="{{ $img->id }}">
-                                                                                        <label
-                                                                                            class="form-check-label">{{ $img->particular }}</label>
+                                                                                        <label class="form-check-label">{{ $img->particular }}</label>
                                                                                     </div>
                                                                                 @endforeach
                                                                             </div>
@@ -283,13 +293,25 @@
                                                                     // Decode the stored JSON to access risks per plant
                                                                     $plantPhysicalValue = $physical_values->plant_and_risk_id ?? '{}';
                                                                     $plantRisks = json_decode($plantPhysicalValue, true);
-                                                                    $img_ids = array_unique(array_merge(...array_values($plantRisks)));
-                                                                    // dd($plantPhysicalValue,$plantRisks,$img_ids);
+                                                                    
+                                                                    // Create a flattened array of all risk IDs across all plants
+                                                                    $all_img_ids = [];
+                                                                    foreach ($plantRisks as $plant_risks) {
+                                                                        // Handle nested arrays if present
+                                                                        if (is_array($plant_risks) && isset($plant_risks[0]) && is_array($plant_risks[0])) {
+                                                                            $plant_risks = array_merge(...$plant_risks);
+                                                                        }
+                                                                        $all_img_ids = array_merge($all_img_ids, array_map('strval', $plant_risks));
+                                                                    }
+                                                                    
+                                                                    // Remove duplicates
+                                                                    $all_img_ids = array_unique($all_img_ids);
+                                                                    // dd($plantPhysicalValue, $plantRisks, $all_img_ids);
                                                                 @endphp
                                                                 @foreach ($physical_img as $key => $img)
                                                                     <li>
-                                                                        {{-- <input type="hidden" name="img[{{$key}}][img_id]" value="{{ $img->id }}"/> --}}
-                                                                        <input type="checkbox" name="img_selection[]" id="myCheckbox{{$key}}" value="{{ $img->id }}" {{ in_array($img->id, $img_ids) ? 'checked' : '' }}/>
+                                                                        <input type="checkbox" name="img_selection[]" id="myCheckbox{{$key}}" 
+                                                                            value="{{ $img->id }}" {{ in_array((string)$img->id, $all_img_ids) ? 'checked' : '' }}/>
                                                                         <label class="img_label" for="myCheckbox{{$key}}">
                                                                             <img src="{{ asset('assets/physical_risk_img/' . $img->img_name . '.jpg') }}" alt="Image{{$key}}" />
                                                                             <div class="text-center">
