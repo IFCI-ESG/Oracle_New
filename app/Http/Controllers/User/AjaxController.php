@@ -68,9 +68,15 @@ class AjaxController extends Controller
 
         // dd($state);
 
-        $city = DB::table('pincodes')->where('pincode',$pincode)->distinct('city')->get()->pluck('city');
+        // $city = DB::table('pincodes')->where('pincode',$pincode)->distinct('CITY')->get()->pluck('city');
         // $district = DB::table('statedistrict')->where('state',$state)->distinct('district')->get()->pluck('district');
-        // dd($city,$district);
+        $city = DB::table('pincodes')
+                    ->where('pincode', $pincode)
+                    ->select('city') // Select only the 'city' column
+                    ->distinct()
+                    ->pluck('city');
+
+        // dd($city);
             $arr = array(
                 'state' => $state,
                 'city' => $city,
