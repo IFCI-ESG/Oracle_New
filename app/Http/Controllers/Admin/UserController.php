@@ -31,6 +31,156 @@ class UserController extends Controller
     {
         return view('admin.home');
     }
+        public function dash_climate_risk()
+    {
+
+        $client = new Client();
+        // dd($client);
+
+        $response = $client->request('POST', 'https://login.microsoftonline.com/common/oauth2/token', [
+            'form_params' => [
+                'grant_type' => 'password',
+                'username' => 'pbview@ifciltd.com',
+                'password' => 'C^943719345517ay',
+                'client_id' => '3646f7fa-262f-48ae-8fef-6c6b9213ee76',
+                'client_secret' => 'Aqt8Q~ykKKoX1YUj2z97F.NVaXbvULVzECbFvcOh',
+                'resource' => 'https://analysis.windows.net/powerbi/api'
+            ]
+        ]);
+            // dd($response);
+        $access_token = json_decode($response->getBody()->getContents())->access_token;
+ 
+      
+
+ //https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/0023b227-5300-414f-8999-8363c0d17c8b/1a5f54ba0124ed149e6b?experience=power-bi
+        $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/0023b227-5300-414f-8999-8363c0d17c8b', [
+
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $access_token
+            ],
+            'json' => [
+                'accessLevel' => 'View',
+                'allowSaveAs' => 'false'
+            ]
+        ]);
+
+        $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
+            // dd($embed_url);
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/0023b227-5300-414f-8999-8363c0d17c8b/GenerateToken', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $access_token
+            ],
+            'json' => [
+                'accessLevel' => 'View',
+                'allowSaveAs' => 'false'
+            ]
+        ]);
+
+        $user=Auth::user()->id;
+        $type='Environment';
+
+        $embed_token = json_decode($response->getBody()->getContents())->token;
+
+        return view('admin.dashboard', compact('embed_url', 'embed_token','user'));
+    }
+        public function bank_dash_climate_risk()
+    {
+
+        $client = new Client();
+        $response = $client->request('POST', 'https://login.microsoftonline.com/common/oauth2/token', [
+            'form_params' => [
+                'grant_type' => 'password',
+                'username' => 'pbview@ifciltd.com',
+                'password' => 'C^943719345517ay',
+                'client_id' => '3646f7fa-262f-48ae-8fef-6c6b9213ee76',
+                'client_secret' => 'Aqt8Q~ykKKoX1YUj2z97F.NVaXbvULVzECbFvcOh',
+                'resource' => 'https://analysis.windows.net/powerbi/api'
+            ]
+        ]);
+
+        $access_token = json_decode($response->getBody()->getContents())->access_token;
+        $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/0023b227-5300-414f-8999-8363c0d17c8b', [
+
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $access_token
+            ],
+            'json' => [
+                'accessLevel' => 'View',
+                'allowSaveAs' => 'false'
+            ]
+        ]);
+
+        $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/0023b227-5300-414f-8999-8363c0d17c8b/GenerateToken', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $access_token
+            ],
+            'json' => [
+                'accessLevel' => 'View',
+                'allowSaveAs' => 'false'
+            ]
+        ]);
+
+        $user=Auth::user()->id;
+        $type='Environment';
+
+        $embed_token = json_decode($response->getBody()->getContents())->token;
+
+        return view('admin.bank_dashboard', compact('embed_url', 'embed_token','user'));
+    }
+
+    public function bank_dash_climate_risk_view()
+    {
+
+        $client = new Client();
+        $response = $client->request('POST', 'https://login.microsoftonline.com/common/oauth2/token', [
+            'form_params' => [
+                'grant_type' => 'password',
+                'username' => 'pbview@ifciltd.com',
+                'password' => 'C^943719345517ay',
+                'client_id' => '3646f7fa-262f-48ae-8fef-6c6b9213ee76',
+                'client_secret' => 'Aqt8Q~ykKKoX1YUj2z97F.NVaXbvULVzECbFvcOh',
+                'resource' => 'https://analysis.windows.net/powerbi/api'
+            ]
+        ]);
+  
+        $access_token = json_decode($response->getBody()->getContents())->access_token;
+        $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/5fe68c5a-2984-4a50-9e04-b8db890001fb', [
+
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $access_token
+            ],
+            'json' => [
+                'accessLevel' => 'View',
+                'allowSaveAs' => 'false'
+            ]
+        ]);
+
+        $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/5fe68c5a-2984-4a50-9e04-b8db890001fb/GenerateToken', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $access_token
+            ],
+            'json' => [
+                'accessLevel' => 'View',
+                'allowSaveAs' => 'false'
+            ]
+        ]);
+
+        $user=Auth::user()->id;
+        $type='Environment';
+
+        $embed_token = json_decode($response->getBody()->getContents())->token;
+
+        return view('admin.bank_dashboard', compact('embed_url', 'embed_token','user'));
+    }
+
 
     public function dash_environment()
     {
@@ -51,9 +201,9 @@ class UserController extends Controller
             // dd($response);
         $access_token = json_decode($response->getBody()->getContents())->access_token;
 
-        //https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/7e83f6d7-e83b-4f6a-b984-8ed4d36efb40/67f5ff6e960e9b2d61e1?experience=power-bi&clientSideAuth=0
+//https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/c016ae19-42ce-436a-9855-77d27f63620b/ab26b9cdad5d3f1e36aa?experience=power-bi
 
-        $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/7e83f6d7-e83b-4f6a-b984-8ed4d36efb40', [
+        $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/c016ae19-42ce-436a-9855-77d27f63620b', [
 
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -67,7 +217,7 @@ class UserController extends Controller
 
         $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
             // dd($embed_url);
-        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/7e83f6d7-e83b-4f6a-b984-8ed4d36efb40/GenerateToken', [
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/c016ae19-42ce-436a-9855-77d27f63620b/GenerateToken', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $access_token
@@ -157,9 +307,9 @@ class UserController extends Controller
 
 
         // https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/769453e2-0917-40b9-83bc-d5c388a8b235/ec424857d636d9141ddd?experience=power-bi&clientSideAuth=0
+//https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/b9bb4639-e350-460a-bbe2-37c676abb0a8/ab26b9cdad5d3f1e36aa?experience=power-bi
 
-
-       $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/769453e2-0917-40b9-83bc-d5c388a8b235', [
+       $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/b9bb4639-e350-460a-bbe2-37c676abb0a8', [
 
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -173,7 +323,7 @@ class UserController extends Controller
 
         $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
             // dd($embed_url);
-        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/769453e2-0917-40b9-83bc-d5c388a8b235/GenerateToken', [
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/b9bb4639-e350-460a-bbe2-37c676abb0a8/GenerateToken', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $access_token
@@ -992,10 +1142,7 @@ class UserController extends Controller
         $access_token = json_decode($response->getBody()->getContents())->access_token;
         // dd($access_token);
 
-       // https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/7cb55549-5e87-47d5-8fad-502db729ca77/cbad1e4fbe9798916933?experience=power-bi
-
-
-       $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/7cb55549-5e87-47d5-8fad-502db729ca77', [
+       $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/e29ff5bd-1a7d-43f8-bd0\4-19d45db0f93f', [
 
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -1009,7 +1156,7 @@ class UserController extends Controller
 
         $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
             // dd($embed_url);
-        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/7cb55549-5e87-47d5-8fad-502db729ca77/GenerateToken', [
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/e29ff5bd-1a7d-43f8-bd0\4-19d45db0f93f/GenerateToken', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $access_token
@@ -1105,9 +1252,9 @@ class UserController extends Controller
             // dd($response);
         $access_token = json_decode($response->getBody()->getContents())->access_token;
 
-        // https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/ad1ce0c1-eea5-450d-bd7b-546206d05629/d39c028cb03c480460d3?experience=power-bi
 
-        $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/ad1ce0c1-eea5-450d-bd7b-546206d05629', [
+//https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/4b41e412-0de9-44db-a9b3-ea73ca40efa5/b9ea300f90371360f305?experience=power-bi
+        $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/4b41e412-0de9-44db-a9b3-ea73ca40efa5', [
 
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -1121,7 +1268,7 @@ class UserController extends Controller
 
         $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
             // dd($embed_url);
-        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/ad1ce0c1-eea5-450d-bd7b-546206d05629/GenerateToken', [
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/4b41e412-0de9-44db-a9b3-ea73ca40efa5/GenerateToken', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $access_token

@@ -121,12 +121,16 @@ Route::name('admin.')->prefix('admin')->middleware(['auth:admin','role:SuperAdmi
     Route::get('bank_dash_social',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_social'])->name('bank_dash_social');
     Route::get('bank_dash_governance',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_governance'])->name('bank_dash_governance');
     Route::get('bank_dash_scoring',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_scoring'])->name('bank_dash_scoring');
+    Route::get('bank_dash_climate_risk',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_climate_risk'])->name('bank_dash_climate_risk');
+
+    Route::get('bank_dash_climate_risk_view',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_climate_risk_view'])->name('bank_dash_climate_risk_view');
 
 
     Route::get('dash_environment',[\App\Http\Controllers\Admin\UserController::class, 'dash_environment'])->name('dash_environment');
     Route::get('dash_social',[\App\Http\Controllers\Admin\UserController::class, 'dash_social'])->name('dash_social');
     Route::get('dash_governance',[\App\Http\Controllers\Admin\UserController::class, 'dash_governance'])->name('dash_governance');
     Route::get('dash_scoring',[\App\Http\Controllers\Admin\UserController::class, 'dash_scoring'])->name('dash_scoring');
+         Route::get('dash_climate_risk',[\App\Http\Controllers\Admin\UserController::class, 'dash_climate_risk'])->name('dash_climate_risk');
 
     // Company List
 
@@ -235,6 +239,15 @@ Route::name('admin.')->prefix('admin')->middleware(['auth:admin','role:SuperAdmi
     // Dashboard Export and Refresh routes
     Route::post('/export-dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'exportDashboard'])->name('dashboard.export');
     Route::post('/refresh-dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'refreshDashboard'])->name('dashboard.refresh');
+
+    
+    Route::get('rbi_disclosure', [\App\Http\Controllers\Admin\RbiDisclosureController::class,'index'])->name('rbi_disclosure');
+    // Route::get('rbi_disclosure/fy/{fy_id}', [\App\Http\Controllers\Admin\RbiDisclosureController::class,'fy'])->name('rbi_disclosure.fy');
+    Route::get('rbi_disclosure/pillar/{fy_id}', [\App\Http\Controllers\Admin\RbiDisclosureController::class,'pillar'])->name('rbi_disclosure.pillar');
+    Route::get('rbi_disclosure/crete/{pillar_id}/{fy_id}', [\App\Http\Controllers\Admin\RbiDisclosureController::class,'create'])->name('rbi_disclosure.create');
+    Route::post('rbi_disclosure/store', [\App\Http\Controllers\Admin\RbiDisclosureController::class,'store'])->name('rbi_disclosure.store');
+    Route::get('rbi_disclosure/edit/{bank_id}/{pillar_id}/{fy_id}', [\App\Http\Controllers\Admin\RbiDisclosureController::class,'edit'])->name('rbi_disclosure.edit');
+    Route::post('rbi_disclosure/update', [\App\Http\Controllers\Admin\RbiDisclosureController::class,'update'])->name('rbi_disclosure.update');
 });
 
 // Company
