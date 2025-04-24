@@ -487,7 +487,7 @@
                             $('#popupTable').append(`
                                 <tr>
                                     <td>
-                                        <label style="margin-left: 50px;" title="${drop.descrption}">
+                                        <label style="margin-left: 50px;" title="${drop.description}">
                                             <input type="checkbox" class="first" id="check_${key}" name="ques[${key}][check]">
                                             &nbsp;&nbsp; ${drop.particular}
                                         </label>
@@ -568,7 +568,7 @@
                                 <tr>
                                     <td>
                                         <input type="hidden" name="ques[${key}][row_id]" value="${drop.id}">
-                                        <label style="margin-left: 50px;" data-toggle="tooltip" title="${drop.descrption}">
+                                        <label style="margin-left: 50px;" data-toggle="tooltip" title="${drop.description}">
                                             <input type="checkbox" class="second" id="checkview_${key}" name="ques[${key}][check]" value="1" ${isChecked}>
                                             &nbsp;&nbsp; ${drop.particular}
                                         </label>
