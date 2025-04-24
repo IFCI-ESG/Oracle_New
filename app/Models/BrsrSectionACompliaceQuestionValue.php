@@ -17,6 +17,7 @@ class BrsrSectionACompliaceQuestionValue extends Model
         'current_fy_no_of_compliants',
         'current_no_of_pending_compliants',
         'current_fy_remarks',
+        'previous_fy_id',
         'previous_fy_no_of_compliants',
         'previous_no_of_pending_compliants',
         'previous_fy_remarks',
