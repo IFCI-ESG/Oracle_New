@@ -62,9 +62,23 @@
                                                         <h4 class="mb-2 h4">Sector</h4>
                                                     </div>
                                                     <div class="col-sm-6 border">
-                                                         <h3 class="mb-2 h4">{{ $corp_users->sector_name }}</h3>
+                                                        <h3 class="mb-2 h4">{{ $corp_users->sector_name_org }}
+
+                                      @php
+
+                                    $sectorclass = ($corp_users->sector_id == 21) ? $corp_users->sector_name : '';
+                                    @endphp
+                                    @if($sectorclass)
+                                    ({{$sectorclass}})
+                                    @endif
+
+
+                                                         </h3>
                                                     </div>
                                                 </div>
+
+
+                                                
                                                 <div class="row justify-content-center">
                                                     <div class="col-sm-4 border">
                                                         <h4 class="mb-2 h4">Segment</h4>

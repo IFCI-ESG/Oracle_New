@@ -352,6 +352,14 @@
                                                 </select>
                                             </td>
                                         </tr>
+                                              <tr id="sectorname-container" class="{{ $user->sector_id == 21 ? 'show' : 'd-none' }}">
+                                            <th>Sector Name <span class="text-danger">*</span></th>
+                                             <td colspan="2"><input type="text" id="sectorname" name="sector_name"  class="form-control form-control-sm"  value="{{ $user->sector_name }}"  >
+                                                @error('sector_name')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </td>
+                                        </tr>
                                         <tr>
                                             <th>Bank Zone <span class="text-danger">*</span></th>
                                             <td colspan="2">
@@ -530,7 +538,15 @@
 
     <script>
         $(document).ready(function() {
-
+      $('#sector').change(function() {
+                var selectedValue = $(this).val();
+                
+                if (selectedValue === '21') {
+                  $('#sectorname-container').show();
+                } else {
+                  $('#sectorname-container').hide();
+                }
+             });
             const saveBtn = document.getElementById("save_submit");
             const finalBtn = document.getElementById("finalsubmit");
 

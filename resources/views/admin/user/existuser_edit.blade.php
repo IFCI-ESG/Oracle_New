@@ -232,6 +232,12 @@
                                                     class="form-control form-control-sm" value="{{ $sector->where('id',$user->sector_id)->first()->name }}">
                                             </td>
                                         </tr>
+                                        <tr id="sectorname-container" class="{{ $user->sector_id == 21 ? 'show' : 'd-none' }}">
+                                            <th>Sector Name <span class="text-danger">*</span></th>
+                                             <td colspan="2"><input type="text" id="sectorname" name="sector_name" readonly  class="form-control form-control-sm"  value="{{ $user->sector_name }}"  >
+                                              
+                                            </td>
+                                        </tr>
                                         <tr>
                                             <th>Bank Zone <span class="text-danger">*</span></th>
                                             <td colspan="2">

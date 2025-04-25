@@ -31,7 +31,7 @@ class HomeController extends Controller
                     ->join('sector_master as sm','sm.id','users.sector_id')
                     ->join('comp_type_master as ctm','ctm.id','users.comp_type_id')
                     ->where('users.id',$user->id)
-                    ->first(['users.*','sm.name as sector_name','ctm.name as com_type']);
+                    ->first(['users.*','sm.name as sector_name_org','ctm.name as com_type']);
         
         // $retail_user = DB::table('users as u')->where('id',$user->id)->first();
 
