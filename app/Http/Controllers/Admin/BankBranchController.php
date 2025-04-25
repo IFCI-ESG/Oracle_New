@@ -535,7 +535,7 @@ class BankBranchController extends Controller
                 $branch->mobile = $request->mobile;
                 $branch->ifsc_code = $request->ifsc_code;
                 $branch->pincode = $request->pincode;
-              
+                $branch->status = 'D';
             $branch->save();
 
         });

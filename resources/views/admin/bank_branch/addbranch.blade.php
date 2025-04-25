@@ -2,12 +2,6 @@
 
 @section('css')
     @vite(['node_modules/sweetalert2/dist/sweetalert2.min.css'])
-    <style>
-        /* Light placeholder color for all input fields */
-        input::placeholder {
-            color: #d3d3d3 !important;
-        }
-    </style>
 @endsection
 
 @section('content')
@@ -153,7 +147,9 @@
                                                 <input type="text" id="contact_person" name="contact_person"
                                                     class="form-control " 
                                                     placeholder="Enter Contact Person"  value="{{ old('contact_person') }}" required />
-                                                <div id="contact_person-error-message" style="color: red; display: none; font-size: 0.9rem;"></div>
+                                                <span
+                                                    style="color: #262626; font-size: 0.8rem; display: block; margin-top: 5px;">(Contact
+                                                    Person - Special Characters And Integers Are Not Allowed)</span>
                                             </td>
                                         </tr>
                                         <tr>
@@ -164,24 +160,21 @@
                                                 <input type="text" id="designation" name="designation"
                                                     class="form-control "  value="{{ old('designation') }}"
                                                     placeholder="Enter Designation" />
-                                                <div id="designation-error-message" style="color: red; display: none; font-size: 0.9rem;"></div>
+                                                <span
+                                                    style="color: #262626; font-size: 0.8rem; display: block; margin-top: 5px;">(Designation
+                                                    - Special Characters And Integers Are Not Allowed)</span>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th class="text-center align-middle shadow-none textcolor" style="font-size: 0.9rem">11.</th>
                                             <th class="text-center align-middle shadow-none textcolor" style="font-size: 0.9rem">Mobile <span style="color: red;">*</span> </th>
                                             <td class="shadow-none textcolor">
-                                                <div style="display: flex; align-items: center;">
-                                                    <span style="margin-right: 5px;">+91</span>
-                                                    <input type="tel" id="mobile" name="mobile"
-                                                        class="form-control form-control-sm text-right" style="width:50%" 
-                                                        oninput="restrictMobileInput(event)" onblur="validateMobileNumber('mobile')" maxlength="10"
-                                                        placeholder="Enter 10 digit mobile number" value="{{ old('mobile') }}" required />
-                                                </div>
-                                                <span style="color: #888; font-size: 0.8rem; display: block; margin-top: 5px;">
-                                                    (Please enter a valid 10-digit Mobile Number)
-                                                </span>
-                                                <div id="mobile-error-message" style="color: red; display: none; font-size: 0.9rem;"></div>
+                                                <input type="tel" id="mobile" name="mobile"
+                                                    class="form-control " 
+                                                    placeholder="Enter 10 digit mobile number" value="{{ old('mobile') }}" required />
+                                                <span
+                                                    style="color: #262626; font-size: 0.8rem; display: block; margin-top: 5px;">(Please
+                                                    enter a valid 10-digit Mobile Number)</span>
                                             </td>
                                         </tr>
 
@@ -306,139 +299,46 @@
                }
         }
 
-        function restrictMobileInput(event) {
-            const input = event.target;
-            input.value = input.value.replace(/[^0-9]/g, '').slice(0, 10);
-        }
-
-        function validateMobileNumber(fieldId) {
-            const mobileNumber = document.getElementById(fieldId).value;
-            const errorMessage = document.getElementById(fieldId + '-error-message');
-            
-            // Check if all digits are same
-            const allSameDigits = /^(\d)\1{9}$/.test(mobileNumber);
-            
-            // Check if number is in ascending or descending sequence
-            const isSequential = /^(0123456789|9876543210)$/.test(mobileNumber);
-            
-            // Check if number starts with 0
-            const startsWithZero = mobileNumber.startsWith('0');
-            
-            // Check for repeated patterns
-            const hasRepeatedPattern = /^(\d{5})\1$/.test(mobileNumber) || 
-                                     /^(\d{4})\1\d{2}$/.test(mobileNumber) ||
-                                     /^(\d{3})\1\d{4}$/.test(mobileNumber) ||
-                                     /^(\d{2})\1\d{6}$/.test(mobileNumber);
-            
-            if (allSameDigits) {
-                errorMessage.textContent = "Invalid mobile number: All digits cannot be the same";
-                errorMessage.style.display = "block";
-                return false;
-            } else if (isSequential) {
-                errorMessage.textContent = "Invalid mobile number: Cannot be a sequential number";
-                errorMessage.style.display = "block";
-                return false;
-            } else if (startsWithZero) {
-                errorMessage.textContent = "Invalid mobile number: Cannot start with 0";
-                errorMessage.style.display = "block";
-                return false;
-            } else if (hasRepeatedPattern) {
-                errorMessage.textContent = "Invalid mobile number: Cannot have repeated digit patterns";
-                errorMessage.style.display = "block";
-                return false;
-            } else {
-                errorMessage.style.display = "none";
-                return true;
-            }
-        }
-
-        function validateEmail() {
-            const email = document.getElementById("email").value;
-            const errorMessage = document.getElementById("email-error-message");
-            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            
-            if (!emailRegex.test(email)) {
-                errorMessage.textContent = "Please enter a valid email address (e.g., example@domain.com)";
-                errorMessage.style.display = "block";
-                return false;
-            } else {
-                errorMessage.style.display = "none";
-                return true;
-            }
-        }
-
-        function validateContactPerson() {
-            const contactPerson = document.getElementById("contact_person").value;
-            const errorMessage = document.getElementById("contact_person-error-message");
-            const regex = /^[A-Za-z\s]+$/;
-            
-            if (!regex.test(contactPerson)) {
-                errorMessage.textContent = "Special Characters And Integers Are Not Allowed";
-                errorMessage.style.display = "block";
-                return false;
-            } else {
-                errorMessage.style.display = "none";
-                return true;
-            }
-        }
-
-        function validateDesignation() {
-            const designation = document.getElementById("designation").value;
-            const errorMessage = document.getElementById("designation-error-message");
-            const regex = /^[A-Za-z\s]+$/;
-            
-            if (!regex.test(designation)) {
-                errorMessage.textContent = "Special Characters And Integers Are Not Allowed";
-                errorMessage.style.display = "block";
-                return false;
-            } else {
-                errorMessage.style.display = "none";
-                return true;
-            }
-        }
-
         function toggleSaveButton() {
-            const ifscCode = document.getElementById("ifsc_code").value;
-            const branchName = document.getElementById("branch_name").value;
-            const email = document.getElementById("email").value;
-            const contactPerson = document.getElementById("contact_person").value;
-            const designation = document.getElementById("designation").value;
-            const mobile = document.getElementById("mobile").value;
-            const pincode = document.getElementById("pincode").value;
-            const state = document.getElementById("state").value;
-            const district = document.getElementById("district").value;
+            var branchName = document.getElementById("branch_name").value;
+            var email = document.getElementById("email").value;
+            var contactPerson = document.getElementById("contact_person").value;
+            var designation = document.getElementById("designation").value;
+            var mobile = document.getElementById("mobile").value;
+            var ifscCode = document.getElementById("ifsc_code").value;
+            var pincode = document.getElementById("pincode").value;
 
-            // Validate mobile number first
-            const isMobileValid = mobile.trim() !== "" && validateMobileNumber('mobile');
-            
-            const isValid = 
-                ifscCode.trim() !== "" &&
-                branchName.trim() !== "" &&
-                validateEmail() &&
-                validateContactPerson() &&
-                validateDesignation() &&
-                isMobileValid &&
-                pincode.trim() !== "" &&
-                state.trim() !== "" &&
-                district.trim() !== "";
+          //  var isValid = true;
 
-            document.getElementById("submit").disabled = !isValid;
+            // Validation for each field
+            // if (branchName.trim() === "") isValid = false;
+            if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) isValid = false;
+            if (contactPerson.trim() === "") isValid = false;
+            if (designation.trim() === "") isValid = false;
+            if (!/^\d{10}$/.test(mobile)) isValid = false;
+            if (!/^[A-Za-z]{4}\d{7}$/.test(ifscCode)) isValid = false;
+            if (!/^\d{6}$/.test(pincode)) isValid = false;
+
+            // console.log("Branch Name: ", branchName);
+            console.log("Email: ", email);
+            console.log("Contact Person: ", contactPerson);
+            console.log("Designation: ", designation);
+            console.log("Mobile: ", mobile);
+            console.log("IFSC Code: ", ifscCode);
+            console.log("Pincode: ", pincode);
+
+            // Enable or disable the submit button
+           // document.getElementById("submit").disabled = !isValid;
         }
 
-        // Attach event listeners to all input fields
+        // Attach event listener to input fields
         document.querySelectorAll('input').forEach(input => {
             input.addEventListener('input', toggleSaveButton);
-            if (input.id === 'mobile') {
-                input.addEventListener('blur', function() {
-                    validateMobileNumber('mobile');
-                    toggleSaveButton();
-                });
-            }
         });
 
-        // Initialize the save button state
-        document.addEventListener('DOMContentLoaded', function() {
-            toggleSaveButton();
-        });
+        // Validate form submission
+        // function validateForm() {
+        //     return document.getElementById("submit").enabled;
+        // }
     </script>
 @endsection

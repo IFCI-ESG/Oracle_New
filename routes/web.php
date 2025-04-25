@@ -522,9 +522,3 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 
 Route::post('/check-credentials', [\App\Http\Controllers\Auth\OtpController::class, 'checkCredentials'])->name('check.credentials');
 Route::post('/verify-otp', [\App\Http\Controllers\Auth\OtpController::class, 'verifyOtp'])->name('verify.otp');
-
-// Forgot Password Routes
-Route::get('/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'showForgotPasswordForm'])
-    ->name('password.request');
-Route::post('/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendTempPassword'])
-    ->name('password.email');

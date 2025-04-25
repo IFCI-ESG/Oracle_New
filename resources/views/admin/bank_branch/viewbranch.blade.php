@@ -40,122 +40,102 @@
                     <div class="card border-primary m-2 mt-0">
                         <div class="card-body">
                             <table class="table table-sm table-striped table-bordered table-hover mb-0">
-                                <thead>
-                                    <tr class="table-success">
-                                        <th style="width: 8%">S.No</th>
-                                        <th style="width: 32%">Particulars</th>
-                                        <th style="width: 60%">Value</th>
-                                    </tr>
-                                </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1.</td>
-                                        <th>IFSC Code <span style="color: red;">*</span></th>
-                                        <td>
-                                            <input type="text" id="ifsc_code" name="ifsc_code"
-                                                value="{{ $bank_details->ifsc_code }}"
-                                                class="form-control form-control-sm" style="width: 50%"
-                                                readonly />
-                                        </td>
+                                    <tr class="table-success">
+                                        <th class="text-center p-2" style="width: 5%">Sr.No.</th>
+                                        <th class="text-center p-2" style="width: 25%">Particulars</th>
+                                        <th class="text-center p-2" style="width: 40%">Value</th>
                                     </tr>
                                     <tr>
-                                        <td>2.</td>
-                                        <th>Branch Name <span style="color: red;">*</span></th>
-                                        <td>
+                                        <th class="text-center align-middle" style="font-size: 0.9rem">1.</th>
+                                        <th class="text-center align-middle" style="font-size: 0.9rem">Branch Name <span style="color: red;">*</span></th>
+                                        <td class="d-flex flex-row-reverse justify-content-between gap-2">
                                             <input type="text" id="branch_name" name="branch_name"
                                                 value="{{ $bank_details->name }}"
-                                                class="form-control form-control-sm" style="width: 50%"
-                                                readonly />
+                                                class="form-control form-control-sm text-right" style="max-width: 286px;width:100%;"
+                                                placeholder="Enter Branch Name" disabled />
+                                            <span
+                                                style="color: #888; font-size: 0.8rem; display: block; margin-top: 5px;font-weight: 700;">(Branch
+                                                Name - Special Characters And Integers Are Not Allowed)</span>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>3.</td>
-                                        <th>MICR <span style="color: red;">*</span></th>
-                                        <td>
-                                            <input type="text" id="micr_code" name="micr_code"
-                                                value="{{ $bank_details->micr_code }}"
-                                                class="form-control form-control-sm" style="width: 50%"
-                                                readonly />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>4.</td>
-                                        <th>Address <span style="color: red;">*</span></th>
-                                        <td>
-                                            <input type="text" id="full_address" name="full_address"
-                                                value="{{ $bank_details->full_address }}"
-                                                class="form-control form-control-sm" style="width: 50%"
-                                                readonly />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>5.</td>
-                                        <th>Pincode <span style="color: red;">*</span></th>
-                                        <td>
-                                            <input type="number" id="pincode" name="pincode"
-                                                value="{{ $bank_details->pincode }}"
-                                                class="form-control form-control-sm" style="width: 50%"
-                                                readonly />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>6.</td>
-                                        <th>State <span style="color: red;">*</span></th>
-                                        <td>
-                                            <input type="text" id="state" name="state"
-                                                value="{{ $bank_details->state }}"
-                                                class="form-control form-control-sm" style="width: 50%"
-                                                readonly />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>7.</td>
-                                        <th>District <span style="color: red;">*</span></th>
-                                        <td>
-                                            <input type="text" id="district" name="district"
-                                                value="{{ $bank_details->district }}"
-                                                class="form-control form-control-sm" style="width: 50%"
-                                                readonly />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>8.</td>
-                                        <th>Email <span style="color: red;">*</span></th>
-                                        <td>
+                                        <th class="text-center align-middle" style="font-size: 0.9rem">2.</th>
+                                        <th class="text-center align-middle" style="font-size: 0.9rem">Email <span style="color: red;">*</span></th>
+                                        <td class="d-flex flex-row-reverse justify-content-between gap-2">
                                             <input type="email" id="email" name="email"
                                                 value="{{ $bank_details->email }}"
-                                                class="form-control form-control-sm" style="width: 50%"
-                                                readonly />
+                                                class="form-control form-control-sm text-right p-2" style="max-width: 286px;width:100%;"
+                                                placeholder="example@domain.com" disabled />
+                                            <div id="email-error-message"
+                                                style="color: red; display: none; font-size: 0.9rem;"></div>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>9.</td>
-                                        <th>Contact Person <span style="color: red;">*</span></th>
-                                        <td>
+                                        <th class="text-center align-middle" style="font-size: 0.9rem">3.</th>
+                                        <th class="text-center align-middle" style="font-size: 0.9rem">Contact Person <span style="color: red;">*</span>
+                                        </th>
+                                        <td class="d-flex flex-row-reverse justify-content-between gap-2">
                                             <input type="text" id="contact_person" name="contact_person"
                                                 value="{{ $bank_details->contact_person }}"
-                                                class="form-control form-control-sm" style="width: 50%"
-                                                readonly />
+                                                class="form-control form-control-sm text-right" style="max-width: 286px;width:100%;"
+                                                placeholder="Enter Contact Person" disabled />
+                                            <span
+                                                style="color: #888; font-size: 0.8rem; display: block; margin-top: 5px;font-weight: 700;">(Contact
+                                                Person - Special Characters And Integers Are Not Allowed)</span>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>10.</td>
-                                        <th>Designation <span style="color: red;">*</span></th>
-                                        <td>
+                                        <th class="text-center align-middle" style="font-size: 0.9rem">4.</th>
+                                        <th class="text-center align-middle" style="font-size: 0.9rem">Designation <span style="color: red;">*</span>
+                                        </th>
+                                        <td class="d-flex flex-row-reverse justify-content-between gap-2">
                                             <input type="text" id="designation" name="designation"
                                                 value="{{ $bank_details->designation }}"
-                                                class="form-control form-control-sm" style="width: 50%"
-                                                readonly />
+                                                class="form-control form-control-sm text-right" style="max-width: 286px;width:100%;"
+                                                placeholder="Enter Designation" />
+                                            <span
+                                                style="color: #888; font-size: 0.8rem; display: block; margin-top: 5px;font-weight: 700;">(Designation
+                                                - Special Characters And Integers Are Not Allowed)</span>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>11.</td>
-                                        <th>Mobile <span style="color: red;">*</span></th>
-                                        <td>
+                                        <th class="text-center align-middle" style="font-size: 0.9rem">5.</th>
+                                        <th class="text-center align-middle" style="font-size: 0.9rem">Mobile <span style="color: red;">*</span> </th>
+                                        <td class="d-flex flex-row-reverse justify-content-between gap-2">
                                             <input type="tel" id="mobile" name="mobile"
                                                 value="{{ $bank_details->mobile }}"
-                                                class="form-control form-control-sm" style="width: 50%"
-                                                readonly />
+                                                class="form-control form-control-sm text-right" style="max-width: 286px;width:100%;"
+                                                placeholder="Enter 10 digit mobile number" disabled />
+                                            <span
+                                                style="color: #888; font-size: 0.8rem; display: block; margin-top: 5px;font-weight: 700;">(Please
+                                                enter a valid 10-digit Mobile Number)</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-center align-middle" style="font-size: 0.9rem">6.</th>
+                                        <th class="text-center align-middle" style="font-size: 0.9rem">IFSC Code <span style="color: red;">*</span></th>
+                                        <td class="d-flex flex-row-reverse justify-content-between gap-2">
+                                            <input type="text" id="ifsc_code" name="ifsc_code"
+                                                value="{{ $bank_details->ifsc_code }}"
+                                                class="form-control form-control-sm text-right" style="max-width: 286px;width:100%;"
+                                                placeholder="Enter IFSC Code" disabled maxlength="11" />
+                                            <span
+                                                style="color: #888; font-size: 0.8rem; display: block; margin-top: 5px;font-weight: 700;">(Please
+                                                enter a valid 11-character IFSC Code)</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-center align-middle" style="font-size: 0.9rem">7.</th>
+                                        <th class="text-center align-middle" style="font-size: 0.9rem">Pincode <span style="color: red;">*</span></th>
+                                        <td class="d-flex flex-row-reverse justify-content-between gap-2">
+                                            <input type="number" id="pincode" name="pincode"
+                                                value="{{ $bank_details->pincode }}"
+                                                class="form-control form-control-sm text-right p-2" style="max-width: 286px;width:100%;"
+                                                placeholder="Enter Pincode" disabled minlength="6" maxlength="6" />
+                                            <span
+                                                style="color: #888; font-size: 0.8rem; display: block; margin-top: 5px;font-weight: 700;">(Please
+                                                enter a valid 6-digit Pincode)</span>
                                         </td>
                                     </tr>
                                 </tbody>
