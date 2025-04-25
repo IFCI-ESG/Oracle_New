@@ -61,7 +61,15 @@
                                     <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.8rem;">{{ $key + 1 }}</td>
                                     <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.8rem;"><a href="{{route('admin.user.home',['id' => encrypt($user->id)])}}">{{$user->name}} </a></td>
                                     <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.8rem;">{{$user->comp_type}}</td>
-                                    <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.8rem;">{{$user->sector}}</td>
+                                    <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.8rem;">{{$user->sector}}
+
+                                    @php
+                                    $sectorclass = ($user->sector_id == 21) ? $user->sector_name : '';
+                                    @endphp
+                                    @if($sectorclass)
+                                    ({{$sectorclass}})
+                                    @endif
+                                    </td>
                                     <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.8rem;">{{$user->pan ? $user->pan : '--'}}</td>
                                     <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.8rem;">{{$user->unique_login_id ? $user->unique_login_id : '--'}}</td>
                                     <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.8rem;">
