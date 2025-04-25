@@ -252,6 +252,14 @@ class LoginController extends Controller
         }
 
         if ($user) {
+            // Check if user is active
+            if ($user->isactive !== 'Y') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User is In-Active. Please contact administration.'
+                ]);
+            }
+
             // Check if user is blocked and attempt to unblock if 10 minutes have passed
             if ($user->isblocked == 1) {
                 if ($this->checkAndUnblockUser($user)) {
