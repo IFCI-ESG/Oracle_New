@@ -275,13 +275,13 @@
                                                 <span style="margin-right: 5px;">+91</span>
                                                 <input type="tel" id="mobile" name="mobile"
                                                     class="form-control form-control-sm text-right" style="width:50%"  value="{{ old('mobile') }}"
-                                                    oninput="restrictMobileInput(event)" onblur="validateMobileNumber('mobile')" maxlength="10"
+                                                    oninput="restrictMobileInput(event)" maxlength="10"
                                                     placeholder="Enter 10 digit mobile number" required />
                                             </div>
-                                            <span style="color: #888; font-size: 0.8rem; display: block; margin-top: 5px;">
+                                            <span
+                                                style="color: #888; font-size: 0.8rem; display: block; margin-top: 5px;">
                                                 (Please enter a valid 10-digit Mobile Number)
                                             </span>
-                                            <div id="mobile-error-message" style="color: red; display: none; font-size: 0.9rem;"></div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -292,13 +292,13 @@
                                                 <span style="margin-right: 5px;">+91</span>
                                                 <input type="tel" id="altr_mobile" name="altr_mobile"
                                                     class="form-control form-control-sm text-right"  value="{{ old('altr_mobile') }}" style="width:50%"
-                                                    oninput="restrictMobileInput(event)" onblur="validateMobileNumber('altr_mobile')" maxlength="10"
+                                                    oninput="restrictMobileInput(event)" maxlength="10"
                                                     placeholder="Enter Alternate Mobile" />
                                             </div>
-                                            <span style="color: #888; font-size: 0.8rem; display: block; margin-top: 5px;">
+                                            <span
+                                                style="color: #888; font-size: 0.8rem; display: block; margin-top: 5px;">
                                                 (Please enter a valid 10-digit Alternate Mobile Number)
                                             </span>
-                                            <div id="altr_mobile-error-message" style="color: red; display: none; font-size: 0.9rem;"></div>
                                         </td>
                                     </tr>
 
@@ -354,6 +354,7 @@
         </div>
     </div>
 </div>
+
 <script>
 function toggleSaveButton() {
     var bankName = document.getElementById("bank_name").value;
@@ -399,10 +400,10 @@ function toggleSaveButton() {
     if (designation && !/^[A-Za-z\s]+$/.test(designation)) {
         isValid = false;
     }
-    if (!/^[0-9]{10}$/.test(mobile) || !validateMobileNumber('mobile')) {
+    if (!/^[0-9]{10}$/.test(mobile)) {
         isValid = false;
     }
-    if (altr_mobile && (!/^[0-9]{10}$/.test(altr_mobile) || !validateMobileNumber('altr_mobile'))) {
+    if (!/^[0-9]{10}$/.test(altr_mobile)) {
         isValid = false;
     }
     if (!license_key) {
@@ -622,48 +623,6 @@ function enableValidToDate() {
     } else {
         validToField.disabled = true;
         validToField.value = '';
-    }
-}
-</script>
-<script>
-function validateMobileNumber(fieldId) {
-    const mobileNumber = document.getElementById(fieldId).value;
-    const errorMessage = document.getElementById(fieldId + '-error-message');
-    
-    // Check if all digits are same
-    const allSameDigits = /^(\d)\1{9}$/.test(mobileNumber);
-    
-    // Check if number is in ascending or descending sequence
-    const isSequential = /^(0123456789|9876543210)$/.test(mobileNumber);
-    
-    // Check if number starts with 0
-    const startsWithZero = mobileNumber.startsWith('0');
-    
-    // Check for repeated patterns (like 0000011111, 1111122222, etc.)
-    const hasRepeatedPattern = /^(\d{5})\1$/.test(mobileNumber) || 
-                             /^(\d{4})\1\d{2}$/.test(mobileNumber) ||
-                             /^(\d{3})\1\d{4}$/.test(mobileNumber) ||
-                             /^(\d{2})\1\d{6}$/.test(mobileNumber);
-    
-    if (allSameDigits) {
-        errorMessage.textContent = "Invalid mobile number: All digits cannot be the same";
-        errorMessage.style.display = "block";
-        return false;
-    } else if (isSequential) {
-        errorMessage.textContent = "Invalid mobile number: Cannot be a sequential number";
-        errorMessage.style.display = "block";
-        return false;
-    } else if (startsWithZero) {
-        errorMessage.textContent = "Invalid mobile number: Cannot start with 0";
-        errorMessage.style.display = "block";
-        return false;
-    } else if (hasRepeatedPattern) {
-        errorMessage.textContent = "Invalid mobile number: Cannot have repeated digit patterns";
-        errorMessage.style.display = "block";
-        return false;
-    } else {
-        errorMessage.style.display = "none";
-        return true;
     }
 }
 </script>
