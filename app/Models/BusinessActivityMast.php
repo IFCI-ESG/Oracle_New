@@ -9,7 +9,7 @@ class BusinessActivityMast extends Model
     protected $table = 'business_activity_master';
     protected $fillable = [
         'id',
-        'acitvity',
+        'activity',
         'source',
         'scope_id',
         'sector_id',

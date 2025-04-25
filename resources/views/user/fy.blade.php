@@ -60,29 +60,13 @@
                                                     {{ $fy->fy }}
                                                 </td>
                                                 <td class="text-center">
-                                                    @if ($bank_details->class_type_id == 1 || $bank_details->class_type_id == 2)
-                                                        @if (count($ques->where('fy_id',$fy->id)))
-                                                            @if($input_mast->where('fy_id',$fy->id)->first()->status == 'S')
-                                                                <a class="btn btn-primary btn-sm"
-                                                                    href="{{ route('user.questionnaire_view', ['branch_id' => encrypt($bank_details->branch_id),'class_type'=> encrypt($bank_details->class_type_id),'com_id' => encrypt($user->id),'fy_id'=> encrypt($fy->id)] ) }}"> View</a>
-                                                            @else
-                                                                <a class="btn btn-primary btn-sm"
-                                                                    href="{{ route('user.addquestionnaire', ['branch_id' => encrypt($bank_details->branch_id),'class_type'=> encrypt($bank_details->class_type_id),'fy_id'=> encrypt($fy->id)] ) }}"> Edit</a>
-                                                            @endif
-                                                        @else
-                                                            <a class="btn btn-primary btn-sm"
-                                                                href="{{ route('user.addquestionnaire', ['branch_id' => encrypt($bank_details->branch_id),'class_type'=> encrypt($bank_details->class_type_id),'fy_id'=> encrypt($fy->id)]) }}"> Create</a>
-                                                        @endif
-                                                    @elseif ($bank_details->class_type_id == 3)
-                                                        3
-                                                    @elseif ($bank_details->class_type_id == 4)
-                                                        4
-                                                    @elseif ($bank_details->class_type_id == 5)
-                                                        5
-                                                    @elseif ($bank_details->class_type_id == 6)
-                                                        <a class="btn btn-primary btn-sm"
-                                                            href="{{ route('user.motor', ['branch_id' => encrypt($bank_details->branch_id),'class_type'=> encrypt($bank_details->class_type_id),'fy_id'=> encrypt($fy->id)]) }}"> Create</a>
-
+                                                    @php
+                                                        $submitted = $input_mast->where('fy_id', $fy->id)->where('status', 'S')->first();
+                                                    @endphp
+                                                    @if($submitted)
+                                                        <a href="{{ route('user.questionnaire_view', ['branch_id' => encrypt($bank_details->branch_id), 'class_type' => encrypt($bank_details->class_type_id), 'com_id' => encrypt(Auth::user()->id), 'fy_id' => encrypt($fy->id)]) }}" class="btn btn-warning btn-sm">View</a>
+                                                    @else
+                                                        <a href="{{ route('user.addquestionnaire', ['branch_id' => encrypt($bank_details->branch_id), 'class_type' => encrypt($bank_details->class_type_id), 'fy_id' => encrypt($fy->id)]) }}" class="btn btn-primary btn-sm">Create</a>
                                                     @endif
                                                 </td>
                                             </tr>

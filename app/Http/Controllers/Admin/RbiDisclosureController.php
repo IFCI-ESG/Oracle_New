@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -8,47 +8,72 @@ use DB;
 use Auth;
 use Carbon\Carbon;
 use App\Models\User;
-use App\Models\QuestionValue;
-use App\Models\BusinessActivityMast;
-use App\Models\BusinessActivityValue;
-use App\Models\InputSheetMast;
-use App\Models\UnsdgValue;
-use App\Models\DocumentUploads;
-use App\Models\DocumentMaster;
-use App\Models\DataQualityValue;
+use App\Models\AdminUser;
 use App\Models\BankFinancialDetails;
-use App\Models\PillarValue;
+use App\Models\RbiPillarValue;
+use App\Models\RbiDisclosureMast;
 use Validator;
-
 
 use Illuminate\Support\Facades\File;
 use SimpleXMLElement;
 
-class ThematicController extends Controller
+class RbiDisclosureController extends Controller
 {
 
     public function index()
     {
-        $user = Auth::user();
+        // dd('d');
 
-        $pillar_mast = DB::table('pillar_master as pm')->where('status',1)->get();
-        $pillar_ques = DB::table('pillar_ques_master as pqm')->where('status',1)->orderby('id')->get();
-        $pillar_val = DB::table('pillar_value as pm')->where('com_id',$user->id)->get();
+        $fys = DB::table('fy_masters')->orderby('id','desc')->get();
+
+        $rbi_mast = RbiDisclosureMast::where('bank_id', Auth::user()->id)->orderby('id')->get();
+        // dd($rbi_mast);
+
+        // $pillar_mast = DB::table('rbi_pillar_master as pm')->where('status',1)->orderby('id')->get();
+        // $pillar_ques = DB::table('rbi_pillar_ques_master as pqm')->where('status',1)->orderby('id')->get();
+        $pillar_val = DB::table('rbi_pillar_value as rpv')
+                            ->join('rbi_pillar_ques_master as rpqm','rpqm.id','rpv.ques_id')
+                            ->where('bank_id',Auth::user()->id)
+                            ->orderby('rpqm.id')
+                            ->get(['rpv.*','rpqm.pillar_id']);
+
+        // $pillar_val =  RbiPillarValue::where('com_id',Auth::user()->id)->get();
         // dd($pillar_mast,$pillar_ques, $pillar_val );
 
-        return view('user.thematic.index', compact('pillar_mast','pillar_ques','pillar_val','user'));
+        return view('admin.rbi_disclosure.index', compact('rbi_mast','fys','pillar_val'));
 
     }
 
-    public function pillar($pillar_id)
+    public function pillar($fy_id)
+    {
+        $fy_id = decrypt($fy_id);
+
+        $fys = DB::table('fy_masters')->where('id',$fy_id)->first();
+
+        $rbi_mast = RbiDisclosureMast::where('bank_id', Auth::user()->id)->where('fy_id', $fy_id)->first();
+            // dd($rbi_mast);
+        $pillar_mast = DB::table('rbi_pillar_master as pm')->where('status',1)->orderby('id')->get();
+        $pillar_ques = DB::table('rbi_pillar_ques_master as pqm')->where('status',1)->orderby('id')->get();
+        $pillar_val = DB::table('rbi_pillar_value as rpv')
+                            ->join('rbi_pillar_ques_master as rpqm','rpqm.id','rpv.ques_id')
+                            ->where('bank_id',Auth::user()->id)
+                            ->orderby('rpqm.id')
+                            ->get(['rpv.*','rpqm.pillar_id']);
+
+        return view('admin.rbi_disclosure.pillar', compact('pillar_mast','pillar_ques','pillar_val','fys','rbi_mast'));
+
+    }
+
+    public function create($pillar_id,$fy_id)
     {
         $pillar_id = decrypt($pillar_id);
-        // dd($pillar_id);
+        $fy_id = decrypt($fy_id);
+        // dd($pillar_id,$fy_id);
 
         $user = Auth::user();
 
-        $pillar_ques = DB::table('pillar_ques_master as pqm')
-                                ->join('pillar_master as pm','pm.id','pqm.pillar_id')
+        $pillar_ques = DB::table('rbi_pillar_ques_master as pqm')
+                                ->join('rbi_pillar_master as pm','pm.id','pqm.pillar_id')
                                 ->where('pqm.pillar_id',$pillar_id)
                                 ->where('pqm.status',1)
                                 ->orderby('pqm.id')
@@ -56,34 +81,44 @@ class ThematicController extends Controller
 
         // dd($pillar_ques);
 
-        return view('user.thematic.create', compact('pillar_ques','user'));
+        return view('admin.rbi_disclosure.create', compact('pillar_ques','user','fy_id'));
 
     }
 
 
     public function store(Request $request)
     {
-        // dd($request);
+        // dd($request,$request->fy_id);
         // try {
-            $user = Auth::user();
-
+            $rbi_mast = RbiDisclosureMast::where('bank_id', Auth::user()->id)->where('fy_id',$request->fy_id)->first();
             DB::transaction(function () use ($request)
             {
+                if(!$rbi_mast){
+                    $rbi = new RbiDisclosureMast;
+                        $rbi->bank_id = Auth::user()->id;
+                        $rbi->status = 'D';
+                        $rbi->fy_id = $request->fy_id;
+                    $rbi->save();
+                }
+
+                // dd($rbi);
+
                 foreach ($request->part as $value) {
-                    // if(isset($value['check']))
-                    // {
-                        $data = new PillarValue;
-                            $data->com_id = Auth::user()->id ;
-                            $data->pillar_id = isset($request->pillar_id) ? $request->pillar_id : null ;
+                    if(isset($value['option']) || isset($value['value']))
+                    {
+                        $data = new RbiPillarValue;
+                            $data->rbi_mast_id = $rbi->id ;
+                            $data->bank_id = Auth::user()->id ;
                             $data->ques_id = isset($value['ques_id']) ? $value['ques_id'] : null ;
+                            $data->option = isset($value['option']) ? $value['option'] : Null ;
                             $data->value = isset($value['value']) ? $value['value'] : null ;
                         $data->save();
-                    // }
+                    }
                 }
             });
             alert()->success('Record Inserted', 'Success!')->persistent('Close');
             // return redirect()->back();
-            return redirect()->route('user.thematic.edit',['com_id' => encrypt($user->id) ,'pillar_id' => encrypt($request->pillar_id)]);
+            return redirect()->route('admin.rbi_disclosure.edit',['bank_id' => encrypt(Auth::user()->id) ,'pillar_id' => encrypt($request->pillar_id), 'fy_id' => encrypt($request->fy_id)]);
         // } catch (\Exception $e) {
         //     alert()->warning('Something Went Wrong', 'Warning!')->persistent('Close');
         //     // errorMail($e, $request->id, Auth::user()->id);
@@ -91,54 +126,78 @@ class ThematicController extends Controller
         // }
     }
 
-    public function edit($com_id,$pillar_id)
+    public function edit($bank_id,$pillar_id,$fy_id)
     {
-        $com_id = decrypt($com_id);
+        $bank_id = decrypt($bank_id);
         $pillar_id = decrypt($pillar_id);
-        // dd($com_id,$pillar_id);
+        $fy_id = decrypt($fy_id);
+        // dd($bank_id,$pillar_id);
 
-        $user = Auth::user();
-
-        $pillar_val = DB::table('pillar_value as pv')
-                            ->join('pillar_ques_master as pqm','pqm.id','pv.ques_id')
-                            ->join('pillar_master as pm','pm.id','pqm.pillar_id')
-                            ->where('pv.com_id',$com_id)
-                            ->where('pv.pillar_id',$pillar_id)
-                            ->get(['pv.*','pqm.name','pm.name as pillar_name','pqm.data_type']);
+       $pillar_val = DB::table('rbi_pillar_ques_master as rpqm')
+                            ->leftJoin('rbi_pillar_value as rpv', function($join) use ($bank_id) {
+                                $join->on('rpqm.id', '=', 'rpv.ques_id')
+                                    ->where('rpv.bank_id', '=', $bank_id); // Ensures filtering only for a specific company
+                            })
+                            ->join('rbi_pillar_master as rpm', 'rpm.id', '=', 'rpqm.pillar_id')
+                            ->where('rpqm.pillar_id', $pillar_id)
+                            ->orderby('rpqm.id')
+                            ->get([
+                                'rpv.*', 
+                                'rpqm.types_of_disclosure', 
+                                'rpqm.ques',
+                                'rpqm.id as ques_id', 
+                                'rpm.name as pillar_name', 
+                                'rpqm.data_type'
+                            ]);
+    
             // dd($pillar_val);
 
-        $pillar_ques = DB::table('pillar_ques_master as pqm')
-                                ->join('pillar_master as pm','pm.id','pqm.pillar_id')
-                                ->where('pqm.pillar_id',$pillar_id)
-                                ->where('pqm.status',1)
-                                ->orderby('pqm.id')
-                                ->get(['pqm.*','pm.name as pillar_name']);
-
-        return view('user.thematic.edit', compact('pillar_val','pillar_ques','user'));
+        return view('admin.rbi_disclosure.edit', compact('pillar_val','fy_id','pillar_id'));
     }
 
 
     public function update(Request $request)
     {
         // dd($request);
-        try{
+        // try{
+
             DB::transaction(function () use ($request)
             {
+                $rbi_mast = RbiDisclosureMast::where('bank_id', Auth::user()->id)->where('fy_id',$request->fy_id)->first();
+
                 foreach ($request->part as $val) {
-                    $data = PillarValue::find($val['row_id']);
-                        $data->value = isset($val['value']) ? $val['value'] : null;
-                        $data->updated_at = Carbon::now();
-                    $data->save();
+                    if(isset($val['row_id']))
+                    {
+                        // dd($request,'f');
+                        $data = RbiPillarValue::find($val['row_id']);
+                            $data->option = isset($val['option']) ? $val['option'] : Null ;
+                            $data->value = isset($val['value']) ? ((isset($val['option']) ? ($val['option'] == 'N' ? null : $val['value']) : $val['value'] )) : null;
+                            $data->updated_at = Carbon::now();
+                        $data->save();
+                    }
+                    else
+                    {
+                        if(isset($val['option']) || isset($val['value']))
+                        {
+                            $data = new RbiPillarValue;
+                                $data->rbi_mast_id = $rbi_mast->id ;
+                                $data->bank_id = Auth::user()->id ;
+                                $data->ques_id = isset($val['ques_id']) ? $val['ques_id'] : null ;
+                                $data->option = isset($val['option']) ? $val['option'] : Null ;
+                                $data->value = isset($val['value']) ? $val['value'] : null ;
+                            $data->save();
+                        }
+                    }
                 }
             });
 
             alert()->success('Data Updated Successfully', 'Success!')->persistent('Close');
             return redirect()->back();
-        }catch (\Exception $e)
-        {
-            alert()->Warning('Something Went Wrong', 'Warning!')->persistent('Close');
-            return redirect()->back();
-        }
+        // }catch (\Exception $e)
+        // {
+        //     alert()->Warning('Something Went Wrong', 'Warning!')->persistent('Close');
+        //     return redirect()->back();
+        // }
     }
 
 
@@ -164,7 +223,7 @@ class ThematicController extends Controller
                 $input_mast->save();
             });
             alert()->Success('Input Sheet Submitted Successfully', 'Success')->persistent('Close');
-            return redirect()->route('user.fy');
+            return redirect()->route('admin.fy');    
 
 
         }catch (\Exception $e)
@@ -244,7 +303,7 @@ class ThematicController extends Controller
 
         // $subques_mast = DB::table('subques_master')->where('sector_id',$user->sector_id)->orderby('id')->get();
 
-        return view('user.questionnaire_view', compact('ques_mast','fy_id','user','ques_value','sector','fys','seg_mast','busi_mast','busi_value','data_quality','data_qual_value','bank_details'));
+        return view('admin.questionnaire_view', compact('ques_mast','fy_id','user','ques_value','sector','fys','seg_mast','busi_mast','busi_value','data_quality','data_qual_value','bank_details'));
 
     }
 

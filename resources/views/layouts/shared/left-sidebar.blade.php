@@ -132,10 +132,25 @@
                 </a> 
                 <div class="collapse" id="sidebarDashboard">
                     <ul class="sub-menu">
-                        <li class="menu-item">
-                            <a href="{{ route('admin.bank_dash_environment') }}" class="menu-link"><span
-                                    class="menu-text">Environment</span></a>
-                        </li>
+                  
+                               <li class="menu-item ">
+                                <a class="menu-link textcolor" href="#sidebarenvironment" data-bs-toggle="collapse">
+                                    <span class="menu-text"> Environment </span>
+                                    <span class="menu-arrow"></span>
+                                </a>
+                                <div class="collapse" id="sidebarenvironment">
+                                    <ul class="sub-menu">
+                                        <li class="menu-item">
+                                            <a href="{{ route('admin.bank_dash_environment') }}" class="menu-link"><span
+                                                    class="menu-text">CF AND FE</span></a>
+                                        </li>
+                                        <li class="menu-item">
+                                            <a href="{{ route('admin.bank_dash_climate_risk') }}" class="menu-link"><span
+                                                    class="menu-text">Climate Risk</span></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                         </li>
                         <li class="menu-item">
                             <a href="{{ route('admin.bank_dash_social') }}" class="menu-link"><span
                                     class="menu-text">Social</span></a>
@@ -151,32 +166,19 @@
                     </ul>
                 </div>
             </li>
-            <li class="menu-item">
-                <a class="menu-link" href="#sidebarClimate" data-bs-toggle="collapse">
-                    <span class="menu-icon"><i data-feather="users"></i></span>
-                    <span class="menu-text"> Climate Risk </span>
-                    <span class="menu-arrow"></span>
-                </a>
-                <div class="collapse" id="sidebarClimate">
-                    <ul class="sub-menu">
-                        <li class="menu-item">
-                            <a href="#" class="menu-link"><span
-                                    class="menu-text">Climate Risk Assement</span></a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="#" class="menu-link"><span
-                                    class="menu-text">Check Climate Risk</span></a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            {{-- {{ Request::routeIs('user.rbi_disclosure') ? 'active' : '' }} --}}
-            {{-- <li class="menu-item">
-                <a href="{{ route('admin.rbi_disclosure') }}" class="menu-link ">
+
+                  <li class="menu-item">
+                    <a href="{{ route('admin.rbi_disclosure') }}" class="menu-link ">
+                        <span class="menu-icon"><i data-feather="calendar"></i></span>
+                        <span class="menu-text"> RBI Disclosure </span>
+                    </a>
+                </li>
+                    <li class="menu-item">
+                <a href="{{ route('admin.bank_dash_climate_risk_view') }}" class="menu-link ">
                     <span class="menu-icon"><i data-feather="calendar"></i></span>
-                    <span class="menu-text"> RBI Disclosure </span>
+                    <span class="menu-text">Check Climate Risk</span>
                 </a>
-            </li> --}}
+            </li>
             <li class="menu-item">
                 <a href="{{ route('admin.bank_env_mis') }}" class="menu-link">
                     <span class="menu-icon"><i data-feather="calendar"></i></span>
@@ -246,10 +248,24 @@
                     </a>
                     <div class="collapse" id="sidebarDashboard">
                     <ul class="sub-menu">
-                    <li class="menu-item">
-                    <a href="{{ route('admin.dash_environment') }}" class="menu-link"><span
-                                                    class="menu-text">Environment</span></a>
-                    </li>
+                        <li class="menu-item ">
+                                <a class="menu-link textcolor" href="#sidebarenvironment" data-bs-toggle="collapse">
+                                    <span class="menu-text"> Environment </span>
+                                    <span class="menu-arrow"></span>
+                                </a>
+                                <div class="collapse" id="sidebarenvironment">
+                                    <ul class="sub-menu">
+                                        <li class="menu-item">
+                                            <a href="{{ route('admin.dash_environment') }}" class="menu-link"><span
+                                                    class="menu-text">CF AND FE</span></a>
+                                        </li>
+                                        <li class="menu-item">
+                                            <a href="{{ route('admin.dash_climate_risk') }}" class="menu-link"><span
+                                                    class="menu-text">Climate Risk</span></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                         </li> 
                     <li class="menu-item">
                     <a href="{{ route('admin.dash_social') }}" class="menu-link"><span class="menu-text">Social</span></a>
                     </li>

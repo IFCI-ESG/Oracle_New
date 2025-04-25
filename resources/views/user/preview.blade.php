@@ -51,7 +51,7 @@
                                                 <tr>
                                                     <td class="text-center" style="font-size: 1rem"><b>{{ $key + 1 }}</b></td>
                                                     <td style="font-size: 1rem">
-                                                        {{ $busi->acitvity }}
+                                                        {{ $busi->activity }}
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -85,10 +85,10 @@
                                                     <td></td>
                                                     <td></td>
                                                 </tr>
-                                                @foreach ($seg_mast->where('scope_id',$scope->id) as $key => $seg)
+                                                @foreach ($seg_mast->where('scopeid',$scope->id) as $key => $seg)
                                                     <tr>
                                                         <th style="font-size: 1rem">
-                                                            {{$seg->header_name}}
+                                                            {{$seg->label}}
                                                         </th>
                                                         <th colspan="2" style="font-size: 1rem">
                                                             Data Quality - {{$data_quality->where('segment_id',$seg->id)->first()->name}}
@@ -208,7 +208,7 @@
             <p style="line-height: 1.6; color: #4b5563;">
                 <span style="font-weight: bold;">Level 1</span> - Verified emissions data<br>
                 <span style="font-weight: bold;">Level 2</span> - Non-verified GHG emissions data or real primary energy data<br>
-                <span style="font-weight: bold;">Level 3</span> - Emissions calculated using primary physical activity data of the company’s production and emission factors specific to that primary data<br>
+                <span style="font-weight: bold;">Level 3</span> - Emissions calculated using primary physical activity data of the company's production and emission factors specific to that primary data<br>
                 <span style="font-weight: bold;">Level 4</span> - Estimate emissions based on sector and revenue<br>
                 <span style="font-weight: bold;">Level 5</span> - Emissions based on national-level proxy data
             </p>

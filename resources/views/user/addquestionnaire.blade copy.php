@@ -400,7 +400,7 @@ accept-charset="utf-8">
                 <span style="font-weight: bold;">Level 2</span> - Non-verified GHG emissions data or real primary energy
                 data<br>
                 <span style="font-weight: bold;">Level 3</span> - Emissions calculated using primary physical activity data
-                of the company’s production and emission factors specific to that primary data<br>
+                of the company's production and emission factors specific to that primary data<br>
                 <span style="font-weight: bold;">Level 4</span> - Estimate emissions based on sector and revenue<br>
                 <span style="font-weight: bold;">Level 5</span> - Emissions based on national-level proxy data
             </p>
@@ -673,7 +673,7 @@ accept-charset="utf-8">
                                 $('#popupTable').append('<tr>' +
                                     '<td>' +
                                     '<label class="" style=" margin-left: 50px;" data-toggle="tooltip" data-placement="right" title="' +
-                                    drop.descrption + '">' +
+                                    drop.description + '">' +
                                     '<input type="checkbox" class="first" id="check_' +
                                     key + '" name="ques[' + key +
                                     '][check]">&nbsp;&nbsp;' + drop.particular +
@@ -761,7 +761,7 @@ accept-charset="utf-8">
                                     '<input type="hidden" name="ques[' + key +
                                     '][row_id]" value="' + drop.id + '">' +
                                     '<label class="" style=" margin-left: 50px;" data-toggle="tooltip" data-placement="right" title="' +
-                                    drop.descrption + '">' +
+                                    drop.description + '">' +
                                     '<input type="checkbox" class="second" id="checkview_' +
                                     key + '" name="ques[' + key +
                                     '][check]" value="1"' + isChecked +

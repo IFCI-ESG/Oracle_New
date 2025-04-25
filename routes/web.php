@@ -126,11 +126,16 @@ Route::get('bank_env_mis', [\App\Http\Controllers\Admin\UserController::class, '
     Route::get('bank_dash_social',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_social'])->name('bank_dash_social');
     Route::get('bank_dash_governance',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_governance'])->name('bank_dash_governance');
     Route::get('bank_dash_scoring',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_scoring'])->name('bank_dash_scoring');
+    Route::get('bank_dash_climate_risk',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_climate_risk'])->name('bank_dash_climate_risk');
+
+    Route::get('bank_dash_climate_risk_view',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_climate_risk_view'])->name('bank_dash_climate_risk_view');
+
 
     Route::get('dash_environment',[\App\Http\Controllers\Admin\UserController::class, 'dash_environment'])->name('dash_environment');
     Route::get('dash_social',[\App\Http\Controllers\Admin\UserController::class, 'dash_social'])->name('dash_social');
     Route::get('dash_governance',[\App\Http\Controllers\Admin\UserController::class, 'dash_governance'])->name('dash_governance');
     Route::get('dash_scoring',[\App\Http\Controllers\Admin\UserController::class, 'dash_scoring'])->name('dash_scoring');
+         Route::get('dash_climate_risk',[\App\Http\Controllers\Admin\UserController::class, 'dash_climate_risk'])->name('dash_climate_risk');
 
     // Company List
 
@@ -239,6 +244,15 @@ Route::get('bank_env_mis', [\App\Http\Controllers\Admin\UserController::class, '
     // Dashboard Export and Refresh routes
     Route::post('/export-dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'exportDashboard'])->name('dashboard.export');
     Route::post('/refresh-dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'refreshDashboard'])->name('dashboard.refresh');
+
+    
+    Route::get('rbi_disclosure', [\App\Http\Controllers\Admin\RbiDisclosureController::class,'index'])->name('rbi_disclosure');
+    // Route::get('rbi_disclosure/fy/{fy_id}', [\App\Http\Controllers\Admin\RbiDisclosureController::class,'fy'])->name('rbi_disclosure.fy');
+    Route::get('rbi_disclosure/pillar/{fy_id}', [\App\Http\Controllers\Admin\RbiDisclosureController::class,'pillar'])->name('rbi_disclosure.pillar');
+    Route::get('rbi_disclosure/crete/{pillar_id}/{fy_id}', [\App\Http\Controllers\Admin\RbiDisclosureController::class,'create'])->name('rbi_disclosure.create');
+    Route::post('rbi_disclosure/store', [\App\Http\Controllers\Admin\RbiDisclosureController::class,'store'])->name('rbi_disclosure.store');
+    Route::get('rbi_disclosure/edit/{bank_id}/{pillar_id}/{fy_id}', [\App\Http\Controllers\Admin\RbiDisclosureController::class,'edit'])->name('rbi_disclosure.edit');
+    Route::post('rbi_disclosure/update', [\App\Http\Controllers\Admin\RbiDisclosureController::class,'update'])->name('rbi_disclosure.update');
 });
 
 // Company
@@ -316,7 +330,7 @@ Route::name('user.')->prefix('user')->middleware(['role:ActiveUser', 'verified',
 
     Route::get('/physical/create/{fy_id}', [\App\Http\Controllers\User\PhysicalController::class,'create'])->name('physical.create');
     Route::get('/physical/edit/{module_mast_id}', [\App\Http\Controllers\User\PhysicalController::class,'edit'])->name('physical.edit');
-    Route::get('/physical/update', [\App\Http\Controllers\User\PhysicalController::class,'update'])->name('physical.update');
+    Route::post('/physical/update', [\App\Http\Controllers\User\PhysicalController::class,'update'])->name('physical.update');
     Route::get('/physical/store', [\App\Http\Controllers\User\PhysicalController::class,'store'])->name('physical');
     Route::resource('physical', \App\Http\Controllers\User\PhysicalController::class)->except(['create','update']);
 
@@ -330,7 +344,7 @@ Route::name('user.')->prefix('user')->middleware(['role:ActiveUser', 'verified',
 
     Route::get('/transition/create/{fy_id}', [\App\Http\Controllers\User\TransitionController::class,'create'])->name('transition.create');
     Route::get('/transition/edit/{module_mast_id}', [\App\Http\Controllers\User\TransitionController::class,'edit'])->name('transition.edit');
-    Route::get('/transition/update', [\App\Http\Controllers\User\TransitionController::class,'update'])->name('transition.update');
+    Route::post('/transition/update', [\App\Http\Controllers\User\TransitionController::class,'update'])->name('transition.update');
     Route::get('/transition/store', [\App\Http\Controllers\User\TransitionController::class,'store'])->name('transition');
     Route::resource('transition', \App\Http\Controllers\User\TransitionController::class)->except(['create','update']);
 
@@ -476,13 +490,31 @@ Route::name('user.')->prefix('user')->middleware(['role:ActiveUser', 'verified',
     Route::post('/seq/update', [\App\Http\Controllers\User\SEQController::class,'update'])->name('seq.update');
     Route::get('seq/row_delete/{row_id}', [\App\Http\Controllers\User\SEQController::class,'destroy'])->name('seq.delete');
 
+ //  Route::resource('brsr', 'User\BrsrController', ['except' => 'create','update']);
+    Route::get('/brsr', [\App\Http\Controllers\User\BrsrController::class,'index'])->name('brsr.index');
 
- Route::resource('brsr', 'User\BrsrController', ['except' => 'create','update']);
-    Route::get('/brsr/create/{fy_id}', 'User\BrsrController@create')->name('brsr.create');
-    Route::post('brsr/store', 'User\BrsrController@store')->name('brsr');
-    Route::get('/brsr/edit/{gov_mast_id}', 'User\BrsrController@edit')->name('brsr.edit');
-    Route::post('/brsr/update', 'User\BrsrController@update')->name('brsr.update');
-    Route::get('brsr/row_delete/{row_id}', 'User\BrsrController@destroy')->name('brsr.delete');
+    Route::get('/brsr/sectionAcreate/{fy_id}', [\App\Http\Controllers\User\BrsrController::class,'create'])->name('brsr.sectionAcreate');
+    Route::post('/brsr/store', [\App\Http\Controllers\User\BrsrController::class,'store'])->name('brsr.store');
+    Route::get('/brsr/sectionAedit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'edit'])->name('brsr.sectionAedit');
+    Route::post('/brsr/update', [\App\Http\Controllers\User\BrsrController::class,'update'])->name('brsr.update');
+ 
+    Route::get('/brsr/sectionBcreate/{fy_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionBcreate'])->name('brsr.sectionBcreate');
+    Route::get('/brsr/sectionBedit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionBedit'])->name('brsr.sectionBedit');
+    Route::post('/brsr/sectionbstore', [\App\Http\Controllers\User\BrsrController::class,'sectionbstore'])->name('brsr.sectionbstore');
+    Route::post('/brsr/sectionbupdate', [\App\Http\Controllers\User\BrsrController::class,'sectionbupdate'])->name('brsr.sectionbupdate');
+  
+    Route::get('/brsr/sectionP1create/{fy_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP1create'])->name('brsr.sectionP1create');
+    Route::post('/brsr/sectionp1store', [\App\Http\Controllers\User\BrsrController::class,'sectionp1store'])->name('brsr.sectionp1store');
+    Route::get('/brsr/sectionP1edit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP1edit'])->name('brsr.sectionP1edit');
+    Route::post('/brsr/sectionp1update', [\App\Http\Controllers\User\BrsrController::class,'sectionp1update'])->name('brsr.sectionp1update');
+    
+
+//  Route::resource('brsr', 'User\BrsrController', ['except' => 'create','update']);
+//     Route::get('/brsr/create/{fy_id}', 'User\BrsrController@create')->name('brsr.create');
+//     Route::post('brsr/store', 'User\BrsrController@store')->name('brsr');
+//     Route::get('/brsr/edit/{gov_mast_id}', 'User\BrsrController@edit')->name('brsr.edit');
+//     Route::post('/brsr/update', 'User\BrsrController@update')->name('brsr.update');
+//     Route::get('brsr/row_delete/{row_id}', 'User\BrsrController@destroy')->name('brsr.delete');
 
 
 });

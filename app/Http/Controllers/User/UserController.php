@@ -121,17 +121,23 @@ class UserController extends Controller
                                 ->where('bfd.class_type_id', $class_type)
                                 ->first(['bfd.*', 'bfd.bank_id as branch_id', 'au.name as bank_name','ctm.name as loan_type']);
 
-            // dd($bank_details,$class_type,$bank_id);
-
         $ques = QuestionValue::where('com_id', $user->id)->orderby('id')->get();
 
-        $input_mast = InputSheetMast::where('com_id', $user->id)->orderby('id')->get();
+        $input_mast = DB::table('inputsheet_mast')
+                        ->where('com_id', $user->id)
+                        ->get();
 
-        // dd($input_mast);
-        $fys = DB::table('fy_masters')->orderby('id','desc')->get();
+        $fys = DB::table('fy_masters')
+                ->select('fy_masters.*')
+                ->leftJoin('inputsheet_mast', function($join) use ($user) {
+                    $join->on('fy_masters.id', '=', 'inputsheet_mast.fy_id')
+                        ->where('inputsheet_mast.com_id', '=', $user->id)
+                        ->where('inputsheet_mast.status', '=', 'S');
+                })
+                ->orderBy('fy_masters.id', 'desc')
+                ->get();
 
         return view('user.fy', compact('fys','ques','input_mast','user','bank_details'));
-
     }
 
     public function updateAccount(Request $request)
@@ -224,7 +230,7 @@ class UserController extends Controller
                     // {
                         $business_activ = new BusinessActivityValue;
                             $business_activ->com_id = Auth::user()->id;
-                            $business_activ->acitvity_id = isset($value['part_id']) ? $value['part_id'] : null;
+                            $business_activ->activity_id = isset($value['part_id']) ? $value['part_id'] : null;
                             $business_activ->is_checked = isset($value['check']) ? 1 : 0;
                             $business_activ->fy_id = $request->fy_id;
                         $business_activ->save();
@@ -335,11 +341,11 @@ class UserController extends Controller
         $busi_mast = BusinessActivityMast::where('sector_id', $user->sector_id)->where('ques_type_id',$user->comp_type_id)->orderby('id')->get();
 
         $busi_value = DB::table('business_activity_value as bav')
-                            ->join('business_activity_master as bam','bam.id','bav.acitvity_id')
+                            ->join('business_activity_master as bam','bam.id','bav.activity_id')
                             ->where('bav.com_id',$user->id)
                             ->where('bav.fy_id',$fy_id)
                             ->orderby('bav.id')
-                            ->get(['bav.*','bam.acitvity']);
+                            ->get(['bav.*','bam.activity']);
 
         // dd($user->sector_id,$busi_mast,$busi_value);
         // dd($fys);
@@ -350,24 +356,24 @@ class UserController extends Controller
 
         // $sec_seg_head=DB::table('sec_seg_head_mapping')->orderby('id')->get();
 
-        $seg_mast = DB::table('segment_master as sgm')
-                            ->join('sector_segment_map as ssm','ssm.segment_id','sgm.id')
-                            ->join('scope_master as sm','sm.id','sgm.scope_id')
+        $seg_mast = DB::table('segmentmaster as sgm')
+                            ->join('sectorsegmentmapping as ssm','ssm.segment_id','sgm.id')
+                            ->join('scopemaster as sm','sm.id','sgm.scopeid')
                             ->where('ssm.ques_type_id',$user->comp_type_id)
                             ->where('ssm.sector_id',$user->sector_id)
-                            ->orderby('sgm.order')
+                            ->orderby('sgm.ordernumber')
                             ->get(['sgm.*','sm.name as scope_name']);
             // dd($seg_mast);
         $ques_value = DB::table('question_value as qv')
                             ->join('question_master as qm','qm.id','=','qv.ques_id')
-                            ->join('sector_segment_map as ssm','ssm.id','qm.sector_segment_map_id')
+                            ->join('sectorsegmentmapping as ssm','ssm.id','qm.sector_segment_map_id')
                             ->where('ssm.ques_type_id',$user->comp_type_id)
                             ->where('qv.com_id',$user->id)
                             ->get(['qv.*','ssm.segment_id']);
             // dd($ques_value);
 
         $ques_mast = DB::table('question_master as qm')
-                            ->join('sector_segment_map as ssm','ssm.id','qm.sector_segment_map_id')
+                            ->join('sectorsegmentmapping as ssm','ssm.id','qm.sector_segment_map_id')
                             ->where('ssm.ques_type_id',$user->comp_type_id)
                             ->where('ssm.sector_id',$user->sector_id)
                             ->orderby('qm.id')->get();
@@ -376,7 +382,7 @@ class UserController extends Controller
         $seg_tot=count($seg_mast);
         $ques_tot= DB::table('question_value as qv')
                             ->join('question_master as qm','qm.id','=','qv.ques_id')
-                            ->join('sector_segment_map as ssm','ssm.id','qm.sector_segment_map_id')
+                            ->join('sectorsegmentmapping as ssm','ssm.id','qm.sector_segment_map_id')
                             ->where('ssm.ques_type_id',$user->comp_type_id)
                             ->where('qv.com_id',$user->id)
                             ->where('qv.fy_id',$fy_id)
@@ -407,32 +413,26 @@ class UserController extends Controller
 
     public function getQuesData($sect_id,$seg_id)
     {
-        // $quesId = $request->input('ques_id');
-        // dd($seg_id,$sect_id);
         $user = Auth::user();
         $busi_val = BusinessActivityValue::where('com_id', $user->id)->where('is_checked', true)->orderby('id')->get();
 
-        $busi_val_ids = $busi_val->pluck('acitvity_id')->toArray();
-        // dd($busi_val_ids);
+        $busi_val_ids = $busi_val->pluck('activity_id')->toArray();
 
         $ques_mast = DB::table('question_master as qm')
-                        ->join('sector_segment_map as ssm', 'ssm.id', '=', 'qm.sector_segment_map_id')
+                        ->join('sectorsegmentmapping as ssm', 'ssm.id', '=', 'qm.sector_segment_map_id')
                         ->where('ssm.ques_type_id',$user->comp_type_id)
                         ->where('ssm.segment_id', $seg_id)
                         ->where('ssm.sector_id', $sect_id)
                         ->where(function ($query) use ($busi_val_ids) {
                             $query->where(function ($query) use ($busi_val_ids) {
                                 foreach ($busi_val_ids as $id) {
-                                    $query->orWhereRaw("? = ANY(string_to_array(qm.business_activity_id, ','))", [$id]);
+                                    $query->orWhereRaw("REGEXP_LIKE(qm.business_activity_id, '(^|,)'||?||'(,|$)')", [$id]);
                                 }
                             })
                             ->orWhereNull('qm.business_activity_id');
                         })
                         ->orderBy('qm.id')
                         ->get(['qm.*']);
-
-        // dd($ques_mast,$busi_val,$busi_val_ids);
-        // dd($ques_val);
 
         return response()->json(['data' => $ques_mast]);
     }
@@ -443,12 +443,12 @@ class UserController extends Controller
         $user = Auth::user();
         $ques_val = DB::table('question_value as qv')
                             ->join('question_master as qm','qm.id','qv.ques_id')
-                            ->join('sector_segment_map as ssm','ssm.id','qm.sector_segment_map_id')
+                            ->join('sectorsegmentmapping as ssm','ssm.id','qm.sector_segment_map_id')
                             ->where('ssm.ques_type_id',$user->comp_type_id)
                             ->where('ssm.segment_id', $seg_id)
                             ->where('qv.fy_id',$fy_id)
                             ->where('qv.com_id',$user->id)
-                            ->get(['qv.*','qm.particular','qm.unit','qm.descrption','qm.data_source']);
+                            ->get(['qv.*','qm.particular','qm.unit','qm.description','qm.data_source']);
 
         // dd($ques_val);
 
@@ -514,32 +514,8 @@ class UserController extends Controller
 
     public function quality_store(Request $request)
     {
-        // dd($request);
         try{
-
             $user=Auth::user();
-
-            $seg_mast = DB::table('segment_master as sgm')
-                    ->join('sector_segment_map as ssm','ssm.segment_id','sgm.id')
-                    ->where('ssm.ques_type_id',$user->comp_type_id)
-                    ->where('ssm.sector_id',$user->sector_id)
-                    ->get(['sgm.*']);
-
-
-            $chk_ques_val = DB::table('question_value as qv')
-                                ->join('question_master as qm','qm.id','=','qv.ques_id')
-                                ->join('sector_segment_map as ssm','ssm.id','qm.sector_segment_map_id')
-                                ->where('ssm.ques_type_id',$user->comp_type_id)
-                                ->where('qv.fy_id',$request->fy_id)
-                                ->where('qv.com_id', $request->com_id)
-                                ->distinct('ssm.segment_id')
-                                ->get();
-
-            if(count($chk_ques_val)!=count($seg_mast))
-            {
-            alert()->warning('Please Attempt All Sheets', 'Warning')->persistent('Close');
-            return redirect()->back();
-            }
 
             $valid = Validator::make($request->all(),[
                 'part.*.data_quality_id' => array('required')
@@ -549,7 +525,7 @@ class UserController extends Controller
                 alert()->warning('Please Select the Data Quality', 'Warning')->persistent('Close');
                 return redirect()->back();
             }
-                // dd($request);
+
             DB::transaction(function () use ($request)
             {
                 foreach ($request->part as $value)
@@ -591,7 +567,7 @@ class UserController extends Controller
         $user=Auth::user();
 
         $busi_acti = DB::table('business_activity_value as bav')
-                            ->join('business_activity_master as bam','bam.id','=','bav.acitvity_id')
+                            ->join('business_activity_master as bam','bam.id','=','bav.activity_id')
                             ->where('is_checked', true)
                             ->where('bav.com_id', $user->id)
                             ->where('bav.fy_id',$fy_id)
@@ -600,26 +576,26 @@ class UserController extends Controller
 
         $ques_val = DB::table('question_value as qv')
                         ->join('question_master as qm','qm.id','=','qv.ques_id')
-                        ->join('sector_segment_map as ssm','ssm.id','qm.sector_segment_map_id')
-                        ->join('segment_master as sm','sm.id','ssm.segment_id')
+                        ->join('sectorsegmentmapping as ssm','ssm.id','qm.sector_segment_map_id')
+                        ->join('segmentmaster as sm','sm.id','ssm.segment_id')
                         ->join('sector_master as sm2','sm2.id','ssm.sector_id')
                         ->where('ssm.ques_type_id',$user->comp_type_id)
                         ->where('qv.fy_id',$fy_id)
                         ->where('qv.com_id', $com_id)
-                        ->get(['qv.*','sm.segment_name','sm.header_name','sm.id as segment_id','qm.particular as question','qm.unit']);
+                        ->get(['qv.*','sm.segmentname','sm.label','sm.id as segment_id','qm.particular as question','qm.unit']);
 
-        $seg_mast = DB::table('segment_master as sgm')
-                        ->join('sector_segment_map as ssm','ssm.segment_id','sgm.id')
-                        ->join('scope_master as sm','sm.id','sgm.scope_id')
+        $seg_mast = DB::table('segmentmaster as sgm')
+                        ->join('sectorsegmentmapping as ssm','ssm.segment_id','sgm.id')
+                        ->join('scopemaster as sm','sm.id','sgm.scopeid')
                         ->where('ssm.ques_type_id',$user->comp_type_id)
                         ->where('ssm.sector_id',$user->sector_id)
                         // ->orderby('sgm.id')
                         ->get(['sgm.*','sm.name as scope_name']);
 
-        $scope_mast =  DB::table('scope_master as sm')->get();
+        $scope_mast =  DB::table('scopemaster as sm')->get();
 
-        // $seg_mast =  DB::table('sector_segment_map as ssm')
-        //                     ->join('segment_master as sm','sm.id','ssm.segment_id')
+        // $seg_mast =  DB::table('sectorsegmentmapping as ssm')
+        //                     ->join('segmentmaster as sm','sm.id','ssm.segment_id')
         //                     ->where('ssm.ques_type_id',$user->comp_type_id)
         //                     ->where('ssm.sector_id', $user->sector_id)
         //                     ->get(['sm.*']);
@@ -699,31 +675,31 @@ class UserController extends Controller
         $busi_mast = BusinessActivityMast::where('sector_id', $user->sector_id)->orderby('id')->get();
 
         $busi_value = DB::table('business_activity_value as bav')
-                            ->join('business_activity_master as bam','bam.id','bav.acitvity_id')
+                            ->join('business_activity_master as bam','bam.id','bav.activity_id')
                             ->where('is_checked', true)
                             ->where('bav.com_id',$user->id)
                             ->where('bav.fy_id',$fy_id)
                             ->orderby('bav.id')
-                            ->get(['bav.*','bam.acitvity']);
+                            ->get(['bav.*','bam.activity']);
 
-        $seg_mast = DB::table('segment_master as sgm')
-                            ->join('sector_segment_map as ssm','ssm.segment_id','sgm.id')
-                            ->join('scope_master as sm','sm.id','sgm.scope_id')
+        $seg_mast = DB::table('segmentmaster as sgm')
+                            ->join('sectorsegmentmapping as ssm','ssm.segment_id','sgm.id')
+                            ->join('scopemaster as sm','sm.id','sgm.scopeid')
                             ->where('ssm.ques_type_id',$user->comp_type_id)
                             ->where('ssm.sector_id',$user->sector_id)
-                            ->orderby('sgm.order')
+                            ->orderby('sgm.ordernumber')
                             ->get(['sgm.*','sm.name as scope_name']);
             // dd($seg_mast);
         $ques_value = DB::table('question_value as qv')
                             ->join('question_master as qm','qm.id','=','qv.ques_id')
-                            ->join('sector_segment_map as ssm','ssm.id','qm.sector_segment_map_id')
+                            ->join('sectorsegmentmapping as ssm','ssm.id','qm.sector_segment_map_id')
                             ->where('ssm.ques_type_id',$user->comp_type_id)
                             ->where('qv.com_id',$user->id)
                             ->get(['qv.*','ssm.segment_id']);
             // dd($ques_value);
 
         $ques_mast = DB::table('question_master as qm')
-                            ->join('sector_segment_map as ssm','ssm.id','qm.sector_segment_map_id')
+                            ->join('sectorsegmentmapping as ssm','ssm.id','qm.sector_segment_map_id')
                             ->where('ssm.ques_type_id',$user->comp_type_id)
                             ->where('ssm.sector_id',$user->sector_id)
                             ->orderby('qm.id')->get();
@@ -762,12 +738,12 @@ class UserController extends Controller
 
         $ques_val = DB::table('question_value as qv')
                             ->join('question_master as qm','qm.id','qv.ques_id')
-                            ->join('sector_segment_map as ssm','ssm.id','qm.sector_segment_map_id')
+                            ->join('sectorsegmentmapping as ssm','ssm.id','qm.sector_segment_map_id')
                             ->where('ssm.ques_type_id',$user->comp_type_id)
                             ->where('ssm.segment_id', $seg_id)
                             ->where('qv.fy_id',$fy_id)
                             ->where('qv.com_id',$user->id)
-                            ->get(['qv.*','qm.particular','qm.unit','qm.descrption','qm.data_source']);
+                            ->get(['qv.*','qm.particular','qm.unit','qm.description','qm.data_source']);
 
 
         // dd($ques_val);
