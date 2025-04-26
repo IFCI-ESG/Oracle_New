@@ -248,8 +248,7 @@ along-with action taken to mitigate the same. </b>
                 @endphp
                 @foreach($sectionp2_lca_value1 as $key => $lca_value1)
                 <tr>
-              
-                <input type="hidden" value="{{ $sectionp2_lca_value1->where('id',$lca_value1->id)->first()->id }}" name="additionals1[{{ $b }}][row_id]">
+                   <input type="hidden" value="{{ $sectionp2_lca_value1->where('id',$lca_value1->id)->first()->id }}" name="additionals1[{{ $b }}][row_id]">
                   <td><textarea class="form-control form-control-sm auto-grow" name="additionals1[{{ $b }}][service_name]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)">{{ $lca_value1->service_name }}</textarea></td>
                   <td><textarea class="form-control form-control-sm auto-grow" name="additionals1[{{ $b }}][risk_concern]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)">{{ $lca_value1->risk_concern }}</textarea></td>
                   <td><textarea class="form-control form-control-sm auto-grow" name="additionals1[{{ $b }}][action_taken]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)">{{ $lca_value1->action_taken }}</textarea></td>

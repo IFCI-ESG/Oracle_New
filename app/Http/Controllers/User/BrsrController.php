@@ -24,6 +24,7 @@ use App\Models\BrsrSectionCP1CaseQuestionValue;
 use App\Models\BrsrSectionP2QuestionMaster;
 use App\Models\BrsrSectionP2QuestionValue;
 use App\Models\BrsrSectionP2OthersQuestionValue;
+use App\Models\BrsrSectionP7QuestionValue;
 use Illuminate\Support\Facades\Http;
 use Auth;
 use DB;
@@ -46,8 +47,9 @@ class BrsrController extends Controller
         $brsr_sectionb = BrsrSectionBPolicyQuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp1 =  BrsrSectionCP1QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp2 =  BrsrSectionP2QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
+        $brsr_sectionp7 =  BrsrSectionP7QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $fys = DB::table('fy_masters')->orderBy('id', 'desc')->limit(1)->get();
-        return view('user.brsr.index', compact('brsr_sectionp1','brsr_sectionb','fys','brsr_value','brsr_sectionp2'));
+        return view('user.brsr.index', compact('brsr_sectionp1','brsr_sectionb','fys','brsr_value','brsr_sectionp2','brsr_sectionp7'));
     }
 
     public function create($fy_id) {
@@ -1051,6 +1053,70 @@ class BrsrController extends Controller
 
     }
 
+    public function sectionP7create($fy_id) {
+ 
+        $fy_id = decrypt($fy_id);
+        
+        $user = Auth::user();
+
+        $social_mast = BrsrMast::where('com_id', $user->id)->where('fy_id',$fy_id)->first();
+        DB::transaction(function () use ($fy_id,$user,$social_mast)
+        {
+            if(!$social_mast)
+            {
+                $social = new BrsrMast;
+                    $social->com_id = $user->id;
+                    $social->status = 'D';
+                    $social->fy_id = $fy_id;
+                $social->save();
+            }
+        });
+      
+        $fys = DB::table('fy_masters')->where('id',$fy_id)->first();
+      
+        return view('user.brsr.sectionP7create', compact('social_mast','user','fys','fy_id'));
+
+    }
+
+    public function sectionP7edit($id) {
+ 
+        $id = decrypt($id);
+        
+        $user = Auth::user();
+
+        $brsr_mast = BrsrMast::where('com_id', $user->id)->where('id', $id)->first();
+        $fys = DB::table('fy_masters')->where('id',$brsr_mast->fy_id)->first();
+      
+        $sectionp7_value1 = DB::table('brsr_sectionc_p7_question_value')
+        ->where('brsr_mast_id', $id)
+        ->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals1'")
+        
+        ->get();
+
+        $sectionp7_value2 = DB::table('brsr_sectionc_p7_question_value')
+        ->where('brsr_mast_id', $id)
+        ->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals2'")
+        
+        ->get();
+
+        
+        $sectionp7_value3 = DB::table('brsr_sectionc_p7_question_value')
+        ->where('brsr_mast_id', $id)
+        ->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals3'")
+        
+        ->get();
+
+          
+        $sectionp7_value4 = DB::table('brsr_sectionc_p7_question_value')
+        ->where('brsr_mast_id', $id)
+        ->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals4'")
+        
+        ->get();
+
+        return view('user.brsr.sectionP7edit', compact('brsr_mast','user','fys','sectionp7_value1','sectionp7_value2','sectionp7_value3','sectionp7_value4'));
+
+    }
+
     public function sectionbstore(Request $request)
     {
       //dd($request->all());
@@ -1672,6 +1738,136 @@ class BrsrController extends Controller
         alert()->success('Record Inserted', 'Success!')->persistent('Close');
         return redirect()->route('user.brsr.sectionP2edit', encrypt($brsr_mast->id));
     }
+
+    public function sectionp7store(Request $request)
+    {
+       
+       
+        $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+
+            if (isset($request->additionals1)) {
+                foreach ($request->additionals1 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP7QuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->affliation_no = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals1';
+                    $prod_serv_data->save();
+                }
+              }
+
+              if (isset($request->additionals2)) {
+                foreach ($request->additionals2 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP7QuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->trade_no = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->trade_reach = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals2';
+                    $prod_serv_data->save();
+                }
+              }
+
+            if (isset($request->additionals3)) {
+                foreach ($request->additionals3 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP7QuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->authority_name = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->brief_case = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->action_taken = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals3';
+                    $prod_serv_data->save();
+                }
+              }
+
+              if (isset($request->additionals4)) {
+                foreach ($request->additionals4 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP7QuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->public_policy = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->advocacy = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->public_domain = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->frequency_review = isset($data['text_d']) ? $data['text_d'] : 'NaN';
+                    $prod_serv_data->web_link = isset($data['text_e']) ? $data['text_e'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals4';
+                    $prod_serv_data->save();
+                }
+              }
+
+        });
+    
+        alert()->success('Record Inserted', 'Success!')->persistent('Close');
+        return redirect()->route('user.brsr.sectionP7edit', encrypt($brsr_mast->id));
+    }
+
+
+    public function sectionp7update(Request $request)
+    {
+       
+       $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+
+            if (isset($request->additionals1)) {
+                foreach ($request->additionals1 as $key => $data) {
+                    $prod_serv_data = BrsrSectionP7QuestionValue::find($data['row_id']);
+                   
+                    $prod_serv_data->affliation_no = isset($data['affliation_no']) ? $data['affliation_no'] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now(); 
+                    $prod_serv_data->save();
+                }
+              }
+
+              if (isset($request->additionals2)) {
+                foreach ($request->additionals2 as $key => $data) {
+                    $prod_serv_data = BrsrSectionP7QuestionValue::find($data['row_id']);
+                    $prod_serv_data->trade_no = isset($data['trade_no']) ? $data['trade_no'] : 'NaN';
+                    $prod_serv_data->trade_reach = isset($data['trade_reach']) ? $data['trade_reach'] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now(); 
+                    $prod_serv_data->save();
+                }
+              }
+
+            if (isset($request->additionals3)) {
+                foreach ($request->additionals3 as $key => $data) {
+                    $prod_serv_data =  BrsrSectionP7QuestionValue::find($data['row_id']);
+                  
+                    $prod_serv_data->authority_name = isset($data['authority_name']) ? $data['authority_name'] : 'NaN';
+                    $prod_serv_data->brief_case = isset($data['brief_case']) ? $data['brief_case'] : 'NaN';
+                    $prod_serv_data->action_taken = isset($data['action_taken']) ? $data['action_taken'] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now(); 
+                    $prod_serv_data->save();
+                }
+              }
+
+              if (isset($request->additionals4)) {
+                foreach ($request->additionals4 as $key => $data) {
+                    $prod_serv_data =  BrsrSectionP7QuestionValue::find($data['row_id']);
+                  
+                    $prod_serv_data->public_policy = isset($data['public_policy']) ? $data['public_policy'] : 'NaN';
+                    $prod_serv_data->advocacy = isset($data['advocacy']) ? $data['advocacy'] : 'NaN';
+                    $prod_serv_data->public_domain = isset($data['public_domain']) ? $data['public_domain'] : 'NaN';
+                    $prod_serv_data->frequency_review = isset($data['frequency_review']) ? $data['frequency_review'] : 'NaN';
+                    $prod_serv_data->web_link = isset($data['web_link']) ? $data['web_link'] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now(); 
+                    $prod_serv_data->save();
+                }
+              }
+
+        });
+    
+        alert()->success('Data Updated Successfully', 'Success!')->persistent('Close');
+        return redirect()->back();        
+    }
+
 
     public function sectionp2update(Request $request)
     {

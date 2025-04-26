@@ -51,6 +51,48 @@
                                 <button class="btn btn-primary btn-sm sectionCButton" id="sectionP2"><i>Create</i></button>
                             </td>
                         </tr>
+                        <tr class="text-center" data-section="C">
+                            <td style="color:blue;"><i>PRINCIPLE 3</i></td>
+                            <td>
+                                <button class="btn btn-primary btn-sm sectionCButton" id="sectionP3"><i>Create</i></button>
+                            </td>
+                        </tr>
+                        <tr class="text-center" data-section="C">
+                            <td style="color:blue;"><i>PRINCIPLE 4</i></td>
+                            <td>
+                                <button class="btn btn-primary btn-sm sectionCButton" id="sectionP4"><i>Create</i></button>
+                            </td>
+                        </tr>
+                        <tr class="text-center" data-section="C">
+                            <td style="color:blue;"><i>PRINCIPLE 5</i></td>
+                            <td>
+                                <button class="btn btn-primary btn-sm sectionCButton" id="sectionP5"><i>Create</i></button>
+                            </td>
+                        </tr>
+                        <tr class="text-center" data-section="C">
+                            <td style="color:blue;"><i>PRINCIPLE 6</i></td>
+                            <td>
+                                <button class="btn btn-primary btn-sm sectionCButton" id="sectionP6"><i>Create</i></button>
+                            </td>
+                        </tr>
+                        <tr class="text-center" data-section="C">
+                            <td style="color:blue;"><i>PRINCIPLE 7</i></td>
+                            <td>
+                                <button class="btn btn-primary btn-sm sectionCButton" id="sectionP7"><i>Create</i></button>
+                            </td>
+                        </tr>
+                        <tr class="text-center" data-section="C">
+                            <td style="color:blue;"><i>PRINCIPLE 8</i></td>
+                            <td>
+                                <button class="btn btn-primary btn-sm sectionCButton" id="sectionP8"><i>Create</i></button>
+                            </td>
+                        </tr>
+                        <tr class="text-center" data-section="C">
+                            <td style="color:blue;"><i>PRINCIPLE 9</i></td>
+                            <td>
+                                <button class="btn btn-primary btn-sm sectionCButton" id="sectionP9"><i>Create</i></button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -143,6 +185,7 @@
     let brsrValue1 = @json($brsr_sectionb);
     let brsrValue2 = @json($brsr_sectionp1);    
     let brsrValue3 = @json($brsr_sectionp2); 
+    let brsrValue4 = @json($brsr_sectionp7);
     let fyData = @json($fys);  
     
     function setFyId(id, fy, ids,mastId) {
@@ -178,11 +221,15 @@
             return item.fy_id == fyid;   
         });
 
-        console.log("fyExists:", fyExists);
-        updateSectionButtons(fyExists,fyExists1,fyExists3,fyExists4);
+        const fyExists5 = brsrValue4.some(item => {
+            console.log("Checking if item.fy_id:", item.fy_id, "matches fyId:", fyId);
+            return item.fy_id == fyid;   
+        });
+
+        updateSectionButtons(fyExists,fyExists1,fyExists3,fyExists4,fyExists5);
     }
 
-    function updateSectionButtons(fyExists,fyExists1,fyExists3,fyExists4) {
+    function updateSectionButtons(fyExists,fyExists1,fyExists3,fyExists4,fyExists5) {
         
         const sectionAButton = document.getElementById('sectionA');
         if (fyExists) {
@@ -227,6 +274,17 @@
             sectionP2Button.classList.remove('btn-warning');
             sectionP2Button.classList.add('btn-primary');
         }
+
+        const sectionP7Button = document.getElementById('sectionP7');
+        if (fyExists5) {
+            sectionP7Button.innerHTML = '<i>Edit</i>';
+            sectionP7Button.classList.remove('btn-primary');
+            sectionP7Button.classList.add('btn-warning');
+        } else {
+            sectionP7Button.innerHTML = '<i>Create</i>';
+            sectionP7Button.classList.remove('btn-warning');
+            sectionP7Button.classList.add('btn-primary');
+        }
     }
     
     document.getElementById('sectionA').addEventListener('click', function() {
@@ -269,11 +327,24 @@
         if (fyId) {
             if (brsrValue3.some(item => item.fy_id == fyid)) {
                 window.location.href = `/user/brsr/sectionP2edit/${mastid }`;
-            } else {
+           } else {
                 window.location.href = `/user/brsr/sectionP2create/${fyId}`;
             }
-        }
+         }
     });
+
+    document.getElementById('sectionP7').addEventListener('click', function() {
+        if (fyId) {
+            if (brsrValue4.some(item => item.fy_id == fyid)) {
+                window.location.href = `/user/brsr/sectionP7edit/${mastid }`;
+           } else {
+                window.location.href = `/user/brsr/sectionP7create/${fyId}`;
+            }
+         }
+    });
+
+
+
 </script>
 
 @endpush

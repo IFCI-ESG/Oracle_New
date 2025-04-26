@@ -800,8 +800,6 @@ class BankBranchController extends Controller
                 DB::beginTransaction();
 
                 $randomString = 'India@1234';
-
-
                 $ifscCode = $value['ifsc_code'];
                 $response = Http::get("https://ifsc.razorpay.com/{$ifscCode}");
 
