@@ -27,25 +27,8 @@
                     @endif
             <div class="dropdown">
                 <a href="javascript: void(0);" class="dropdown-toggle h5 mb-1 d-block textcolor"
-                    data-bs-toggle="dropdown"> {{ auth()->user()->contact_person }}</a>
-                <div class="dropdown-menu user-pro-dropdown">
-                    <!-- item-->
-                <!--     <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <i class="fe-user me-1"></i>
-                        <span>My Account</span>
-                    </a> -->
-
-
-                    <!-- item-->
-                   <form method="POST" action="{{ route('admin.logout') }}">
-                        @csrf
-                        <a href="javascript:void(0);" class="dropdown-item notify-item"
-                            onclick="event.preventDefault(); this.closest('form').submit();">
-                            <i class="fe-log-out"></i>
-                            <span>Logout</span>
-                        </a>
-                    </form>
-                </div>
+                    > {{ auth()->user()->contact_person }}</a>
+                
             </div>
             <p class="text-muted mb-0">{{ auth()->user()->designation }}</p>
         </div>
