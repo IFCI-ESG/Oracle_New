@@ -1592,7 +1592,7 @@ class BrsrController extends Controller
        });
     
         alert()->success('Record Inserted', 'Success!')->persistent('Close');
-        return redirect()->route('user.brsr.sectionP2edit', encrypt($brsr_mast->id));
+        return redirect()->route('user.brsr.sectionP1edit', encrypt($brsr_mast->id));
     }
 
     public function sectionp2store(Request $request)
