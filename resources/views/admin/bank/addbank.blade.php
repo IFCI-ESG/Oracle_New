@@ -57,12 +57,19 @@
                                             IFSC Code <span style="color: red;">*</span>
                                         </th>
                                         <td>
-                                            <input type="text" id="ifsc_code" name="ifsc_code"
-                                                class="form-control form-control-sm text-right" style="width:50%"
-                                                oninput="validateIFSC()" placeholder="ABCD0123456"  value="{{ old('ifsc_code') }}" required />
-                                            <div id="ifsc-error-message"
-                                                style="color: red; display: none; font-size: 0.9rem;"></div>
-                                        </td>
+    <input type="text" id="ifsc_code" name="ifsc_code"
+        class="form-control form-control-sm text-right" style="width:50%" 
+        oninput="validateIFSC()" placeholder="ABCD0123456" value="{{ old('ifsc_code') }}" required />
+    <div id="ifsc-error-message" style="color: red; display: none; font-size: 0.9rem;"></div>
+</td>
+
+<style>
+    /* Lighten the placeholder text */
+    #ifsc_code::placeholder {
+        color: #d3d3d3; /* Light gray color for placeholder */
+    }
+</style>
+
                                     </tr>
 
                                     <tr>
@@ -164,13 +171,20 @@
                                             PAN <span style="color: red;">*</span>
                                         </th>
                                         <td>
-                                            <input type="text" id="pan" name="pan"
-                                                class="form-control form-control-sm text-right" style="width:50%"
-                                                oninput="restrictPANInput(event)" onblur="validatePAN()"
-                                                placeholder="ABCDE1234F"  value="{{ old('pan') }}" required />
-                                            <div id="pan-error-message"
-                                                style="color: red; display: none; font-size: 0.9rem;"></div>
-                                        </td>
+    <input type="text" id="pan" name="pan"
+        class="form-control form-control-sm text-right" style="width:50%"
+        oninput="restrictPANInput(event)" onblur="validatePAN()"
+        placeholder="ABCDE1234F" value="{{ old('pan') }}" required />
+    <div id="pan-error-message" style="color: red; display: none; font-size: 0.9rem;"></div>
+</td>
+
+<style>
+    /* Lighten the placeholder text */
+    #pan::placeholder {
+        color: #d3d3d3; /* Light gray color for placeholder */
+    }
+</style>
+
                                     </tr>
                                     <tr>
                                         <th class="text-center" style="font-size: 0.9rem"> 11. </th>
@@ -209,13 +223,20 @@
                                         <th class="text-center" style="font-size: 0.9rem"> 14. </th>
                                         <th style="font-size: 0.9rem"> Email <span style="color: red;">*</span></th>
                                         <td>
-                                            <input type="email" id="email" name="email"
-                                                class="form-control form-control-sm text-right" style="width:50%"
-                                                oninput="restrictEmailInput(event)" onblur="validateEmail()"
-                                                placeholder="example@domain.com"  value="{{ old('email') }}" required />
-                                            <div id="email-error-message"
-                                                style="color: red; display: none; font-size: 0.9rem;"></div>
-                                        </td>
+    <input type="email" id="email" name="email"
+        class="form-control form-control-sm text-right" style="width:50%"
+        oninput="restrictEmailInput(event)" onblur="validateEmail()"
+        placeholder="example@domain.com" value="{{ old('email') }}" required />
+    <div id="email-error-message" style="color: red; display: none; font-size: 0.9rem;"></div>
+</td>
+
+<style>
+    /* Lighten the placeholder text */
+    #email::placeholder {
+        color: #d3d3d3; /* Light gray color for placeholder */
+    }
+</style>
+
                                     </tr>
                                     <tr>
                                         <th class="text-center" style="font-size: 0.9rem"> 15. </th>
@@ -254,30 +275,30 @@
                                                 <span style="margin-right: 5px;">+91</span>
                                                 <input type="tel" id="mobile" name="mobile"
                                                     class="form-control form-control-sm text-right" style="width:50%"  value="{{ old('mobile') }}"
-                                                    oninput="restrictMobileInput(event)" maxlength="10"
+                                                    oninput="restrictMobileInput(event)" onblur="validateMobileNumber('mobile')" maxlength="10"
                                                     placeholder="Enter 10 digit mobile number" required />
                                             </div>
-                                            <span
-                                                style="color: #888; font-size: 0.8rem; display: block; margin-top: 5px;">
+                                            <span style="color: #888; font-size: 0.8rem; display: block; margin-top: 5px;">
                                                 (Please enter a valid 10-digit Mobile Number)
                                             </span>
+                                            <div id="mobile-error-message" style="color: red; display: none; font-size: 0.9rem;"></div>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="text-center" style="font-size: 0.9rem"> 18. </th>
-                                        <th style="font-size: 0.9rem"> Alternate Mobile No. </th>
+                                        <th style="font-size: 0.9rem"> Alternate Mobile No. <span style="color: red;">*</span> </th>
                                         <td>
                                             <div style="display: flex; align-items: center;">
                                                 <span style="margin-right: 5px;">+91</span>
                                                 <input type="tel" id="altr_mobile" name="altr_mobile"
                                                     class="form-control form-control-sm text-right"  value="{{ old('altr_mobile') }}" style="width:50%"
-                                                    oninput="restrictMobileInput(event)" maxlength="10"
+                                                    oninput="restrictMobileInput(event)" onblur="validateMobileNumber('altr_mobile')" maxlength="10"
                                                     placeholder="Enter Alternate Mobile" />
                                             </div>
-                                            <span
-                                                style="color: #888; font-size: 0.8rem; display: block; margin-top: 5px;">
+                                            <span style="color: #888; font-size: 0.8rem; display: block; margin-top: 5px;">
                                                 (Please enter a valid 10-digit Alternate Mobile Number)
                                             </span>
+                                            <div id="altr_mobile-error-message" style="color: red; display: none; font-size: 0.9rem;"></div>
                                         </td>
                                     </tr>
 
@@ -333,10 +354,8 @@
         </div>
     </div>
 </div>
-
 <script>
 function toggleSaveButton() {
-
     var bankName = document.getElementById("bank_name").value;
     var micr = document.getElementById("micr_code").value;
     var state = document.getElementById("state").value;
@@ -352,6 +371,16 @@ function toggleSaveButton() {
     var designation = document.getElementById("designation").value;
     var mobile = document.getElementById("mobile").value;
     var altr_mobile = document.getElementById("altr_mobile").value;
+
+    // Check if any service is selected
+    var services = document.getElementsByName("services[]");
+    var isServiceSelected = false;
+    for (var i = 0; i < services.length; i++) {
+        if (services[i].checked) {
+            isServiceSelected = true;
+            break;
+        }
+    }
 
     var isValid = true;
 
@@ -370,12 +399,12 @@ function toggleSaveButton() {
     if (designation && !/^[A-Za-z\s]+$/.test(designation)) {
         isValid = false;
     }
-    if (!/^[0-9]{10}$/.test(mobile)) {
+    if (!/^[0-9]{10}$/.test(mobile) || !validateMobileNumber('mobile')) {
         isValid = false;
     }
-    // if (!/^[0-9]{10}$/.test(altr_mobile)) {
-    //     isValid = false;
-    // }
+    if (altr_mobile && (!/^[0-9]{10}$/.test(altr_mobile) || !validateMobileNumber('altr_mobile'))) {
+        isValid = false;
+    }
     if (!license_key) {
         isValid = false;
     }
@@ -383,6 +412,9 @@ function toggleSaveButton() {
         isValid = false;
     }
     if (!valid_to) {
+        isValid = false;
+    }
+    if (!isServiceSelected) {
         isValid = false;
     }
 
@@ -401,6 +433,12 @@ window.onload = function() {
     document.getElementById("designation").addEventListener("input", toggleSaveButton);
     document.getElementById("mobile").addEventListener("input", toggleSaveButton);
     document.getElementById("altr_mobile").addEventListener("input", toggleSaveButton);
+    
+    // Add event listeners for service checkboxes
+    var services = document.getElementsByName("services[]");
+    for (var i = 0; i < services.length; i++) {
+        services[i].addEventListener("change", toggleSaveButton);
+    }
 };
 
 toggleSaveButton();
@@ -584,6 +622,48 @@ function enableValidToDate() {
     } else {
         validToField.disabled = true;
         validToField.value = '';
+    }
+}
+</script>
+<script>
+function validateMobileNumber(fieldId) {
+    const mobileNumber = document.getElementById(fieldId).value;
+    const errorMessage = document.getElementById(fieldId + '-error-message');
+    
+    // Check if all digits are same
+    const allSameDigits = /^(\d)\1{9}$/.test(mobileNumber);
+    
+    // Check if number is in ascending or descending sequence
+    const isSequential = /^(0123456789|9876543210)$/.test(mobileNumber);
+    
+    // Check if number starts with 0
+    const startsWithZero = mobileNumber.startsWith('0');
+    
+    // Check for repeated patterns (like 0000011111, 1111122222, etc.)
+    const hasRepeatedPattern = /^(\d{5})\1$/.test(mobileNumber) || 
+                             /^(\d{4})\1\d{2}$/.test(mobileNumber) ||
+                             /^(\d{3})\1\d{4}$/.test(mobileNumber) ||
+                             /^(\d{2})\1\d{6}$/.test(mobileNumber);
+    
+    if (allSameDigits) {
+        errorMessage.textContent = "Invalid mobile number: All digits cannot be the same";
+        errorMessage.style.display = "block";
+        return false;
+    } else if (isSequential) {
+        errorMessage.textContent = "Invalid mobile number: Cannot be a sequential number";
+        errorMessage.style.display = "block";
+        return false;
+    } else if (startsWithZero) {
+        errorMessage.textContent = "Invalid mobile number: Cannot start with 0";
+        errorMessage.style.display = "block";
+        return false;
+    } else if (hasRepeatedPattern) {
+        errorMessage.textContent = "Invalid mobile number: Cannot have repeated digit patterns";
+        errorMessage.style.display = "block";
+        return false;
+    } else {
+        errorMessage.style.display = "none";
+        return true;
     }
 }
 </script>

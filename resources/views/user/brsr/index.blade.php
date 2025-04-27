@@ -37,8 +37,12 @@
                         </tr>
                         <tr class="text-center" data-section="C">
                             <td style="color:green;"><i>SECTION C (PRINCIPLE WISE PERFORMANCE DISCLOSURE)</i></td>
+                            <td></td> 
+                        </tr>
+                        <tr class="text-center" data-section="C">
+                            <td style="color:blue;"><i>PRINCIPLE 1</i></td>
                             <td>
-                                <button class="btn btn-primary btn-sm sectionCButton" id="sectionC"><i>Create</i></button>
+                                <button class="btn btn-primary btn-sm sectionCButton" id="sectionP1"><i>Create</i></button>
                             </td>
                         </tr>
                     </tbody>
@@ -97,8 +101,7 @@
                                       $brsrMastItem = \App\Models\BrsrMast::where('fy_id', $fy->id)->where('com_id', Auth::id())->first();
                                     @endphp
                                  
-                                    
-                                            <tr>
+                                         <tr>
                                                 <td class="text-center" style="font-size: 1rem"><b>{{ $key + 1 }}</b></td>
                                                 <td class="text-center" style="font-size: 1rem">{{ $fy->fy }}</td>
                                                 <td class="text-center">
@@ -131,10 +134,10 @@
     let fyId = null;
     let mastid = null;
     let brsrValue = @json($brsr_value);
-    let brsrValue1 = @json($brsr_sectionb);   
+    let brsrValue1 = @json($brsr_sectionb);
+    let brsrValue2 = @json($brsr_sectionp1);     
     let fyData = @json($fys);  
-   
-
+    
     function setFyId(id, fy, ids,mastId) {
         fyId = id;
         fyid = ids;
@@ -158,11 +161,16 @@
             return item.fy_id == fyid;   
         });
 
+        const fyExists3 = brsrValue2.some(item => {
+            console.log("Checking if item.fy_id:", item.fy_id, "matches fyId:", fyId);
+            return item.fy_id == fyid;   
+        });
+
         console.log("fyExists:", fyExists);
-        updateSectionButtons(fyExists,fyExists1);
+        updateSectionButtons(fyExists,fyExists1,fyExists3);
     }
 
-    function updateSectionButtons(fyExists,fyExists1) {
+    function updateSectionButtons(fyExists,fyExists1,fyExists3) {
         
         const sectionAButton = document.getElementById('sectionA');
         if (fyExists) {
@@ -186,8 +194,8 @@
             sectionBButton.classList.add('btn-primary');
         }
 
-        const sectionCButton = document.getElementById('sectionCb');
-        if (fyExists) {
+        const sectionCButton = document.getElementById('sectionP1');
+        if (fyExists3) {
             sectionCButton.innerHTML = '<i>Edit</i>';
             sectionCButton.classList.remove('btn-primary');
             sectionCButton.classList.add('btn-warning');
@@ -224,12 +232,12 @@
        }
     });
 
-    document.getElementById('sectionC').addEventListener('click', function() {
+    document.getElementById('sectionP1').addEventListener('click', function() {
         if (fyId) {
-            if (brsrValue.some(item => item.fy_id == fyid)) {
-                window.location.href = `/user/brsr/sectionCedit/${mastid }`;
+            if (brsrValue2.some(item => item.fy_id == fyid)) {
+                window.location.href = `/user/brsr/sectionP1edit/${mastid }`;
             } else {
-                window.location.href = `/user/brsr/sectionCcreate/${fyId}`;
+                window.location.href = `/user/brsr/sectionP1create/${fyId}`;
             }
         }
     });

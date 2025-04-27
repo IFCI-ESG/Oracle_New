@@ -59,7 +59,7 @@
                                                         <tr>
                                                             <td class="text-center" style="font-size: 1rem"><b>{{ $key + 1 }}</b></td>
                                                             <td style="font-size: 1rem">
-                                                                {{ $busi->acitvity }}
+                                                                {{ $busi->activity }}
                                                                 <input type="hidden" name="business[{{$key}}][part_id]" value="{{$busi->id}}">
                                                             </td>
                                                             <td class="text-center">
@@ -74,7 +74,7 @@
                                                         <tr>
                                                             <td class="text-center" style="font-size: 1rem"><b>{{ $key + 1 }}</b></td>
                                                             <td style="font-size: 1rem">
-                                                                {{ $busi->acitvity }}
+                                                                {{ $busi->activity }}
                                                                 {{-- <input type="hidden" name="business[{{$key}}][row_id]" value="{{$busi->id}}"> --}}
                                                             </td>
                                                             <td class="text-center">
@@ -158,11 +158,11 @@
                                                                     {{ $key+1 }}
                                                                 </td>
                                                                 <td style="font-size: 1rem;" >
-                                                                    {{$seg->header_name}}
+                                                                    {{$seg->label}}
                                                                     <input type="hidden" value="{{ $seg->id }}" name="part[{{ $key }}][ques_id]">
                                                                 </td>
                                                                     @if ($ques_value->isNotEmpty())
-                                                                        <td class="text-center test1" data_seg_id={{ $seg->id }} data_comp_id="{{$user->id}}" ques_data="{{ $seg->header_name }}" data_fy_id="{{$fy_id}}" >
+                                                                        <td class="text-center test1" data_seg_id={{ $seg->id }} data_comp_id="{{$user->id}}" ques_data="{{ $seg->label }}" data_fy_id="{{$fy_id}}" >
                                                                             <a class="btn btn-primary btn-sm ShowRow"
                                                                                 data-toggle="modal" data-target="#ViewModalCenter">
                                                                                 <i class="fa fa-eye"></i>View</a>

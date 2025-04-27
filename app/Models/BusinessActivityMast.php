@@ -6,16 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class BusinessActivityMast extends Model
 {
-    protected $table = 'BUSINESSACTIVITYMASTER';
-    protected $primaryKey = 'ID';
-    public $timestamps = false;
+    protected $table = 'business_activity_master';
     protected $fillable = [
-        'ID',
-        'ACITVITY',
-        'SOURCE',
-        'SCOPE_ID',
-        'SECTOR_ID',
-        'QUES_TYPE_ID',
-        'STATUS'
+        'id',
+        'activity',
+        'source',
+        'scope_id',
+        'sector_id',
+        'status'
     ];
 }

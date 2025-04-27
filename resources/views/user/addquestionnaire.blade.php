@@ -94,7 +94,7 @@
                                                     <td class="text-center" style="font-size: 1rem">
                                                         <b>{{ $key + 1 }}</b></td>
                                                     <td style="font-size: 1rem">
-                                                        {{ $busi->acitvity }}
+                                                        {{ $busi->activity }}
                                                         <input type="hidden" name="business[{{ $key }}][part_id]"
                                                             value="{{ $busi->id }}">
                                                     </td>
@@ -112,7 +112,7 @@
                                                     <td class="text-center" style="font-size: 1rem">
                                                         <b>{{ $key + 1 }}</b></td>
                                                     <td style="font-size: 1rem">
-                                                        {{ $busi->acitvity }}
+                                                        {{ $busi->activity }}
                                                         {{-- <input type="hidden" name="business[{{$key}}][row_id]" value="{{$busi->id}}"> --}}
                                                     </td>
                                                     <td class="text-center">
@@ -222,7 +222,7 @@
                                                                     {{ $key + 1 }}
                                                                 </td>
                                                                 <td style="font-size: 1rem;">
-                                                                    {{ $seg->header_name }}
+                                                                    {{ $seg->label }}
                                                                     <input type="hidden" value="{{ $seg->id }}"
                                                                         name="part[{{ $key }}][seg_id]">
                                                                 </td>
@@ -234,7 +234,7 @@
                                                                         <td class="text-center test1"
                                                                             data_seg_id={{ $seg->id }}
                                                                             data_comp_id="{{ $user->id }}"
-                                                                            ques_data="{{ $seg->header_name }}"
+                                                                            ques_data="{{ $seg->label }}"
                                                                             data_fy_id="{{ $fy_id }}">
                                                                             <a class="btn btn-primary btn-sm ShowRow"
                                                                                 data-toggle="modal"
@@ -244,7 +244,7 @@
                                                                     @else
                                                                         <td class="text-center test"
                                                                             data_seg_id={{ $seg->id }}
-                                                                            ques_data="{{ $seg->header_name }}"
+                                                                            ques_data="{{ $seg->label }}"
                                                                             data_sector_id="{{ Auth::user()->sector_id }}">
                                                                             <a class="btn btn-primary btn-sm ShowRow"
                                                                                 data-toggle="modal"
@@ -339,7 +339,7 @@
                 <span style="font-weight: bold;">Level 2</span> - Non-verified GHG emissions data or real primary energy
                 data<br>
                 <span style="font-weight: bold;">Level 3</span> - Emissions calculated using primary physical activity data
-                of the company’s production and emission factors specific to that primary data<br>
+                of the company's production and emission factors specific to that primary data<br>
                 <span style="font-weight: bold;">Level 4</span> - Estimate emissions based on sector and revenue<br>
                 <span style="font-weight: bold;">Level 5</span> - Emissions based on national-level proxy data
             </p>
@@ -487,7 +487,7 @@
                             $('#popupTable').append(`
                                 <tr>
                                     <td>
-                                        <label style="margin-left: 50px;" title="${drop.descrption}">
+                                        <label style="margin-left: 50px;" title="${drop.description}">
                                             <input type="checkbox" class="first" id="check_${key}" name="ques[${key}][check]">
                                             &nbsp;&nbsp; ${drop.particular}
                                         </label>
@@ -568,7 +568,7 @@
                                 <tr>
                                     <td>
                                         <input type="hidden" name="ques[${key}][row_id]" value="${drop.id}">
-                                        <label style="margin-left: 50px;" data-toggle="tooltip" title="${drop.descrption}">
+                                        <label style="margin-left: 50px;" data-toggle="tooltip" title="${drop.description}">
                                             <input type="checkbox" class="second" id="checkview_${key}" name="ques[${key}][check]" value="1" ${isChecked}>
                                             &nbsp;&nbsp; ${drop.particular}
                                         </label>

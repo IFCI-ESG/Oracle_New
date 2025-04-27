@@ -251,31 +251,31 @@ class RbiDisclosureController extends Controller
         $busi_mast = BusinessActivityMast::where('sector_id', $user->sector_id)->orderby('id')->get();
 
         $busi_value = DB::table('business_activity_value as bav')
-                            ->join('business_activity_master as bam','bam.id','bav.acitvity_id')
+                            ->join('business_activity_master as bam','bam.id','bav.activity_id')
                             ->where('is_checked', true)
                             ->where('bav.com_id',$user->id)
                             ->where('bav.fy_id',$fy_id)
                             ->orderby('bav.id')
-                            ->get(['bav.*','bam.acitvity']);
+                            ->get(['bav.*','bam.activity']);
 
-        $seg_mast = DB::table('segment_master as sgm')
-                            ->join('sector_segment_map as ssm','ssm.segment_id','sgm.id')
-                            ->join('scope_master as sm','sm.id','sgm.scope_id')
+        $seg_mast = DB::table('segmentmaster as sgm')
+                            ->join('sectorsegmentmapping as ssm','ssm.segment_id','sgm.id')
+                            ->join('scopemaster as sm','sm.id','sgm.scopeid')
                             ->where('ssm.ques_type_id',$user->comp_type_id)
                             ->where('ssm.sector_id',$user->sector_id)
-                            ->orderby('sgm.order')
+                            ->orderby('sgm.ordernumber')
                             ->get(['sgm.*','sm.name as scope_name']);
             // dd($seg_mast);
         $ques_value = DB::table('question_value as qv')
                             ->join('question_master as qm','qm.id','=','qv.ques_id')
-                            ->join('sector_segment_map as ssm','ssm.id','qm.sector_segment_map_id')
+                            ->join('sectorsegmentmapping as ssm','ssm.id','qm.sector_segment_map_id')
                             ->where('ssm.ques_type_id',$user->comp_type_id)
                             ->where('qv.com_id',$user->id)
                             ->get(['qv.*','ssm.segment_id']);
             // dd($ques_value);
 
         $ques_mast = DB::table('question_master as qm')
-                            ->join('sector_segment_map as ssm','ssm.id','qm.sector_segment_map_id')
+                            ->join('sectorsegmentmapping as ssm','ssm.id','qm.sector_segment_map_id')
                             ->where('ssm.ques_type_id',$user->comp_type_id)
                             ->where('ssm.sector_id',$user->sector_id)
                             ->orderby('qm.id')->get();
