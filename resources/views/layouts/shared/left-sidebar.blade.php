@@ -56,7 +56,8 @@
                      <li class="menu-title">Navigation</li>
             @if (Auth::user()->hasRole('SuperAdmin'))
 
-            <li class="menu-item">
+	    
+	       <li class="menu-item">
                 <a class="menu-link {{ Request::routeIs('admin.user.adminhome') ? 'active' : '' }}"
                     href="{{ route('admin.home') }}">
                     <span class="menu-icon">
@@ -100,9 +101,13 @@
                         </ul>
                     </div>
                 </li>
-            @elseif (Auth::user()->hasRole('Admin') && Auth::user()->hasRole('SubAdmin'))
+	    
+	    
+	    @elseif (Auth::user()->hasRole('Admin') && Auth::user()->hasRole('SubAdmin'))
                 <!-- <li class="menu-title">Reports</li> -->
-                <li class="menu-item">
+		
+
+  <li class="menu-item">
                     <a class="menu-link {{ Request::routeIs('admin.user.adminhome') ? 'active' : '' }}"
                         href="{{ route('admin.home') }}">
                         <span class="menu-icon">
@@ -111,7 +116,7 @@
                         <span class="menu-text">Home</span>
                     </a>
                 </li>
-                <li class="menu-item">
+<li class="menu-item">
                     <a class="menu-link {{ Request::routeIs('admin.user.adminhome') ? 'active' : '' }}" href="{{ route('admin.user.adminhome') }}">
                     <span class="menu-icon">
                         <i class="fa fa-user"></i>
@@ -119,7 +124,7 @@
                  <span class="menu-text">Profile</span>
                 </a>
             </li>
-            <li class="menu-item">
+ <li class="menu-item">
                 <a class="menu-link" href="#sidebarDashboard" data-bs-toggle="collapse">
                     <span class="menu-icon"><i data-feather="users"></i></span>
                     <span class="menu-text"> Dashboard </span>
@@ -186,8 +191,8 @@
                         <span class="menu-icon"><i data-feather="calendar"></i></span>
                         <span class="menu-text"> MIS </span>
                     </a>
-                </li> --}}
-                <li class="menu-item">
+                </li> --}}		
+<li class="menu-item">
     <a class="menu-link textcolor" href="#sidebarBranch" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarBranch">
         <span class="menu-icon"><i data-feather="globe"></i></span>
         <span class="menu-text">Manage Branch</span>

@@ -16,6 +16,9 @@ require __DIR__ . '/auth.php';
 //     Route::get('{first}/{second}', [RoutingController::class, 'secondLevel'])->name('second');
 //     Route::get('{any}', [RoutingController::class, 'root'])->name('any');
 //  });
+Route::get('/test', function () {
+    echo "ok";
+});
 
 Route::get('/', function () {
     return view('landing.home');
@@ -54,9 +57,7 @@ Route::get('/hyperlink-policy', function () {
     return view('landing.hyperlink-policy');
 })->name('hyperlink-policy');
 
-Route::get('/flash-card', function () {
-    return view('landing.flash_card');
-})->name('flash-card');
+
 
 Route::get('/landing', [\App\Http\Controllers\HomeController::class, 'home'])
 ->name('landing');
@@ -74,8 +75,7 @@ Route::get('/faq', [\App\Http\Controllers\HomeController::class, 'faq'])
     ->name('tool');
 
 Route::post('inquiryMail',  [\App\Http\Controllers\HomeController::class, 'inquiryMail'])->name('inquiry');
-Route::get('/explore', [\App\Http\Controllers\HomeController::class, 'explore'])
-->name('explore');
+
 
 
 Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'create'])
@@ -87,7 +87,7 @@ Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'store
 
 Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'destroy'])
     ->middleware('auth')
-    ->name('logout');  
+    ->name('logout');
 
 //Route::get('/', [\App\Http\Controllers\Admin\LoginController::class, 'showLoginForm'])->name('/');
 
@@ -114,8 +114,13 @@ Route::name('admin.')->prefix('admin')->middleware(['auth:admin','role:SuperAdmi
     Route::get('/home', [\App\Http\Controllers\Admin\HomeController::class,'index'])->name('home');
      Route::get('dash',[\App\Http\Controllers\Admin\UserController::class, 'dash'])->name('dash');
     Route::get('env_mis', [\App\Http\Controllers\Admin\UserController::class, 'env_mis'])->name('env_mis');
-
-    Route::get('bank_env_mis', [\App\Http\Controllers\Admin\UserController::class, 'bank_env_mis'])->name('bank_env_mis');
+Route::get('bank_env_mis', [\App\Http\Controllers\Admin\UserController::class, 'bank_env_mis'])->name('bank_env_mis');
+ 
+    Route::get('bank_dash_environment',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_environment'])->name('bank_dash_environment');
+    Route::get('bank_dash_social',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_social'])->name('bank_dash_social');
+    Route::get('bank_dash_governance',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_governance'])->name('bank_dash_governance');
+    Route::get('bank_dash_scoring',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_scoring'])->name('bank_dash_scoring');
+Route::get('bank_env_mis', [\App\Http\Controllers\Admin\UserController::class, 'bank_env_mis'])->name('bank_env_mis');
  
     Route::get('bank_dash_environment',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_environment'])->name('bank_dash_environment');
     Route::get('bank_dash_social',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_social'])->name('bank_dash_social');
@@ -502,6 +507,16 @@ Route::name('user.')->prefix('user')->middleware(['role:ActiveUser', 'verified',
     Route::post('/brsr/sectionp1store', [\App\Http\Controllers\User\BrsrController::class,'sectionp1store'])->name('brsr.sectionp1store');
     Route::get('/brsr/sectionP1edit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP1edit'])->name('brsr.sectionP1edit');
     Route::post('/brsr/sectionp1update', [\App\Http\Controllers\User\BrsrController::class,'sectionp1update'])->name('brsr.sectionp1update');
+
+    Route::get('/brsr/sectionP2create/{fy_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP2create'])->name('brsr.sectionP2create');
+    Route::post('/brsr/sectionp2store', [\App\Http\Controllers\User\BrsrController::class,'sectionp2store'])->name('brsr.sectionp2store');
+    Route::get('/brsr/sectionP2edit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP2edit'])->name('brsr.sectionP2edit');
+    Route::post('/brsr/sectionp2update', [\App\Http\Controllers\User\BrsrController::class,'sectionp2update'])->name('brsr.sectionp2update');
+
+    Route::get('/brsr/sectionP7create/{fy_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP7create'])->name('brsr.sectionP7create');
+    Route::post('/brsr/sectionp7store', [\App\Http\Controllers\User\BrsrController::class,'sectionp7store'])->name('brsr.sectionp7store');
+    Route::get('/brsr/sectionP7edit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP7edit'])->name('brsr.sectionP7edit');
+    Route::post('/brsr/sectionp7update', [\App\Http\Controllers\User\BrsrController::class,'sectionp7update'])->name('brsr.sectionp7update');
     
 
 //  Route::resource('brsr', 'User\BrsrController', ['except' => 'create','update']);
