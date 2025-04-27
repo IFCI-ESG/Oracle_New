@@ -1177,7 +1177,8 @@ class UserController extends Controller
     }
 
 
-    public function bank_env_mis()
+
+     public function bank_env_mis()
     {
         $client = new Client();
 

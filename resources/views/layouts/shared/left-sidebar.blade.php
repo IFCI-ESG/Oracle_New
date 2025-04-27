@@ -27,25 +27,8 @@
                     @endif
             <div class="dropdown">
                 <a href="javascript: void(0);" class="dropdown-toggle h5 mb-1 d-block textcolor"
-                    data-bs-toggle="dropdown"> {{ auth()->user()->contact_person }}</a>
-                <div class="dropdown-menu user-pro-dropdown">
-                    <!-- item-->
-                <!--     <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <i class="fe-user me-1"></i>
-                        <span>My Account</span>
-                    </a> -->
-
-
-                    <!-- item-->
-                   <form method="POST" action="{{ route('admin.logout') }}">
-                        @csrf
-                        <a href="javascript:void(0);" class="dropdown-item notify-item"
-                            onclick="event.preventDefault(); this.closest('form').submit();">
-                            <i class="fe-log-out"></i>
-                            <span>Logout</span>
-                        </a>
-                    </form>
-                </div>
+                    > {{ auth()->user()->contact_person }}</a>
+                
             </div>
             <p class="text-muted mb-0">{{ auth()->user()->designation }}</p>
         </div>
@@ -56,7 +39,8 @@
                      <li class="menu-title">Navigation</li>
             @if (Auth::user()->hasRole('SuperAdmin'))
 
-            <li class="menu-item">
+	    
+	       <li class="menu-item">
                 <a class="menu-link {{ Request::routeIs('admin.user.adminhome') ? 'active' : '' }}"
                     href="{{ route('admin.home') }}">
                     <span class="menu-icon">
@@ -100,9 +84,13 @@
                         </ul>
                     </div>
                 </li>
-            @elseif (Auth::user()->hasRole('Admin') && Auth::user()->hasRole('SubAdmin'))
+	    
+	    
+	    @elseif (Auth::user()->hasRole('Admin') && Auth::user()->hasRole('SubAdmin'))
                 <!-- <li class="menu-title">Reports</li> -->
-                <li class="menu-item">
+		
+
+  <li class="menu-item">
                     <a class="menu-link {{ Request::routeIs('admin.user.adminhome') ? 'active' : '' }}"
                         href="{{ route('admin.home') }}">
                         <span class="menu-icon">
@@ -111,7 +99,7 @@
                         <span class="menu-text">Home</span>
                     </a>
                 </li>
-                <li class="menu-item">
+<li class="menu-item">
                     <a class="menu-link {{ Request::routeIs('admin.user.adminhome') ? 'active' : '' }}" href="{{ route('admin.user.adminhome') }}">
                     <span class="menu-icon">
                         <i class="fa fa-user"></i>
@@ -119,7 +107,7 @@
                  <span class="menu-text">Profile</span>
                 </a>
             </li>
-            <li class="menu-item">
+ <li class="menu-item">
                 <a class="menu-link" href="#sidebarDashboard" data-bs-toggle="collapse">
                     <span class="menu-icon"><i data-feather="users"></i></span>
                     <span class="menu-text"> Dashboard </span>
@@ -186,8 +174,8 @@
                         <span class="menu-icon"><i data-feather="calendar"></i></span>
                         <span class="menu-text"> MIS </span>
                     </a>
-                </li> --}}
-                <li class="menu-item">
+                </li> --}}		
+<li class="menu-item">
     <a class="menu-link textcolor" href="#sidebarBranch" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarBranch">
         <span class="menu-icon"><i data-feather="globe"></i></span>
         <span class="menu-text">Manage Branch</span>

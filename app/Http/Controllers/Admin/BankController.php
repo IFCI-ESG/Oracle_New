@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 use Validator;
 use Mail;
@@ -99,78 +100,68 @@ class BankController extends Controller
         return redirect()->back()->with('error', 'User not found');
     }
 
-    public function updateAccount(Request $request) {
-      try {
+    public function updateAccount(Request $request)
+    {
+        try {
+            $user = auth()->user();
+            
+            if ($request->has('reset_password') && $request->filled('new_password')) {
+                // Validate OTP
+                $otp = $request->input('otp');
+                $generatedOtp = $request->input('generated_otp');
+                $staticOtp = '987654';
+                
+                // Check against both static and generated OTP
+                if ($otp !== $staticOtp && $otp !== $generatedOtp) {
+                    return back()->with('error', 'Invalid OTP!');
+                }
 
-        $user = AdminUser::find(auth()->user()->id);
-
-        if($user->password_changed == 1) {
-           $request->validate([
-            'email' => 'required|email|unique:users,email,' . auth()->user()->id,
-            'image' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
-           ]);
-        }
-
-        if ($request->has('reset_password')) {
-            $request->validate([
-                'new_password'     => 'required|min:8',
-                'confirm_password' => 'required|same:new_password',
-                'otp'              => 'required|numeric',
-            ]);
-
-        // $SMS = new OtpTemp();
-        // $module = "to update your account";
-        // $smsResponse = $SMS->sendSMS($request->mobile, $module, $otp);
-
-            $validOtp = '987654';
-
-            if ($request->otp != $validOtp) {
-                return redirect()->back()->with('error', 'Invalid OTP!');
+                // Update password
+                $user->password = bcrypt($request->new_password);
+                $user->password_changed = 1; // Mark that password has been changed
             }
-        }
 
-        if (! $user) {
-            return redirect()->back()->with('error', 'User not found!');
-        }
-        if($user->password_changed == 1){
-         $user->email = $request->email;
-        }
+            // Update other fields if provided
+            if ($request->filled('email')) {
+                $user->email = $request->email;
+            }
 
-        if ($request->has('reset_password')) {
-            $user->password = Hash::make($request->new_password);
+            // Handle image upload if provided
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $allowedTypes = ['jpg', 'jpeg', 'png'];
+                $extension = strtolower($file->getClientOriginalExtension());
+                
+                if (!in_array($extension, $allowedTypes)) {
+                    return back()->with('error', 'Only JPG, JPEG, and PNG files are allowed!');
+                }
+                
+                if ($file->getSize() > 2048000) { // 2MB in bytes
+                    return back()->with('error', 'File size should not exceed 2MB!');
+                }
+                
+                // Delete old image if exists
+                if ($user->image && Storage::exists('public/' . $user->image)) {
+                    Storage::delete('public/' . $user->image);
+                }
+                
+                $path = $file->store('profile_images', 'public');
+                $user->image = $path;
+            }
 
-            $user->password_changed = 1;
             $user->save();
-            Auth::Logout($user);
-            return redirect('/admin/login')->with('success', 'Password updated. Please log in.');
-        }
 
+            if ($request->has('reset_password')) {
+                // If password was reset, redirect to login
+                Auth::logout();
+                return redirect('/admin/login')->with('success', 'Password updated successfully. Please login with your new password.');
+            }
 
-        if($user->password_changed == 1){
-        if  ( $request->hasFile('image')) {
-            $imageName = time() . '.' . $request->image->extension();
-            $request->image->storeAs('images', $imageName, 'public');
-            $user->image = 'images/' . $imageName;
+            return back()->with('success', 'Account updated successfully!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'An error occurred while updating your account: ' . $e->getMessage());
         }
     }
-
-
-        $user->save();
-
-        return redirect()->back()->with([
-            'success' => 'Account updated successfully!',
-            'password_changed' => 1
-        ]);
-
-     } catch (\Exception $e) {
-        Log::error('Error in updating account: ' . $e->getMessage(), [
-            'exception' => $e,
-            'user_id' => auth()->user()->id
-        ]);
-
-        return redirect()->back()->with('error', 'Please upload Only JPG, JPEG & PNG image format!');
-    }
-}
 
    public function activate($id)
     {
