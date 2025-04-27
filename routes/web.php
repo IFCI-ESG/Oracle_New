@@ -514,3 +514,6 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 
 Route::post('/check-credentials', [\App\Http\Controllers\Auth\OtpController::class, 'checkCredentials'])->name('check.credentials');
 Route::post('/verify-otp', [\App\Http\Controllers\Auth\OtpController::class, 'verifyOtp'])->name('verify.otp');
+
+Route::post('/send-otp', [App\Http\Controllers\PassChangeController::class, 'sendOTP'])->name('send.otp');
+Route::post('/store-otp', [App\Http\Controllers\PassChangeController::class, 'storeOTP'])->name('store.otp');
