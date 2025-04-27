@@ -283,8 +283,10 @@ function handleOTPSend() {
     $.ajax({
         url: '{{ route("send.otp") }}',
         type: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
         data: {
-            _token: '{{ csrf_token() }}',
             otp: otp,
             email: '{{ auth()->user()->email }}'
         },
@@ -297,15 +299,21 @@ function handleOTPSend() {
                 document.getElementById('otp_field').style.display = 'block';
                 sendOtpBtn.disabled = false;
                 sendOtpBtn.innerHTML = originalText;
+                
+                // Show success message
                 alert('OTP has been sent to your email address');
             } else {
-                alert('Failed to send OTP. Please try again.');
+                alert('Failed to send OTP: ' + (response.message || 'Please try again.'));
                 sendOtpBtn.disabled = false;
                 sendOtpBtn.innerHTML = originalText;
             }
         },
-        error: function() {
-            alert('An error occurred while sending OTP. Please try again.');
+        error: function(xhr) {
+            var errorMessage = 'An error occurred while sending OTP.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage = xhr.responseJSON.message;
+            }
+            alert(errorMessage + ' Please try again.');
             sendOtpBtn.disabled = false;
             sendOtpBtn.innerHTML = originalText;
         }
