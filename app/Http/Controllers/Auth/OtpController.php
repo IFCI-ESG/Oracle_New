@@ -7,9 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 
-class OTPController extends Controller
+class OtpController extends Controller
 {
     public function checkCredentials(Request $request)
     {
@@ -98,44 +97,6 @@ class OTPController extends Controller
                 'success' => false,
                 'message' => 'Error verifying OTP: ' . $e->getMessage()
             ]);
-        }
-    }
-
-    public function sendOTP(Request $request)
-    {
-        try {
-            $email = $request->email;
-            $otp = $request->otp;
-
-            // Send email
-            Mail::send([], [], function($message) use ($email, $otp) {
-                $message->to($email)
-                    ->subject('Password Reset OTP - ESG Portal')
-                    ->html("
-                        <div style='font-family: Arial, sans-serif;'>
-                            <div style='max-width: 600px; margin: 0 auto; padding: 20px;'>
-                                <div style='background-color: #296243; color: white; padding: 20px; text-align: center;'>
-                                    <h2 style='margin: 0;'>Password Reset OTP</h2>
-                                </div>
-                                <div style='padding: 20px; border: 1px solid #ddd;'>
-                                    <p>Dear User,</p>
-                                    <p>You have requested to reset your password. Please use the following OTP to proceed:</p>
-                                    <div style='background-color: #f8f9fa; padding: 15px; text-align: center; margin: 20px 0;'>
-                                        <h1 style='margin: 0; color: #296243; letter-spacing: 5px;'>" . $otp . "</h1>
-                                    </div>
-                                    <p>This OTP will expire in 10 minutes.</p>
-                                    <p>If you did not request this password reset, please ignore this email.</p>
-                                    <p style='margin-top: 30px;'>Best regards,<br>ESG Portal Team</p>
-                                </div>
-                            </div>
-                        </div>
-                    ");
-            });
-
-            return response()->json(['success' => true, 'message' => 'OTP sent successfully']);
-        } catch (\Exception $e) {
-            \Log::error('OTP Send Error: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Failed to send OTP'], 500);
         }
     }
 } 
