@@ -14,7 +14,7 @@
                 <h5 class="modal-title" id="sectionModalLabel"><i>Select Section</i></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" style="max-height: 300px; overflow-y: auto;">
+            <div class="modal-body">
                 <table class="table table-bordered">
                     <thead>
                         <tr class="text-center">
@@ -43,54 +43,6 @@
                             <td style="color:blue;"><i>PRINCIPLE 1</i></td>
                             <td>
                                 <button class="btn btn-primary btn-sm sectionCButton" id="sectionP1"><i>Create</i></button>
-                            </td>
-                        </tr>
-                        <tr class="text-center" data-section="C">
-                            <td style="color:blue;"><i>PRINCIPLE 2</i></td>
-                            <td>
-                                <button class="btn btn-primary btn-sm sectionCButton" id="sectionP2"><i>Create</i></button>
-                            </td>
-                        </tr>
-                        <tr class="text-center" data-section="C">
-                            <td style="color:blue;"><i>PRINCIPLE 3</i></td>
-                            <td>
-                                <button class="btn btn-primary btn-sm sectionCButton" id="sectionP3"><i>Create</i></button>
-                            </td>
-                        </tr>
-                        <tr class="text-center" data-section="C">
-                            <td style="color:blue;"><i>PRINCIPLE 4</i></td>
-                            <td>
-                                <button class="btn btn-primary btn-sm sectionCButton" id="sectionP4"><i>Create</i></button>
-                            </td>
-                        </tr>
-                        <tr class="text-center" data-section="C">
-                            <td style="color:blue;"><i>PRINCIPLE 5</i></td>
-                            <td>
-                                <button class="btn btn-primary btn-sm sectionCButton" id="sectionP5"><i>Create</i></button>
-                            </td>
-                        </tr>
-                        <tr class="text-center" data-section="C">
-                            <td style="color:blue;"><i>PRINCIPLE 6</i></td>
-                            <td>
-                                <button class="btn btn-primary btn-sm sectionCButton" id="sectionP6"><i>Create</i></button>
-                            </td>
-                        </tr>
-                        <tr class="text-center" data-section="C">
-                            <td style="color:blue;"><i>PRINCIPLE 7</i></td>
-                            <td>
-                                <button class="btn btn-primary btn-sm sectionCButton" id="sectionP7"><i>Create</i></button>
-                            </td>
-                        </tr>
-                        <tr class="text-center" data-section="C">
-                            <td style="color:blue;"><i>PRINCIPLE 8</i></td>
-                            <td>
-                                <button class="btn btn-primary btn-sm sectionCButton" id="sectionP8"><i>Create</i></button>
-                            </td>
-                        </tr>
-                        <tr class="text-center" data-section="C">
-                            <td style="color:blue;"><i>PRINCIPLE 9</i></td>
-                            <td>
-                                <button class="btn btn-primary btn-sm sectionCButton" id="sectionP9"><i>Create</i></button>
                             </td>
                         </tr>
                     </tbody>
@@ -183,9 +135,7 @@
     let mastid = null;
     let brsrValue = @json($brsr_value);
     let brsrValue1 = @json($brsr_sectionb);
-    let brsrValue2 = @json($brsr_sectionp1);    
-    let brsrValue3 = @json($brsr_sectionp2); 
-    let brsrValue4 = @json($brsr_sectionp7);
+    let brsrValue2 = @json($brsr_sectionp1);     
     let fyData = @json($fys);  
     
     function setFyId(id, fy, ids,mastId) {
@@ -216,20 +166,11 @@
             return item.fy_id == fyid;   
         });
 
-        const fyExists4 = brsrValue3.some(item => {
-            console.log("Checking if item.fy_id:", item.fy_id, "matches fyId:", fyId);
-            return item.fy_id == fyid;   
-        });
-
-        const fyExists5 = brsrValue4.some(item => {
-            console.log("Checking if item.fy_id:", item.fy_id, "matches fyId:", fyId);
-            return item.fy_id == fyid;   
-        });
-
-        updateSectionButtons(fyExists,fyExists1,fyExists3,fyExists4,fyExists5);
+        console.log("fyExists:", fyExists);
+        updateSectionButtons(fyExists,fyExists1,fyExists3);
     }
 
-    function updateSectionButtons(fyExists,fyExists1,fyExists3,fyExists4,fyExists5) {
+    function updateSectionButtons(fyExists,fyExists1,fyExists3) {
         
         const sectionAButton = document.getElementById('sectionA');
         if (fyExists) {
@@ -262,28 +203,6 @@
             sectionCButton.innerHTML = '<i>Create</i>';
             sectionCButton.classList.remove('btn-warning');
             sectionCButton.classList.add('btn-primary');
-        }
-
-        const sectionP2Button = document.getElementById('sectionP2');
-        if (fyExists4) {
-            sectionP2Button.innerHTML = '<i>Edit</i>';
-            sectionP2Button.classList.remove('btn-primary');
-            sectionP2Button.classList.add('btn-warning');
-        } else {
-            sectionP2Button.innerHTML = '<i>Create</i>';
-            sectionP2Button.classList.remove('btn-warning');
-            sectionP2Button.classList.add('btn-primary');
-        }
-
-        const sectionP7Button = document.getElementById('sectionP7');
-        if (fyExists5) {
-            sectionP7Button.innerHTML = '<i>Edit</i>';
-            sectionP7Button.classList.remove('btn-primary');
-            sectionP7Button.classList.add('btn-warning');
-        } else {
-            sectionP7Button.innerHTML = '<i>Create</i>';
-            sectionP7Button.classList.remove('btn-warning');
-            sectionP7Button.classList.add('btn-primary');
         }
     }
     
@@ -322,29 +241,6 @@
             }
         }
     });
-
-    document.getElementById('sectionP2').addEventListener('click', function() {
-        if (fyId) {
-            if (brsrValue3.some(item => item.fy_id == fyid)) {
-                window.location.href = `/user/brsr/sectionP2edit/${mastid }`;
-           } else {
-                window.location.href = `/user/brsr/sectionP2create/${fyId}`;
-            }
-         }
-    });
-
-    document.getElementById('sectionP7').addEventListener('click', function() {
-        if (fyId) {
-            if (brsrValue4.some(item => item.fy_id == fyid)) {
-                window.location.href = `/user/brsr/sectionP7edit/${mastid }`;
-           } else {
-                window.location.href = `/user/brsr/sectionP7create/${fyId}`;
-            }
-         }
-    });
-
-
-
 </script>
 
 @endpush

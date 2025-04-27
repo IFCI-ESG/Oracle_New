@@ -637,8 +637,8 @@ in the following format:</b>
             let newRow = `
                 <tr>
                    
-                    <td><textarea class="form-control form-control-sm auto-grow" name="additional[${rowCount}][text_a]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)"></textarea></td>
-                     <td><textarea class="form-control form-control-sm auto-grow" name="additional[${rowCount}][text_b]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)"></textarea></td>
+                    <td><textarea class="form-control form-control-sm auto-grow" name="additional[${rowCount}][text_a]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                     <td><textarea class="form-control form-control-sm auto-grow" name="additional[${rowCount}][text_b]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
                     
                     <td class="text-center">
                         <button type="button" class="btn btn-danger btn-sm remove-row"><i class="fas fa-minus"></i></button>
@@ -663,9 +663,9 @@ in the following format:</b>
             rowCount++;
             let newRow = `
                 <tr>
-                     <td><textarea class="form-control form-control-sm auto-grow" name="additionals[${rowCount}][text_a]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)"></textarea></td>
-                     <td><textarea class="form-control form-control-sm auto-grow" name="additionals[${rowCount}][text_b]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)"></textarea></td>
-                     <td><textarea class="form-control form-control-sm auto-grow" name="additionals[${rowCount}][text_c]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)"></textarea></td>
+                     <td><textarea class="form-control form-control-sm auto-grow" name="additionals[${rowCount}][text_a]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                     <td><textarea class="form-control form-control-sm auto-grow" name="additionals[${rowCount}][text_b]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
+                     <td><textarea class="form-control form-control-sm auto-grow" name="additionals[${rowCount}][text_b]" style=" overflow:hidden; resize:none;"  oninput="autoResize(this)" required></textarea></td>
                     <td class="text-center">
                         <button type="button" class="btn btn-danger btn-sm remove-row"><i class="fas fa-minus"></i></button>
                     </td>
@@ -679,6 +679,17 @@ in the following format:</b>
             
             
         });
+    });
+</script>
+
+<script>
+    function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px'; 
+    }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.auto-grow').forEach(autoResize);
     });
 </script>
 

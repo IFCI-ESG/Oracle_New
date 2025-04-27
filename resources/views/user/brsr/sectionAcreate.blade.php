@@ -963,6 +963,7 @@
 
         $(document).on('click', '.remove-row', function() {
             $(this).closest('tr').remove();  
+            
             rowCount--;
             $('#material_data_rows tr').each(function(index) {
                 $(this).find('td:first').text(index + 1);  

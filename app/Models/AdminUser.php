@@ -6,23 +6,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Support\Facades\DB;
+
 class AdminUser extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable, HasRoles;
      protected $table = 'users';
-    
-    public $incrementing = false;
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            $nextId = DB::select('SELECT USERS_SEQ.NEXTVAL AS ID FROM DUAL');
-            $model->id = $nextId[0]->id;
-        });
-    }
     /**
      * The attributes that are mass assignable.
      *
@@ -62,7 +50,6 @@ class AdminUser extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password', 'remember_token',
     ];
-
 
     public function documents()
     {
