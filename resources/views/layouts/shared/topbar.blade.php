@@ -122,7 +122,7 @@
                     @if(auth()->user()->password_changed == 1)
                         <!-- Show full account form when password has been changed -->
                         <div class="text-center mb-4">
-                            <h3 class="font-weight-bold" style="color: #0d0d6e;">Hi {{ auth()->user()->contact_person }}</h3>
+                            <h3 class="font-weight-bold" style="color: #0d0d6e;"> {{ auth()->user()->contact_person }}</h3>
                             <p style="font-size: 1rem; color: #666;">Make sure all information is correct before submitting.</p>
                         </div>
 
