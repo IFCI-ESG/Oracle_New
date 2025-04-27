@@ -16,9 +16,6 @@ require __DIR__ . '/auth.php';
 //     Route::get('{first}/{second}', [RoutingController::class, 'secondLevel'])->name('second');
 //     Route::get('{any}', [RoutingController::class, 'root'])->name('any');
 //  });
-Route::get('/test', function () {
-    echo "ok";
-});
 
 Route::get('/', function () {
     return view('landing.home');
@@ -57,7 +54,9 @@ Route::get('/hyperlink-policy', function () {
     return view('landing.hyperlink-policy');
 })->name('hyperlink-policy');
 
-
+Route::get('/flash-card', function () {
+    return view('landing.flash_card');
+})->name('flash-card');
 
 Route::get('/landing', [\App\Http\Controllers\HomeController::class, 'home'])
 ->name('landing');
@@ -75,7 +74,8 @@ Route::get('/faq', [\App\Http\Controllers\HomeController::class, 'faq'])
     ->name('tool');
 
 Route::post('inquiryMail',  [\App\Http\Controllers\HomeController::class, 'inquiryMail'])->name('inquiry');
-
+Route::get('/explore', [\App\Http\Controllers\HomeController::class, 'explore'])
+->name('explore');
 
 
 Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'create'])
@@ -87,7 +87,7 @@ Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'store
 
 Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'destroy'])
     ->middleware('auth')
-    ->name('logout');
+    ->name('logout');  
 
 //Route::get('/', [\App\Http\Controllers\Admin\LoginController::class, 'showLoginForm'])->name('/');
 
@@ -114,13 +114,8 @@ Route::name('admin.')->prefix('admin')->middleware(['auth:admin','role:SuperAdmi
     Route::get('/home', [\App\Http\Controllers\Admin\HomeController::class,'index'])->name('home');
      Route::get('dash',[\App\Http\Controllers\Admin\UserController::class, 'dash'])->name('dash');
     Route::get('env_mis', [\App\Http\Controllers\Admin\UserController::class, 'env_mis'])->name('env_mis');
-Route::get('bank_env_mis', [\App\Http\Controllers\Admin\UserController::class, 'bank_env_mis'])->name('bank_env_mis');
- 
-    Route::get('bank_dash_environment',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_environment'])->name('bank_dash_environment');
-    Route::get('bank_dash_social',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_social'])->name('bank_dash_social');
-    Route::get('bank_dash_governance',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_governance'])->name('bank_dash_governance');
-    Route::get('bank_dash_scoring',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_scoring'])->name('bank_dash_scoring');
-Route::get('bank_env_mis', [\App\Http\Controllers\Admin\UserController::class, 'bank_env_mis'])->name('bank_env_mis');
+
+    Route::get('bank_env_mis', [\App\Http\Controllers\Admin\UserController::class, 'bank_env_mis'])->name('bank_env_mis');
  
     Route::get('bank_dash_environment',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_environment'])->name('bank_dash_environment');
     Route::get('bank_dash_social',[\App\Http\Controllers\Admin\UserController::class, 'bank_dash_social'])->name('bank_dash_social');
@@ -492,32 +487,14 @@ Route::name('user.')->prefix('user')->middleware(['role:ActiveUser', 'verified',
 
  //  Route::resource('brsr', 'User\BrsrController', ['except' => 'create','update']);
     Route::get('/brsr', [\App\Http\Controllers\User\BrsrController::class,'index'])->name('brsr.index');
-
     Route::get('/brsr/sectionAcreate/{fy_id}', [\App\Http\Controllers\User\BrsrController::class,'create'])->name('brsr.sectionAcreate');
     Route::post('/brsr/store', [\App\Http\Controllers\User\BrsrController::class,'store'])->name('brsr.store');
     Route::get('/brsr/sectionAedit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'edit'])->name('brsr.sectionAedit');
     Route::post('/brsr/update', [\App\Http\Controllers\User\BrsrController::class,'update'])->name('brsr.update');
- 
     Route::get('/brsr/sectionBcreate/{fy_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionBcreate'])->name('brsr.sectionBcreate');
     Route::get('/brsr/sectionBedit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionBedit'])->name('brsr.sectionBedit');
     Route::post('/brsr/sectionbstore', [\App\Http\Controllers\User\BrsrController::class,'sectionbstore'])->name('brsr.sectionbstore');
     Route::post('/brsr/sectionbupdate', [\App\Http\Controllers\User\BrsrController::class,'sectionbupdate'])->name('brsr.sectionbupdate');
-  
-    Route::get('/brsr/sectionP1create/{fy_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP1create'])->name('brsr.sectionP1create');
-    Route::post('/brsr/sectionp1store', [\App\Http\Controllers\User\BrsrController::class,'sectionp1store'])->name('brsr.sectionp1store');
-    Route::get('/brsr/sectionP1edit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP1edit'])->name('brsr.sectionP1edit');
-    Route::post('/brsr/sectionp1update', [\App\Http\Controllers\User\BrsrController::class,'sectionp1update'])->name('brsr.sectionp1update');
-
-    Route::get('/brsr/sectionP2create/{fy_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP2create'])->name('brsr.sectionP2create');
-    Route::post('/brsr/sectionp2store', [\App\Http\Controllers\User\BrsrController::class,'sectionp2store'])->name('brsr.sectionp2store');
-    Route::get('/brsr/sectionP2edit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP2edit'])->name('brsr.sectionP2edit');
-    Route::post('/brsr/sectionp2update', [\App\Http\Controllers\User\BrsrController::class,'sectionp2update'])->name('brsr.sectionp2update');
-
-    Route::get('/brsr/sectionP7create/{fy_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP7create'])->name('brsr.sectionP7create');
-    Route::post('/brsr/sectionp7store', [\App\Http\Controllers\User\BrsrController::class,'sectionp7store'])->name('brsr.sectionp7store');
-    Route::get('/brsr/sectionP7edit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP7edit'])->name('brsr.sectionP7edit');
-    Route::post('/brsr/sectionp7update', [\App\Http\Controllers\User\BrsrController::class,'sectionp7update'])->name('brsr.sectionp7update');
-    
 
 //  Route::resource('brsr', 'User\BrsrController', ['except' => 'create','update']);
 //     Route::get('/brsr/create/{fy_id}', 'User\BrsrController@create')->name('brsr.create');
@@ -537,14 +514,3 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 
 Route::post('/check-credentials', [\App\Http\Controllers\Auth\OtpController::class, 'checkCredentials'])->name('check.credentials');
 Route::post('/verify-otp', [\App\Http\Controllers\Auth\OtpController::class, 'verifyOtp'])->name('verify.otp');
-
-
-Route::post('/send-otp', [App\Http\Controllers\PassChangeController::class, 'sendOTP'])->name('send.otp');
-Route::post('/store-otp', [App\Http\Controllers\PassChangeController::class, 'storeOTP'])->name('store.otp');
-
-// Forgot Password Routes
-Route::get('/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'showForgotPasswordForm'])
-    ->name('password.request');
-Route::post('/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendTempPassword'])
-    ->name('password.email');
-
