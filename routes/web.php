@@ -66,7 +66,6 @@ Route::get('/key_policy', [\App\Http\Controllers\HomeController::class, 'key_pol
 Route::get('/panchamrit', [\App\Http\Controllers\HomeController::class, 'panchamrit'])->name('panchamrit');
 Route::get('/contact', [\App\Http\Controllers\HomeController::class, 'contact'])->name('contact');
 Route::get('/calculator', [\App\Http\Controllers\HomeController::class, 'calculator'])->name('calculator');
-Route::get('/send-otp', [\App\Http\Controllers\HomeController::class, 'sendOtp'])->name('sendOtp');
 Route::get('/verify-otp', [\App\Http\Controllers\HomeController::class, 'verifyOtp'])->name('verifyOtp');
 Route::get('/faq', [\App\Http\Controllers\HomeController::class, 'faq'])
     ->name('faq');
