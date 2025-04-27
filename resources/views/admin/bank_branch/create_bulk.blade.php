@@ -183,45 +183,48 @@
                         </div>
 
                         <div class="table-responsive">
-                            <table id="branchTable" class="table table-sm table-hover">
+                            <table id="branchTable" class="table table-striped table-centered mb-0">
                                 <thead>
-                                    <tr class="table-dark text-center" style="font-size: 0.8rem; height: 40px;">
-                                        <th style="padding: 8px 5px; text-align: center; vertical-align: middle;">Sr. No</th>
-                                        <th style="padding: 8px 5px; text-align: center; vertical-align: middle;">Branch Name</th>
-                                        <th style="padding: 8px 5px; text-align: center; vertical-align: middle;">Email</th>
-                                        <th style="padding: 8px 5px; text-align: center; vertical-align: middle;">IFSC Code</th>
-                                        <th style="padding: 8px 5px; text-align: center; vertical-align: middle;">PIN Code</th>
-                                        <th style="padding: 8px 5px; text-align: center; vertical-align: middle;">Contact Person</th>
-                                        <th style="padding: 8px 5px; text-align: center; vertical-align: middle;">Designation</th>
-                                        <th style="padding: 8px 5px; text-align: center; vertical-align: middle;">Mobile</th>
-                                        <th style="padding: 8px 5px; text-align: center; vertical-align: middle;">Actions</th>
+                                    <tr>
+                                        <th>Sr. No</th>
+                                        <th>Branch Name</th>
+                                        <th>Email</th>
+                                        <th>IFSC Code</th>
+                                        <th>PIN Code</th>
+                                        <th>Contact Person</th>
+                                        <th>Designation</th>
+                                        <th>Mobile</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($branchDetails as $key => $user)
-                                        <tr>
-                                        <input type="hidden" value="{{$user->id}}" name="area[{{$key}}][row_id]">
-                                        <meta name="csrf-token" content="{{ csrf_token() }}">
-
-                                            <td class="text-center">{{ $key + 1 }}</td>
-                                            <td class="text-center">{{ $user->name}}</td>
-                                            <td class="text-center">{{ $user->email }}</td>
-                                            <td class="text-center">{{ $user->ifsc_code }}</td>
-                                            <td class="text-center">{{ $user->pincode }}</td>
-                                            <td class="text-center">{{ $user->contact_person }}</td>
-                                            <td class="text-center">{{ $user->designation }}</td>
-                                            <td class="text-center">{{ $user->mobile }}</td>
-                                            
-                                            <td class="text-center">
-                                            @csrf
-                                            <a href="javascript:void(0)" class="btn Custom-btn-edit btn-sm btn-primary btn-custom-edit" title="Edit" data-id="{{ $user->id }}">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                             <a href="javascript:void(0)" class="btn btn-danger btn-sm" onclick="deleteRow({{$user->id}})">
-                                                <i class="far fa-trash-alt"></i>
-                                             </a>
-                                           </td>
-                                         </tr>
+                                    @foreach($branchDetails as $key => $branch)
+                                    <tr>
+                                        <td>{{ $key + 1 }}</td>
+                                        <td>{{ $branch->name }}</td>
+                                        <td>{{ $branch->email }}</td>
+                                        <td>{{ $branch->ifsc_code }}</td>
+                                        <td>{{ $branch->pincode }}</td>
+                                        <td>{{ $branch->contact_person }}</td>
+                                        <td>{{ $branch->designation }}</td>
+                                        <td>{{ $branch->mobile }}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-primary btn-sm edit-btn" 
+                                                    data-id="{{ $branch->id }}"
+                                                    data-name="{{ $branch->name }}"
+                                                    data-email="{{ $branch->email }}"
+                                                    data-ifsc="{{ $branch->ifsc_code }}"
+                                                    data-pincode="{{ $branch->pincode }}"
+                                                    data-contact="{{ $branch->contact_person }}"
+                                                    data-designation="{{ $branch->designation }}"
+                                                    data-mobile="{{ $branch->mobile }}">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="{{ $branch->id }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>

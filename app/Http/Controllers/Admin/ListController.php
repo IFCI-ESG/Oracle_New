@@ -81,7 +81,7 @@ class ListController extends Controller
                             ->where('qv.sec_seg_head_mapping_id', $head_id)
                             ->where('qv.fy_id',$fy_id)
                             ->where('qv.com_id',$com_id)
-                            ->get(['qv.*','qm.particular','qm.unit','qm.descrption','qm.data_source']);
+                            ->get(['qv.*','qm.particular','qm.unit','qm.description','qm.data_source']);
 
         // $ques_val = DB::table('question_value')
         //                     ->join('subques_master as sm','sm.id','question_value.subques_id')

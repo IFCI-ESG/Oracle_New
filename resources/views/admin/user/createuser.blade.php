@@ -33,7 +33,7 @@
         <div class="row">
 
         <form action="{{ route('admin.user.apidata') }}" id="getdetails" role="form" method="get"
-                    class='prevent_multiple_submit' files=true enctype='multipart/form-data' accept-charset="utf-8">
+                    class='prevent_multiple_submit' >
                     @csrf
                     <div class="card border-primary m-2">
                         <div class="card-body mt-4">
@@ -481,6 +481,14 @@
                                                 </select>
                                             </td>
                                         </tr>
+                                            <tr id="sectorname-container" style="display: none;">
+                                            <th>Sector Name <span class="text-danger">*</span></th>
+                                             <td colspan="2"><input type="text" id="sectorname" name="sector_name"  class="form-control form-control-sm"  value="{{ old('sector_name') }}"  >
+                                                @error('sector_name')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </td>
+                                        </tr>
                                         <tr>
                                             <th>Bank Zone <span class="text-danger">*</span></th>
                                             <td colspan="2">
@@ -774,6 +782,15 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
+                        $('#sector').change(function() {
+                var selectedValue = $(this).val();
+                
+                if (selectedValue === '21') {
+                  $('#sectorname-container').show();
+                } else {
+                  $('#sectorname-container').hide();
+                }
+             });
             console.log('tt');
             const subBtn = document.getElementById("submit");
             // const finalBtn = document.getElementById("final");

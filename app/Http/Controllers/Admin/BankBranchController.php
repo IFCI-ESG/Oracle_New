@@ -263,125 +263,80 @@ class BankBranchController extends Controller
     {
         $userInput = $request->all();
         $rules = [
-            'file' => 'required|file|mimes:csv,txt|max:20480',
+            'file' => 'required|file|mimes:csv,txt|max:20480'
         ];
 
         $validator = Validator::make($request->only('file'), $rules);
-
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-
+        
         $file = $request->file('file');
-        $name = time() . '-' . $file->getClientOriginalName();
-
-        // Parse the CSV to array
-        $arraydata = $this->csvToArray($file);
-        $i = 1;
-
-        DB::beginTransaction();
-
+        $name = time().'-'.$file->getClientOriginalName();
+        
         try {
+            $arraydata = $this->csvToArray($file);
+            $keyarray = array();
+            $i = 1;
+            
             foreach ($arraydata as $key => $value) {
                 $i = $i + 1;
-
-                // Normalize the keys to lowercase
-                $value = array_change_key_case($value, CASE_LOWER);
-
-                // Log the problematic row
-                \Log::info("Processing row $i: " . json_encode($value));
-
-                // Check if required columns exist
-                if ((!isset($value['email'])) || (!isset($value['contactperson'])) || (!isset($value['designation'])) || (!isset($value['mobile'])) || (!isset($value['ifsccode'])) || (!isset($value['pincode']))) {
-                    \Log::error("Missing columns in row $i: " . json_encode($value)); // Log the problematic row
-                    $validator->errors()->add('customError', 'The column names "Email", "ContactPerson", "Designation", "Mobile", "IfscCode" and "PinCode" should appear in the first row of the CSV.');
+                
+                // Basic validation for required columns
+                if ((!isset($value['Email'])) || (!isset($value['ContactPerson'])) || (!isset($value['Designation'])) || 
+                    (!isset($value['Mobile'])) || (!isset($value['IfscCode'])) || (!isset($value['PinCode']))) {
+                    $validator->errors()->add('customError', 'Required columns are missing in CSV.');
                     return redirect()->back()->withErrors($validator);
                 }
 
-                // Validate Email
-                if (empty(trim($value['email'])) || !filter_var($value['email'], FILTER_VALIDATE_EMAIL)) {
-                    $validator->errors()->add('customError', "Invalid email or empty field. Please check row no:- " . $i);
-                    return redirect()->back()->withErrors($validator);
-                }
-
-                // Validate ContactPerson
-                if (empty(trim($value['contactperson']))) {
-                    $validator->errors()->add('customError', 'Column "ContactPerson" cannot be null. Please check row no:- ' . $i);
-                    return redirect()->back()->withErrors($validator);
-                }
-
-                // Validate Designation
-                if (empty(trim($value['designation']))) {
-                    $validator->errors()->add('customError', 'Column "Designation" cannot be null. Please check row no:- ' . $i);
-                    return redirect()->back()->withErrors($validator);
-                }
-
-                // Validate Mobile
-                $pattern = "/^[6789]\d{9}$/";
-                if (empty($value['mobile']) || !preg_match($pattern, $value['mobile'])) {
-                    $validator->errors()->add('customError', 'Invalid Mobile No or empty field!. Please check row no:- ' . $i);
-                    return redirect()->back()->withErrors($validator);
-                }
-
-                // Validate PinCode
-                if (empty($value['pincode']) || !preg_match("/^\d{5}|\d{6}$/", $value['pincode'])) {
-                    $validator->errors()->add('customError', 'Invalid PinCode or empty field! Please check row no:- ' . $i);
-                    return redirect()->back()->withErrors($validator);
-                }
-
-                // Validate IFSC Code
-                if (empty($value['ifsccode'])) {
-                    $validator->errors()->add('customError', 'Column "IfscCode" cannot be null!. Please check row no:- ' . $i);
-                    return redirect()->back()->withErrors($validator);
-                }
-
-                // Fetch IFSC code data
-                $ifscCode = $value['ifsccode'];
-                $userBankCode = Auth::user()->bank_code;
+                // Validate IFSC Code format and fetch branch details
+                $ifscCode = trim($value['IfscCode']);
                 $response = Http::get("https://ifsc.razorpay.com/{$ifscCode}");
-
+                
                 if ($response->failed()) {
                     $validator->errors()->add('customError', 'Invalid IFSC Code or not found. Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
 
-                $data = $response->json();
+                $branchData = $response->json();
+                $userBankCode = Auth::user()->bank_code;
 
-                // Check if the IFSC code belongs to the user's bank
-                if (isset($data['BANKCODE']) && $data['BANKCODE'] !== $userBankCode) {
+                // Verify bank code matches
+                if (isset($branchData['BANKCODE']) && $branchData['BANKCODE'] !== $userBankCode) {
                     $validator->errors()->add('customError', 'IFSC Code does not belong to your bank. Please check row no:- ' . $i);
                     return redirect()->back()->withErrors($validator);
                 }
 
-                // Insert valid data into the database
+                // Get branch name from API response
+                $branchName = $branchData['BRANCH'] ?? 'NA';
+
+                // Mobile validation
+                $pattern = "/^[6789]\d{9}$/";
+                if (empty($value['Mobile']) || !preg_match($pattern, $value['Mobile'])) {
+                    $validator->errors()->add('customError', 'Invalid Mobile No or empty field!.Please check row no:- ' . $i);
+                    return redirect()->back()->withErrors($validator);
+                }
+
+                // Insert into database with branch name
                 DB::table('users_temp')->insert([
-                    'name' => 'NA',
-                    'email' => trim($value['email']),
-                    'contact_person' => trim($value['contactperson']),
-                    'designation' => trim($value['designation']),
-                    'mobile' => trim($value['mobile']),
-                    'ifsc_code' => trim($value['ifsccode']),
-                    'pincode' => trim($value['pincode']),
+                    'name' => $branchName,
+                    'email' => trim($value['Email']),
+                    'contact_person' => trim($value['ContactPerson']),
+                    'designation' => trim($value['Designation']),
+                    'mobile' => trim($value['Mobile']),
+                    'ifsc_code' => $ifscCode,
+                    'pincode' => trim($value['PinCode']),
                     'created_by' => Auth::user()->id,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ]);
             }
 
-            // Commit the transaction if everything is valid
-            DB::commit();
-
-            return redirect()->back()->with('success', 'Your file has been uploaded successfully! Please verify the branch data before final submission.');
-
+            return redirect()->back()->with('success', 'Your Excel file has been uploaded successfully! Please Verify the Branch Data before Final Submission.');
         } catch (\Exception $e) {
-            // Rollback the transaction if an error occurs
-            DB::rollBack();
-
-            // Log the error for debugging purposes
-            \Log::error("Error during bulk store: " . $e->getMessage());
-
-            // Return the error to the user
-            return redirect()->back()->withErrors(['customError' => 'An error occurred while processing the file. Please try again.']);
+            \Log::error("Bulk upload error: " . $e->getMessage());
+            $validator->errors()->add('customError', "Something went wrong. Please try again after some time");
+            return redirect()->back()->withErrors($validator);
         }
     }
 
@@ -535,7 +490,7 @@ class BankBranchController extends Controller
                 $branch->mobile = $request->mobile;
                 $branch->ifsc_code = $request->ifsc_code;
                 $branch->pincode = $request->pincode;
-                $branch->status = 'D';
+              
             $branch->save();
 
         });

@@ -1,3 +1,15 @@
+@if(auth()->user()->password_changed == 0)
+<script>
+    window.onload = function() {
+        var myModal = new bootstrap.Modal(document.getElementById('accountModal'), {
+            backdrop: 'static',
+            keyboard: false
+        });
+        myModal.show();
+    }
+</script>
+@endif
+
 <div class="navbar-custom">
     <div class="topbar tophead">
         <div class="topbar-menu d-flex align-items-center gap-1">
@@ -61,7 +73,6 @@
 
                     <div class="dropdown-divider"></div>
 
-
                     <form method="POST" action="{{ route('admin.logout') }}">
                         @csrf
                         <a href="javascript:void(0);" class="dropdown-item notify-item"
@@ -84,344 +95,425 @@
 </div>
 
 
-<div class="modal fade" id="accountModal" tabindex="-1" aria-labelledby="accountModalLabel" aria-hidden="true">
- 
+<div class="modal fade" id="accountModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="accountModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header d-flex justify-content-center align-items-center"
-                style="background-color: #0d0d6e; color: white; width: 100%;">
+                style="background-color: #296243; color: white; width: 100%;">
                 <h5 class="modal-title" id="accountModalLabel" style="font-weight: bold; color: white;">
-                    My Account
+                    @if(auth()->user()->password_changed == 0)
+                        Change Password Required
+                    @else
+                        My Account
+                    @endif
                 </h5>
-
+                @if(auth()->user()->password_changed == 1)
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                @endif
             </div>
 
-
             <div class="modal-body">
-                @if (session('success'))
-                    <div class="alert alert-success">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-                @if (session('error'))
-                    <div class="alert alert-danger">
-                        {{ session('error') }}
-                    </div>
-                @endif
-            
-                @if (auth()->user()->password_changed == 1)
-               <form method="POST" action="{{ Auth::guard('admin')->check() ? route('admin.new_admin.bank.updateAccount') : route('user.updateAccount') }}"  id="updateAccountForm" onsubmit="return confirmUpdate();" enctype="multipart/form-data">  
+                <form method="POST" action="{{ Auth::guard('admin')->check() ? route('admin.new_admin.bank.updateAccount') : route('user.updateAccount') }}" 
+                    id="updateAccountForm" onsubmit="return confirmUpdate();" enctype="multipart/form-data">
                     @csrf
-                  
+                    <input type="hidden" id="generated_otp" name="generated_otp" value="">
 
-             
-                    <div class="text-center mb-4">
-                        <h3 class="font-weight-bold" style="color: #0d0d6e;">Hi {{ auth()->user()->contact_person }}
-                        </h3>
-                        <p style="font-size: 1rem; color: #666;">Make sure all information is correct before submitting.
-                        </p>
-                    </div>
-                
- 
+                    @if(auth()->user()->password_changed == 1)
+                        <!-- Show full account form when password has been changed -->
+                        <div class="text-center mb-4">
+                            <h3 class="font-weight-bold" style="color: #0d0d6e;">Hi {{ auth()->user()->contact_person }}</h3>
+                            <p style="font-size: 1rem; color: #666;">Make sure all information is correct before submitting.</p>
+                        </div>
 
-                    <div class="mb-4">
-                        <label for="name" class="form-label font-weight-bold" style="color: #333;">Name</label>
-                        <div class="position-relative">
-                            <input type="text" class="form-control" id="name" name="name"
-                                value="{{ auth()->user()->name }}" readonly
-                                style="border-radius: 8px; border: 1px solid #ddd; padding-right: 2.5rem;">
-                            <i class="fas fa-lock position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #888;"></i>
+                        <div class="mb-4">
+                            <label for="name" class="form-label font-weight-bold" style="color: #333;">Name</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="name" name="name"
+                                    value="{{ auth()->user()->name }}" readonly
+                                    style="border-radius: 8px 0 0 8px; border: 1px solid #ddd; background-color: #f8f9fa;">
+                                <span class="input-group-text" style="background-color: #f8f9fa; border-radius: 0 8px 8px 0;">
+                                    <i class="fas fa-lock" style="color: #6c757d;"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="email" class="form-label font-weight-bold" style="color: #333;">Email</label>
+                            <input type="email" class="form-control" id="email" name="email"
+                                value="{{ auth()->user()->email }}"
+                                style="border-radius: 8px; border: 1px solid #ddd;">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="image" class="form-label font-weight-bold" style="color: #333;">Upload Profile Image</label>
+                            <br>
+                            <input type="file" name="image" id="image" accept="image/*">
+                            <br>
+                            <small style="color: green; font-size: 0.9em;">Only JPG, PNG, and JPEG are allowed (Max: 2MB)</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <input type="checkbox" id="reset_password" name="reset_password" onclick="togglePasswordFields()">
+                            <label for="reset_password" class="form-label font-weight-bold" style="color: #333;">Reset Password</label>
+                        </div>
+
+                        <div id="password_section" style="display: none;">
+                    @else
+                        <!-- Show only password change form for first login -->
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i> For security reasons, you must change your password before proceeding.
+                        </div>
+                        <input type="hidden" name="reset_password" value="1">
+                    @endif
+
+                    <!-- Password fields - shown either in password section or directly -->
+                    <div class="@if(auth()->user()->password_changed == 1) password-fields @endif">
+                        <div class="mb-4">
+                            <label for="new_password" class="form-label font-weight-bold" style="color: #333;">New Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="new_password" name="new_password" required
+                                    style="border-radius: 8px; border: 1px solid #ddd;" onkeyup="validatePasswords()">
+                                <span class="input-group-text" style="cursor: pointer;" onclick="togglePasswordVisibility('new_password', this)">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="confirm_password" class="form-label font-weight-bold" style="color: #333;">Confirm Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required
+                                    style="border-radius: 8px; border: 1px solid #ddd;" onkeyup="validatePasswords()">
+                                <span class="input-group-text" style="cursor: pointer;" onclick="togglePasswordVisibility('confirm_password', this)">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div id="password_validation_message" class="mb-3" style="color: red; display: none; font-size: 0.875rem;"></div>
+
+                        <div class="mb-4">
+                            <button type="button" id="sendOtpBtn" class="btn btn-primary" onclick="handleOTPSend();" 
+                                style="background-color: #296243; border-color: #296243;" disabled>
+                                Send OTP
+                            </button>
+                        </div>
+
+                        <div id="otp_field" class="mb-4" style="display: none;">
+                            <label for="otp" class="form-label font-weight-bold" style="color: #333;">Enter OTP</label>
+                            <input type="text" class="form-control" id="otp" name="otp" required
+                                style="border-radius: 8px; border: 1px solid #ddd;"
+                                maxlength="6" 
+                                pattern="[0-9]{6}"
+                                inputmode="numeric"
+                                onkeypress="return (event.charCode >= 48 && event.charCode <= 57) && this.value.length < 6"
+                                onpaste="return false"
+                                ondrop="return false"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 6);">
+                            <small class="text-muted">OTP has been sent to your email address</small>
+                            <div id="otp_validation_message" class="invalid-feedback" style="display: none;">Please enter a valid 6-digit OTP</div>
                         </div>
                     </div>
-                    
 
-
-                    <div class="mb-4">
-                        <label for="email" class="form-label font-weight-bold" style="color: #333;">Email</label>
-                        <input type="email" class="form-control" id="email" name="email"
-                            value="{{ auth()->user()->email }}" style="border-radius: 8px; border: 1px solid #ddd;">
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="image" class="form-label font-weight-bold" style="color: #333;">Upload Profile
-                            Image</label>
-                        <br />
-                        <input type="file" name="image" id="image" accept="image/*">
-                        <br />
-                        <small style="color: green; font-size: 0.9em;">Only JPG, PNG, and JPEG are allowed (Max:
-                            2MB)</small>
-                    </div>
- 
- 
-
-                    <div class="mb-4">
-                        <input type="checkbox" id="reset_password" name="reset_password"
-                            onclick="togglePasswordFields()">
-                            
-                        <label for="reset_password" class="form-label font-weight-bold" style="color: #333;">Reset
-                            Password</label>
-                    </div>
-                   
-
-                   
-                    <div id="new_password_field" class="mb-4" style="display: none;">
-                        <label for="new_password" class="form-label font-weight-bold" style="color: #333;">New
-                            Password</label>
-                        <input type="password" class="form-control" id="new_password" name="new_password"
-                            style="border-radius: 8px; border: 1px solid #ddd;" onkeyup="checkPasswordMatch();">
-                    </div>
-
-                    <div id="confirm_password_field" class="mb-4" style="display: none;">
-                        <label for="confirm_password" class="form-label font-weight-bold"
-                            style="color: #333;">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password"
-                            style="border-radius: 8px; border: 1px solid #ddd;" onkeyup="checkPasswordMatch();">
-                    </div>
-                   
-
-                    <div id="password_error" class="mb-4" style="display: none;">
-                        <span style="color: red;">Password does not match</span>
-                    </div>
-
-                    <div id="send_otp_button" class="mb-4" style="display: none;">
-                        <button type="button" class="btn btn-primary" onclick="showOtpField();">
-                            Send OTP
-                        </button>
-                    </div>
-
-                    <div id="otp_field" class="mb-4" style="display: none;">
-                        <label for="otp" class="form-label font-weight-bold" style="color: #333;">Enter
-                            OTP</label>
-                        <input type="text" class="form-control" id="otp" name="otp"
-                            style="border-radius: 8px; border: 1px solid #ddd;">
-                    </div>
- 
-                        <div class="d-flex justify-content-between align-items-center">
-
-                        <button type="submit" class="btn btn-primary"
-                            style="background-color: #0d0d6e; color: white; border-radius: 25px; padding: 10px 30px; font-weight: bold; transition: background-color 0.3s ease;">
-                            Update
-                        </button>
-
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal" aria-label="Close"
-                            style="border-radius: 25px; padding: 10px 30px; border: 1px solid #0d0d6e; font-weight: bold; transition: border 0.3s ease;">
-                            Close
-                        </button>
-                    </div>
-                </form>
-               
-
-                @elseif (auth()->user()->password_changed == 0)
-               <form method="POST" action="{{ Auth::guard('admin')->check() ? route('admin.new_admin.bank.updateAccount') : route('user.updateAccount') }}"  id="updateAccountForm" onsubmit="return confirmUpdate();" enctype="multipart/form-data">  
-                    @csrf
-
-                   
-                    <div class="mb-4" style = "display:none;">
-                     <input type="checkbox" id="reset_password" name="reset_password" onclick="togglePasswordFields()" checked>
-                    <label for="reset_password" class="form-label font-weight-bold" style="color: #333;">Reset Password</label>
-                    </div>
-
-                   
-                    <div id="new_password_field" class="mb-4" style="display: none;">
-                        <label for="new_password" class="form-label font-weight-bold" style="color: #333;">New
-                            Password</label>
-                        <input type="password" class="form-control" id="new_password" name="new_password"
-                            style="border-radius: 8px; border: 1px solid #ddd;" onkeyup="checkPasswordMatch();">
-                    </div>
-
-                    <div id="confirm_password_field" class="mb-4" style="display: none;">
-                        <label for="confirm_password" class="form-label font-weight-bold"
-                            style="color: #333;">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password"
-                            style="border-radius: 8px; border: 1px solid #ddd;" onkeyup="checkPasswordMatch();">
-                    </div>
-                   
-
-                    <div id="password_error" class="mb-4" style="display: none;">
-                        <span style="color: red;">Password does not match</span>
-                    </div>
-
-                    <div id="send_otp_button" class="mb-4" style="display: none;">
-                        <button type="button" class="btn btn-primary" onclick="showOtpField();">
-                            Send OTP
-                        </button>
-                    </div>
-
-                    <div id="otp_field" class="mb-4" style="display: none;">
-                        <label for="otp" class="form-label font-weight-bold" style="color: #333;">Enter
-                            OTP</label>
-                        <input type="text" class="form-control" id="otp" name="otp"
-                            style="border-radius: 8px; border: 1px solid #ddd;">
-                    </div>
- 
- 
-                    
+                    @if(auth()->user()->password_changed == 1)
+                        </div> <!-- Close password section div -->
+                    @endif
 
                     <div class="d-flex justify-content-between align-items-center">
-
                         <button type="submit" class="btn btn-primary"
-                            style="background-color: #0d0d6e; color: white; border-radius: 25px; padding: 10px 30px; font-weight: bold; transition: background-color 0.3s ease;">
-                            Update
+                            style="background-color: #296243; color: white; border-radius: 25px; padding: 10px 30px; font-weight: bold;">
+                            @if(auth()->user()->password_changed == 1)
+                                Update
+                            @else
+                                Update Password
+                            @endif
                         </button>
 
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal" aria-label="Close"
-                            style="border-radius: 25px; padding: 10px 30px; border: 1px solid #0d0d6e; font-weight: bold; transition: border 0.3s ease;">
+                        @if(auth()->user()->password_changed == 1)
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal"
+                            style="border-radius: 25px; padding: 10px 30px; border: 1px solid #296243; font-weight: bold;">
                             Close
                         </button>
+                        @endif
                     </div>
                 </form>
-                @endif
-                  
-             
-
-
-                <!-- <style>
-
-    .form-control {
-        background-color: #f9f9f9;
-        font-size: 1rem;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        padding: 10px;
-        transition: box-shadow 0.3s ease;
-    }
-
-    .form-control:focus {
-        border-color: #0d0d6e;
-        box-shadow: 0 0 8px rgba(13, 13, 110, 0.3);
-    }
-
-    .btn-primary:hover {
-        background-color: #4b4d99;
-    }
-
-    .btn-light:hover {
-        border-color: #4b4d99;
-    }
-
-    .modal-dialog {
-        max-width: 500px;
-        margin: 1.75rem auto;
-    }
-</style> -->
-
-
-
             </div>
         </div>
     </div>
 </div>
- 
- 
+
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        @if (session('force_password_change'))
-            var myModal = new bootstrap.Modal(document.getElementById('accountModal'), {
-                backdrop: 'static',
-                keyboard: false
-            });
-
-            myModal.show();
-
-
-            document.getElementById('accountModal').addEventListener('hidden.bs.modal', function(event) {
-                if (!window.passwordChanged) {
-                    event.preventDefault();
-                    myModal.show();
-                }
-            });
-
-
-            @if (session('password_changed') == 1)
-                window.passwordChanged = true;
-                myModal.hide();
-            @endif
-
-
-            window.setPasswordChanged = function() {
-                window.passwordChanged = true;
-                myModal.hide();
-            };
-        @endif
+// Prevent modal from closing when password_changed is 0
+@if(auth()->user()->password_changed == 0)
+document.addEventListener('DOMContentLoaded', function() {
+    var accountModal = document.getElementById('accountModal');
+    accountModal.addEventListener('hide.bs.modal', function (event) {
+        if (!{{ auth()->user()->password_changed }}) {
+            event.preventDefault();
+        }
     });
-</script>
+});
+@endif
 
-
-
-<script>
-
-window.onload = function() {
-    // Call the function on page load to handle the checkbox and field visibility
-    togglePasswordFields();
-};
-   
-    function togglePasswordFields() {
-        var resetPasswordChecked = document.getElementById('reset_password').checked;
-        var otpField = document.getElementById('otp_field');
-        var sendOtpButton = document.getElementById('send_otp_button');
-
-        document.getElementById('new_password_field').style.display = resetPasswordChecked ? 'block' : 'none';
-        document.getElementById('confirm_password_field').style.display = resetPasswordChecked ? 'block' : 'none';
-        document.getElementById('password_error').style.display = 'none';
-
-
-        sendOtpButton.style.display = resetPasswordChecked ? 'block' : 'none';
-    }
+function togglePasswordVisibility(fieldId, iconElement) {
+    var passwordField = document.getElementById(fieldId);
+    var icon = iconElement.querySelector('i');
     
-
-
-    function showOtpField() {
-        var otpField = document.getElementById('otp_field');
-        otpField.style.display = 'block';
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
     }
+}
 
+function handleOTPSend() {
+    var sendOtpBtn = document.getElementById('sendOtpBtn');
+    var originalText = sendOtpBtn.innerHTML;
+    sendOtpBtn.disabled = true;
+    sendOtpBtn.innerHTML = 'Sending...';
 
-    function checkPasswordMatch() {
-        var newPasswordField = document.getElementById('new_password_field').style.display;
-        if (newPasswordField === 'block') {
-            var newPassword = document.getElementById('new_password').value;
-            var confirmPassword = document.getElementById('confirm_password').value;
-            var errorMessage = document.getElementById('password_error');
-
-            if (newPassword !== confirmPassword) {
-                errorMessage.style.display = 'block';
+    // Generate OTP
+    var otp = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // Send OTP via AJAX
+    $.ajax({
+        url: '{{ route("send.otp") }}',
+        type: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}',
+            otp: otp,
+            email: '{{ auth()->user()->email }}'
+        },
+        success: function(response) {
+            if (response.success) {
+                // Store OTP in hidden field
+                $('#generated_otp').val(otp);
+                
+                // Show OTP field and enable button
+                document.getElementById('otp_field').style.display = 'block';
+                sendOtpBtn.disabled = false;
+                sendOtpBtn.innerHTML = originalText;
+                alert('OTP has been sent to your email address');
             } else {
-                errorMessage.style.display = 'none';
+                alert('Failed to send OTP. Please try again.');
+                sendOtpBtn.disabled = false;
+                sendOtpBtn.innerHTML = originalText;
             }
+        },
+        error: function() {
+            alert('An error occurred while sending OTP. Please try again.');
+            sendOtpBtn.disabled = false;
+            sendOtpBtn.innerHTML = originalText;
         }
+    });
+}
+
+function validatePasswords() {
+    var newPassword = document.getElementById('new_password').value;
+    var confirmPassword = document.getElementById('confirm_password').value;
+    var sendOtpBtn = document.getElementById('sendOtpBtn');
+    var validationMessage = document.getElementById('password_validation_message');
+
+    // Clear previous validation message
+    validationMessage.style.display = 'none';
+    sendOtpBtn.disabled = true;
+
+    // Only proceed with validation if both fields have values
+    if (newPassword && confirmPassword) {
+        if (newPassword !== confirmPassword) {
+            validationMessage.textContent = 'Passwords do not match';
+            validationMessage.style.display = 'block';
+            sendOtpBtn.disabled = true;
+        } else if (newPassword.length < 6) {
+            validationMessage.textContent = 'Password must be at least 6 characters long';
+            validationMessage.style.display = 'block';
+            sendOtpBtn.disabled = true;
+        } else {
+            validationMessage.style.display = 'none';
+            sendOtpBtn.disabled = false;
+        }
+    } else {
+        sendOtpBtn.disabled = true;
+    }
+}
+
+// Add event listeners to password fields
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('new_password').addEventListener('input', validatePasswords);
+    document.getElementById('confirm_password').addEventListener('input', validatePasswords);
+    
+    // Ensure button is disabled on page load
+    document.getElementById('sendOtpBtn').disabled = true;
+});
+
+function togglePasswordFields() {
+    var passwordSection = document.getElementById('password_section');
+    var resetPasswordChecked = document.getElementById('reset_password').checked;
+    
+    if (resetPasswordChecked) {
+        passwordSection.style.display = 'block';
+        document.getElementById('new_password').required = true;
+        document.getElementById('confirm_password').required = true;
+    } else {
+        passwordSection.style.display = 'none';
+        document.getElementById('new_password').required = false;
+        document.getElementById('confirm_password').required = false;
+        // Clear password fields
+        document.getElementById('new_password').value = '';
+        document.getElementById('confirm_password').value = '';
+        // Hide OTP field if visible
+        document.getElementById('otp_field').style.display = 'none';
+    }
+}
+
+function validateOTP() {
+    var otpInput = document.getElementById('otp');
+    var otpValidationMessage = document.getElementById('otp_validation_message');
+    var otpPattern = /^[0-9]{6}$/;
+    
+    if (!otpPattern.test(otpInput.value)) {
+        otpValidationMessage.style.display = 'block';
+        otpInput.classList.add('is-invalid');
+        return false;
+    } else {
+        otpValidationMessage.style.display = 'none';
+        otpInput.classList.remove('is-invalid');
+        return true;
+    }
+}
+
+function confirmUpdate() {
+    var newPassword = document.getElementById('new_password').value;
+    var confirmPassword = document.getElementById('confirm_password').value;
+    var otp = document.getElementById('otp').value;
+    var generatedOtp = document.getElementById('generated_otp').value;
+
+    if (!newPassword || !confirmPassword) {
+        alert("Please fill both password fields!");
+        return false;
+    }
+        
+    if (newPassword !== confirmPassword) {
+        alert("Passwords do not match!");
+        return false;
     }
 
-    function confirmUpdate() {
-
-        var resetPasswordChecked = document.getElementById('reset_password').checked;
-        var newPassword = document.getElementById('new_password').value;
-        var confirmPassword = document.getElementById('confirm_password').value;
-        var otp = document.getElementById('otp').value;
-
-
-        if (resetPasswordChecked) {
-
-            if (newPassword !== confirmPassword) {
-                alert("Passwords do not match!");
-                return false;
-            }
-
-
-            if (otp === '') {
-                alert("Please enter the OTP!");
-                return false;
-            }
-
-
-            var validOtp = '987654';
-            if (otp !== validOtp) {
-                alert("Invalid OTP!");
-                return false;
-            }
-        }
-
-
-        return confirm("Are you sure you want to update the changes?");
+    if (!otp || !validateOTP()) {
+        alert("Please enter a valid 6-digit OTP!");
+        return false;
     }
+
+    // Check against both static and generated OTP
+    var staticOtp = '987654';
+    if (otp !== staticOtp && otp !== generatedOtp) {
+        alert("Invalid OTP!");
+        return false;
+    }
+
+    return true;
+}
+
+// Add event listener for OTP input
+document.addEventListener('DOMContentLoaded', function() {
+    // ... existing event listeners ...
+    
+    var otpInput = document.getElementById('otp');
+    otpInput.addEventListener('input', validateOTP);
+});
 </script>
+ 
+<style>
+.input-group-text {
+    cursor: pointer;
+    user-select: none;
+}
+
+.input-group-text:hover {
+    background-color: #e9ecef;
+}
+
+#password_validation_message {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}
+
+#sendOtpBtn {
+    transition: all 0.3s ease;
+}
+
+#sendOtpBtn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.text-muted {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.invalid-feedback {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+</style>
+
+@php
+use Illuminate\Support\Facades\Mail;
+
+function sendOTPEmail($email, $otp) {
+    try {
+        $data = [
+            'otp' => $otp,
+            'email' => $email
+        ];
+        
+        Mail::send([], $data, function($message) use ($email, $otp) {
+            $message->to($email)
+                ->subject('Password Reset OTP - ESG Portal')
+                ->html("
+                    <div style='font-family: Arial, sans-serif;'>
+                        <div style='max-width: 600px; margin: 0 auto; padding: 20px;'>
+                            <div style='background-color: #296243; color: white; padding: 20px; text-align: center;'>
+                                <h2 style='margin: 0;'>Password Reset OTP</h2>
+                            </div>
+                            <div style='padding: 20px; border: 1px solid #ddd;'>
+                                <p>Dear User,</p>
+                                <p>You have requested to reset your password. Please use the following OTP to proceed:</p>
+                                <div style='background-color: #f8f9fa; padding: 15px; text-align: center; margin: 20px 0;'>
+                                    <h1 style='margin: 0; color: #296243; letter-spacing: 5px;'>" . $otp . "</h1>
+                                </div>
+                                <p>This OTP will expire in 10 minutes.</p>
+                                <p>If you did not request this password reset, please ignore this email.</p>
+                                <p style='margin-top: 30px;'>Best regards,<br>ESG Portal Team</p>
+                            </div>
+                        </div>
+                    </div>
+                ");
+        });
+        
+        return true;
+    } catch (\Exception $e) {
+        \Log::error('OTP Email Error: ' . $e->getMessage());
+        return false;
+    }
+}
+@endphp
+
+@if(request()->isMethod('post') && request('action') == 'send_otp')
+    @php
+    $success = sendOTPEmail(request('email'), request('otp'));
+    header('Content-Type: application/json');
+    echo json_encode(['success' => $success]);
+    exit;
+    @endphp
+@endif
  

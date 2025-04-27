@@ -10,7 +10,7 @@ class BusinessActivityValue extends Model
     protected $fillable = [
         'id',
         'com_id',
-        'acitvity_id',
+        'activity_id',
         'is_checked',
         'created_at',
         'updated_at'

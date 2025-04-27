@@ -484,7 +484,7 @@ class UserController extends Controller
             ->join('comp_type_master as ctm', 'ctm.id', 'u.comp_type_id')
             ->whereIn('bfd.bank_id', $bank_branch) // No borrower_type filter
             ->distinct() // Remove distinct on CLOB columns
-            ->get(['u.id', 'u.name','u.pan','u.status', 'u.email','u.created_by','u.unique_login_id', 'sm.name as sector', 'ctm.name as comp_type']); // Select only necessary columns
+            ->get(['u.id', 'u.name','u.pan','u.status', 'u.email','u.created_by','u.unique_login_id','u.sector_id','u.sector_name', 'sm.name as sector', 'ctm.name as comp_type']); // Select only necessary columns
     }
 
     // If the user is a SubAdmin
@@ -495,7 +495,7 @@ class UserController extends Controller
             ->join('comp_type_master as ctm', 'ctm.id', 'u.comp_type_id')
             ->where('bfd.bank_id', $user->id) // No borrower_type filter
             ->distinct() // Remove distinct on CLOB columns
-            ->get(['u.id', 'u.name','u.pan', 'u.email','u.status','u.created_by','u.unique_login_id', 'sm.name as sector', 'ctm.name as comp_type']); // Select only necessary columns
+            ->get(['u.id', 'u.name','u.pan', 'u.email','u.status','u.created_by','u.unique_login_id','u.sector_id','u.sector_name', 'sm.name as sector', 'ctm.name as comp_type']); // Select only necessary columns
     }
 
     // Fetch retail details (no borrower_type filter)
@@ -961,7 +961,7 @@ class UserController extends Controller
         {
             $user=AdminUser::where('pan', $request->pan)->first();
 
-            alert()->success('This Company is already Registered by another Bank', 'Data Fetched!')->persistent('Close');
+           // alert()->success('This Company is already Registered by another Bank', 'Data Fetched!')->persistent('Close');
             return redirect()->route('admin.user.existuser',['id' => encrypt($user->id)]);
         }
 
@@ -1607,6 +1607,7 @@ class UserController extends Controller
                     $newuser->isapproved = 'Y';
                     $newuser->mobile_verified_at = Carbon::now();
                     $newuser->email_verified_at = Carbon::now();
+                    $newuser->sector_name = $request->has('sector_name') ? $request->sector_name : null;
 
                     // dd($newuser);
                     $newuser->save();
@@ -1862,6 +1863,7 @@ class UserController extends Controller
                     $user->pan = $request->pan;
                     $user->contact_person = $request->auth_name;
                     $user->sector_id = $request->sector ;
+                     $newuser->sector_name = $request->has('sector_name') ? $request->sector_name : null;
                 $user->save();
 
 

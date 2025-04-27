@@ -50,8 +50,8 @@
                                         Person</th>
                                     <th class="textcolor border" style="text-align: center; vertical-align: middle;">
                                         Designation</th>
-                                    <th class="textcolor" style="text-align: center; vertical-align: middle;">Mobile
-                                    </th>
+                                    <!-- <th class="textcolor" style="text-align: center; vertical-align: middle;">Mobile
+                                    </th> -->
                                     <th class="textcolor border" style="padding: 8px 5px; text-align: center; vertical-align: middle;">Status
                                     </th>
                                     <th class="textcolor" style="text-align: center; vertical-align: middle;">Action
@@ -72,8 +72,8 @@
                                                 {{ $bank->contact_person ?? '--' }}</td>
                                             <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.8rem;">
                                                 {{ $bank->designation ?? '--' }}</td>
-                                            <td class="text-center align-middle shadow-none textcolor" style="font-size:0.8rem;">
-                                                {{ $bank->mobile ?? '--' }}</td>
+                                            <!-- <td class="text-center align-middle shadow-none textcolor" style="font-size:0.8rem;">
+                                                {{ $bank->mobile ?? '--' }}</td> -->
                                             <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.9rem;">
                                                 @if ($bank->isactive == 'Y')
                                                     <span class="badge activebg activetext p-2">Active</span>
