@@ -25,6 +25,9 @@ use App\Models\BrsrSectionP2QuestionMaster;
 use App\Models\BrsrSectionP2QuestionValue;
 use App\Models\BrsrSectionP2OthersQuestionValue;
 use App\Models\BrsrSectionP7QuestionValue;
+use App\Models\BrsrSectionP8QuestionMaster;
+use App\Models\BrsrSectionP8QuestionValue;
+use App\Models\BrsrSectionP8AdditionalQuestionValue;
 use Illuminate\Support\Facades\Http;
 use Auth;
 use DB;
@@ -48,8 +51,9 @@ class BrsrController extends Controller
         $brsr_sectionp1 =  BrsrSectionCP1QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp2 =  BrsrSectionP2QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp7 =  BrsrSectionP7QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
+        $brsr_sectionp8 =  BrsrSectionP8QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $fys = DB::table('fy_masters')->orderBy('id', 'desc')->limit(1)->get();
-        return view('user.brsr.index', compact('brsr_sectionp1','brsr_sectionb','fys','brsr_value','brsr_sectionp2','brsr_sectionp7'));
+        return view('user.brsr.index', compact('brsr_sectionp1','brsr_sectionb','fys','brsr_value','brsr_sectionp2','brsr_sectionp7','brsr_sectionp8'));
     }
 
     public function create($fy_id) {
@@ -1078,6 +1082,184 @@ class BrsrController extends Controller
 
     }
 
+    public function sectionP8create($fy_id) {
+ 
+        $fy_id = decrypt($fy_id);
+        
+        $user = Auth::user();
+
+        $social_mast = BrsrMast::where('com_id', $user->id)->where('fy_id',$fy_id)->first();
+        DB::transaction(function () use ($fy_id,$user,$social_mast)
+        {
+            if(!$social_mast)
+            {
+                $social = new BrsrMast;
+                    $social->com_id = $user->id;
+                    $social->status = 'D';
+                    $social->fy_id = $fy_id;
+                $social->save();
+            }
+        });
+      
+        $community_ques = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'community')->orderby('id')->get();
+        $material_ques = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'input_material')->orderby('id')->get();
+        $location_ques = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'location')->orderby('id')->get();
+        $group_ques1 = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'vulnerable_groups')->orderby('id')->get();
+        $group_ques2 = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'vulnerable_groups1')->orderby('id')->get();
+        $group_ques3 = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'vulnerable_groups2')->orderby('id')->get();
+        $fys = DB::table('fy_masters')->where('id',$fy_id)->first();
+        $current_fy = $fys->fy;
+        $startYear = (int)substr($current_fy, 0, 4);
+        $previous_fy = ($startYear - 1) . '-' . substr($startYear, 2, 2);
+        $previous_year = substr($fys->fy, 0, 4);
+
+         // API Integration for P8
+         
+         $token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4OTEyODk1LCJpYXQiOjE3MzczNzY4OTUsImp0aSI6ImFiNjgxMmQxOWFlNTRjMDFhYWQyN2NjODY5ODI2NmUyIiwidXNlcl9pZCI6NH0.fbeXrf5QUjjY4sAUtjE4RjElsaeUWdm6HQ1Fl56Zv6w';
+         $cin = Auth::user()->cin_llpin;
+         $apiUrl = 'http://13.200.249.135:7000/api/get-all-data-by-cin/';
+         $brsrMap = [
+             'X3' => 'E4',
+             'X4' => 'E4',
+         ];
+
+         $brsrMap1 = [
+            'A6' => 'E5',
+            'B6' => 'E5',
+            'C6' => 'E5',
+            'D6' => 'E5',
+        ];
+         
+         $Results = [];
+         $Results1 = [];
+         
+         foreach ($brsrMap as $id => $question) {
+             $postData = [
+                 'cin' => $cin,
+                 'year' => $previous_year,
+                 'Section' => 'P8',
+                 'Question' => $question,
+                 'BRSR_ID' => $id,
+             ];
+         
+             $response = Http::withToken($token)->post($apiUrl, $postData);
+             $values = 'NA';
+         
+             if ($response->successful()) {
+                 $data = data_get($response->json(), 'data.L1');
+                 if (is_array($data)) {
+                     $values = implode(', ', $data);
+                 } elseif (!empty($data)) {
+                     $values = $data;
+                 }
+             }
+         
+             $Results[$id] = $values;
+         }
+
+         foreach ($brsrMap1 as $id => $question) {
+            $postData = [
+                'cin' => $cin,
+                'year' => $previous_year,
+                'Section' => 'P8',
+                'Question' => $question,
+                'BRSR_ID' => $id,
+            ];
+        
+            $response = Http::withToken($token)->post($apiUrl, $postData);
+            $values = 'NA';
+        
+            if ($response->successful()) {
+                $data = data_get($response->json(), 'data.L1');
+                if (is_array($data)) {
+                    $values = implode(', ', $data);
+                } elseif (!empty($data)) {
+                    $values = $data;
+                }
+            }
+        
+            $Results1[$id] = $values;
+        }
+
+ 
+         $previous_msme = isset($Results['X3']) ? number_format($Results['X3'] * 100, 2) . '%' : '0%';
+         $previous_others = isset($Results['X4']) ? number_format($Results['X4'] * 100, 2) . '%' : '0%';
+
+         $previous_rural = isset($Results1['A6']) ? number_format($Results1['A6'] * 100, 2) . '%' : '0%';
+         $previous_semiurban = isset($Results1['B6']) ? number_format($Results1['B6'] * 100, 2) . '%' : '0%';
+         $previous_urban = isset($Results1['C6']) ? number_format($Results1['C6'] * 100, 2) . '%' : '0%';
+         $previous_metro = isset($Results1['D6']) ? number_format($Results1['D6'] * 100, 2) . '%' : '0%';
+      
+        return view('user.brsr.sectionP8create', compact('social_mast','user','fys','fy_id','community_ques','current_fy',
+        'previous_fy','previous_year','material_ques','location_ques','group_ques1','group_ques2',
+        'group_ques3','previous_msme','previous_others',
+        'previous_rural','previous_semiurban','previous_urban','previous_metro'));
+
+    }
+
+    public function sectionP8edit($id) {
+ 
+        $id = decrypt($id);
+        
+        $user = Auth::user();
+
+        $brsr_mast = BrsrMast::where('com_id', $user->id)->where('id', $id)->first();
+        $fys = DB::table('fy_masters')->where('id',$brsr_mast->fy_id)->first();
+        $current_fy = $fys->fy;
+        $startYear = (int)substr($current_fy, 0, 4);
+        $previous_fy = ($startYear - 1) . '-' . substr($startYear, 2, 2);
+      
+        $community_ques = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'community')->orderby('id')->get();
+        $material_ques = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'input_material')->orderby('id')->get();
+        $location_ques = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'location')->orderby('id')->get();
+        $group_ques1 = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'vulnerable_groups')->orderby('id')->get();
+        $group_ques2 = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'vulnerable_groups1')->orderby('id')->get();
+        $group_ques3 = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'vulnerable_groups2')->orderby('id')->get();
+
+        $sectionp8_value = BrsrSectionP8QuestionValue::where('brsr_mast_id', $id)->get();
+
+        $sectionp8_value1 = DB::table('brsr_sectionc_p8_additional_question_value')
+        ->where('brsr_mast_id', $id)
+        ->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals1'")
+        ->get();
+
+        $sectionp8_value2 = DB::table('brsr_sectionc_p8_additional_question_value')
+        ->where('brsr_mast_id', $id)
+        ->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals2'")
+        ->get();
+
+        $sectionp8_value3 = DB::table('brsr_sectionc_p8_additional_question_value')
+        ->where('brsr_mast_id', $id)
+        ->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals3'")
+        ->get();
+       
+        $sectionp8_value4 = DB::table('brsr_sectionc_p8_additional_question_value')
+        ->where('brsr_mast_id', $id)
+        ->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals4'")
+        ->get();
+
+        $sectionp8_value5 = DB::table('brsr_sectionc_p8_additional_question_value')
+        ->where('brsr_mast_id', $id)
+        ->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals5'")
+        ->get();
+
+        $sectionp8_value6 = DB::table('brsr_sectionc_p8_additional_question_value')
+        ->where('brsr_mast_id', $id)
+        ->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals6'")
+        ->get();
+      
+        $sectionp8_value7 = DB::table('brsr_sectionc_p8_additional_question_value')
+        ->where('brsr_mast_id', $id)
+        ->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals7'")
+        ->get();
+      
+        return view('user.brsr.sectionP8edit', compact('brsr_mast','user','fys','community_ques','current_fy',
+        'previous_fy','material_ques','location_ques','group_ques1','group_ques2','group_ques3','sectionp8_value',
+        'sectionp8_value1','sectionp8_value2',
+        'sectionp8_value3','sectionp8_value4','sectionp8_value5','sectionp8_value6','sectionp8_value7'));
+     
+    }
+
     public function sectionP7edit($id) {
  
         $id = decrypt($id);
@@ -1592,7 +1774,7 @@ class BrsrController extends Controller
        });
     
         alert()->success('Record Inserted', 'Success!')->persistent('Close');
-        return redirect()->route('user.brsr.sectionP2edit', encrypt($brsr_mast->id));
+        return redirect()->route('user.brsr.sectionP1edit', encrypt($brsr_mast->id));
     }
 
     public function sectionp2store(Request $request)
@@ -1742,7 +1924,6 @@ class BrsrController extends Controller
     public function sectionp7store(Request $request)
     {
        
-       
         $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
         
         DB::transaction(function () use ($request, $brsr_mast) {
@@ -1808,6 +1989,331 @@ class BrsrController extends Controller
         return redirect()->route('user.brsr.sectionP7edit', encrypt($brsr_mast->id));
     }
 
+    public function sectionp8store(Request $request)
+    {
+ 
+        $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+           $previous_id = (int) $request->fy_id - 1;
+
+            if (isset($request->additionals1)) {
+                foreach ($request->additionals1 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP8AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->project_name = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->sia_no = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->notify_date = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->external_agency = isset($data['text_d']) ? $data['text_d'] : 'NaN';
+                    $prod_serv_data->public_domain = isset($data['text_e']) ? $data['text_e'] : 'NaN';
+                    $prod_serv_data->web_link = isset($data['text_f']) ? $data['text_f'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals1';
+                    $prod_serv_data->save();
+                }
+              }
+
+              if (isset($request->additionals2)) {
+                foreach ($request->additionals2 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP8AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->rr_name = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->state_name = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->district_name = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->affected_family = isset($data['text_d']) ? $data['text_d'] : 'NaN';
+                    $prod_serv_data->paf_percent = isset($data['text_e']) ? $data['text_e'] : 'NaN';
+                    $prod_serv_data->paf_amount = isset($data['text_f']) ? $data['text_f'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals2';
+                    $prod_serv_data->save();
+                }
+              }
+
+              foreach ($request->segment1 as $val) {
+                $p8_data = new BrsrSectionP8QuestionValue;
+                $p8_data->com_id = $request->com_id;
+                $p8_data->brsr_mast_id = $brsr_mast->id;
+                $p8_data->fy_id = $request->fy_id;
+                $p8_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p8_data->community = $val['community'] ?? 'NaN'; 
+                $p8_data->save();
+             }
+
+             foreach ($request->segment2 as $val) {
+                $p8_data = new BrsrSectionP8QuestionValue;
+                $p8_data->com_id = $request->com_id;
+                $p8_data->brsr_mast_id = $brsr_mast->id;
+                $p8_data->fy_id = $request->fy_id;
+                $p8_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p8_data->input_material_current_fy = $val['input_material_current_fy'] ?? 'NaN'; 
+                $p8_data->input_material_previous_fy_id = $previous_id;
+                $p8_data->input_material_previous_fy = $val['input_material_previous_fy'] ?? 'NaN'; 
+                $p8_data->save();
+             }
+
+             foreach ($request->segment3 as $val) {
+                $p8_data = new BrsrSectionP8QuestionValue;
+                $p8_data->com_id = $request->com_id;
+                $p8_data->brsr_mast_id = $brsr_mast->id;
+                $p8_data->fy_id = $request->fy_id;
+                $p8_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p8_data->location_current_fy = $val['location_current_fy'] ?? 'NaN'; 
+                $p8_data->location_previous_fy_id = $previous_id;
+                $p8_data->location_previous_fy = $val['location_previous_fy'] ?? 'NaN'; 
+                $p8_data->save();
+             }
+
+
+            if (isset($request->additionals3)) {
+                foreach ($request->additionals3 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP8AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->social_details = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->action_taken = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals3';
+                    $prod_serv_data->save();
+                }
+              }
+
+              if (isset($request->additionals4)) {
+                foreach ($request->additionals4 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP8AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->csr_state = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->asp_district = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->amount_spent = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals4';
+                    $prod_serv_data->save();
+                }
+              }
+
+              foreach ($request->segment4 as $val) {
+                $p8_data = new BrsrSectionP8QuestionValue;
+                $p8_data->com_id = $request->com_id;
+                $p8_data->brsr_mast_id = $brsr_mast->id;
+                $p8_data->fy_id = $request->fy_id;
+                $p8_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p8_data->preferential_policy = $val['preferential_policy'] ?? 'NaN'; 
+                $p8_data->save();
+             }
+
+             foreach ($request->segment5 as $val) {
+                $p8_data = new BrsrSectionP8QuestionValue;
+                $p8_data->com_id = $request->com_id;
+                $p8_data->brsr_mast_id = $brsr_mast->id;
+                $p8_data->fy_id = $request->fy_id;
+                $p8_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p8_data->vulnerable_groups = $val['vulnerable_groups'] ?? 'NaN'; 
+                $p8_data->save();
+             }
+
+             foreach ($request->segment6 as $val) {
+                $p8_data = new BrsrSectionP8QuestionValue;
+                $p8_data->com_id = $request->com_id;
+                $p8_data->brsr_mast_id = $brsr_mast->id;
+                $p8_data->fy_id = $request->fy_id;
+                $p8_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p8_data->total_procurement = $val['total_procurement'] ?? 'NaN'; 
+                $p8_data->save();
+             }
+
+             if (isset($request->additionals5)) {
+                foreach ($request->additionals5 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP8AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->traditional  = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->acquired = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->benefit_shared = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->basis_benefit = isset($data['text_d']) ? $data['text_d'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals5';
+                    $prod_serv_data->save();
+                }
+              }
+
+              
+
+              if (isset($request->additionals6)) {
+                foreach ($request->additionals6 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP8AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->authority_name = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->brief_case = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->corrective_action = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals6';
+                    $prod_serv_data->save();
+                }
+              }
+
+              if (isset($request->additionals7)) {
+                foreach ($request->additionals7 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP8AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->csr_project = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->csr_persons = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->groups_percent = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals7';
+                    $prod_serv_data->save();
+                }
+              }
+
+        });
+    
+        alert()->success('Record Inserted', 'Success!')->persistent('Close');
+        return redirect()->route('user.brsr.sectionP8edit', encrypt($brsr_mast->id));
+    }
+
+    public function sectionp8update(Request $request)
+    {
+ 
+        $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+         
+         if (isset($request->additionals1)) {
+                foreach ($request->additionals1 as $key => $data) {
+                    $prod_serv_data = BrsrSectionP8AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->project_name = isset($data['project_name']) ? $data['project_name'] : 'NaN';
+                    $prod_serv_data->sia_no = isset($data['sia_no']) ? $data['sia_no'] : 'NaN';
+                    $prod_serv_data->notify_date = isset($data['notify_date']) ? $data['notify_date'] : 'NaN';
+                    $prod_serv_data->external_agency = isset($data['external_agency']) ? $data['external_agency'] : 'NaN';
+                    $prod_serv_data->public_domain = isset($data['public_domain']) ? $data['public_domain'] : 'NaN';
+                    $prod_serv_data->web_link = isset($data['web_link']) ? $data['web_link'] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now(); 
+                    $prod_serv_data->save();
+                }
+              }
+
+              if (isset($request->additionals2)) {
+                foreach ($request->additionals2 as $key => $data) {
+                    $prod_serv_data =  BrsrSectionP8AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->rr_name = isset($data['rr_name']) ? $data['rr_name'] : 'NaN';
+                    $prod_serv_data->state_name = isset($data['state_name']) ? $data['state_name'] : 'NaN';
+                    $prod_serv_data->district_name = isset($data['district_name']) ? $data['district_name'] : 'NaN';
+                    $prod_serv_data->affected_family = isset($data['affected_family']) ? $data['affected_family'] : 'NaN';
+                    $prod_serv_data->paf_percent = isset($data['paf_percent']) ? $data['paf_percent'] : 'NaN';
+                    $prod_serv_data->paf_amount = isset($data['paf_amount']) ? $data['paf_amount'] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now(); 
+                    $prod_serv_data->save();
+                }
+              }
+
+              foreach ($request->segment1 as $val) {
+                $p8_data = BrsrSectionP8QuestionValue::find($val['row_id']);
+                $p8_data->community = $val['community'] ?? 'NaN'; 
+                $p8_data->updated_at = Carbon::now(); 
+                $p8_data->save();
+             }
+
+             foreach ($request->segment2 as $val) {
+                $p8_data =  BrsrSectionP8QuestionValue::find($val['row_id']);
+                $p8_data->input_material_current_fy = $val['input_material_current_fy'] ?? 'NaN'; 
+                $p8_data->input_material_previous_fy = $val['input_material_previous_fy'] ?? 'NaN'; 
+                $p8_data->updated_at = Carbon::now(); 
+                $p8_data->save();
+             }
+
+             foreach ($request->segment3 as $val) {
+                $p8_data = BrsrSectionP8QuestionValue::find($val['row_id']);
+                $p8_data->location_current_fy = $val['location_current_fy'] ?? 'NaN'; 
+                $p8_data->location_previous_fy = $val['location_previous_fy'] ?? 'NaN'; 
+                $p8_data->updated_at = Carbon::now(); 
+                $p8_data->save();
+             }
+
+
+            if (isset($request->additionals3)) {
+                foreach ($request->additionals3 as $key => $data) {
+                    $prod_serv_data = BrsrSectionP8AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->social_details = isset($data['social_details']) ? $data['social_details'] : 'NaN';
+                    $prod_serv_data->action_taken = isset($data['action_taken']) ? $data['action_taken'] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now(); 
+                    $prod_serv_data->save();
+                }
+              }
+
+              if (isset($request->additionals4)) {
+                foreach ($request->additionals4 as $key => $data) {
+                    $prod_serv_data = BrsrSectionP8AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->csr_state = isset($data['csr_state']) ? $data['csr_state'] : 'NaN';
+                    $prod_serv_data->asp_district = isset($data['asp_district']) ? $data['asp_district'] : 'NaN';
+                    $prod_serv_data->amount_spent = isset($data['amount_spent ']) ? $data['amount_spent '] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now(); 
+                    $prod_serv_data->save();
+                }
+              }
+
+              foreach ($request->segment4 as $val) {
+                $p8_data = BrsrSectionP8QuestionValue::find($val['row_id']);
+                $p8_data->preferential_policy = $val['preferential_policy'] ?? 'NaN'; 
+                $p8_data->updated_at = Carbon::now(); 
+                $p8_data->save();
+             }
+
+             foreach ($request->segment5 as $val) {
+                $p8_data =  BrsrSectionP8QuestionValue::find($val['row_id']);
+                $p8_data->vulnerable_groups = $val['vulnerable_groups'] ?? 'NaN'; 
+                $p8_data->updated_at = Carbon::now(); 
+                $p8_data->save();
+             }
+
+             foreach ($request->segment6 as $val) {
+                $p8_data = BrsrSectionP8QuestionValue::find($val['row_id']);
+                $p8_data->total_procurement = $val['total_procurement'] ?? 'NaN'; 
+                $p8_data->updated_at = Carbon::now(); 
+                $p8_data->save();
+             }
+
+             if (isset($request->additionals5)) {
+                foreach ($request->additionals5 as $key => $data) {
+                    $prod_serv_data = BrsrSectionP8AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->traditional  = isset($data['traditional']) ? $data['traditional'] : 'NaN';
+                    $prod_serv_data->acquired = isset($data['acquired']) ? $data['acquired'] : 'NaN';
+                    $prod_serv_data->benefit_shared = isset($data['benefit_shared']) ? $data['benefit_shared'] : 'NaN';
+                    $prod_serv_data->basis_benefit = isset($data['basis_benefit']) ? $data['basis_benefit'] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now(); 
+                    $prod_serv_data->save();
+                }
+              }
+
+             if (isset($request->additionals6)) {
+                foreach ($request->additionals6 as $key => $data) {
+                    $prod_serv_data = BrsrSectionP8AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->authority_name = isset($data['authority_name']) ? $data['authority_name'] : 'NaN';
+                    $prod_serv_data->brief_case = isset($data['brief_case']) ? $data['brief_case'] : 'NaN';
+                    $prod_serv_data->corrective_action = isset($data['corrective_action']) ? $data['corrective_action'] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now(); 
+                    $prod_serv_data->save();
+                }
+              }
+
+              if (isset($request->additionals7)) {
+                foreach ($request->additionals7 as $key => $data) {
+                    $prod_serv_data =  BrsrSectionP8AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->csr_project = isset($data['csr_project']) ? $data['csr_project'] : 'NaN';
+                    $prod_serv_data->csr_persons = isset($data['csr_persons']) ? $data['csr_persons'] : 'NaN';
+                    $prod_serv_data->groups_percent = isset($data['groups_percent']) ? $data['groups_percent'] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now(); 
+                    $prod_serv_data->save();
+                }
+              }
+
+        });
+    
+        alert()->success('Data Updated Successfully', 'Success!')->persistent('Close');
+        return redirect()->back();   
+    }
 
     public function sectionp7update(Request $request)
     {

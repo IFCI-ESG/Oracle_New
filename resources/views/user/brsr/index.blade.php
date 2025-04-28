@@ -186,6 +186,7 @@
     let brsrValue2 = @json($brsr_sectionp1);    
     let brsrValue3 = @json($brsr_sectionp2); 
     let brsrValue4 = @json($brsr_sectionp7);
+    let brsrValue5 = @json($brsr_sectionp8);
     let fyData = @json($fys);  
     
     function setFyId(id, fy, ids,mastId) {
@@ -226,10 +227,15 @@
             return item.fy_id == fyid;   
         });
 
-        updateSectionButtons(fyExists,fyExists1,fyExists3,fyExists4,fyExists5);
+        const fyExists6 = brsrValue5.some(item => {
+            console.log("Checking if item.fy_id:", item.fy_id, "matches fyId:", fyId);
+            return item.fy_id == fyid;   
+        });
+
+        updateSectionButtons(fyExists,fyExists1,fyExists3,fyExists4,fyExists5,fyExists6);
     }
 
-    function updateSectionButtons(fyExists,fyExists1,fyExists3,fyExists4,fyExists5) {
+    function updateSectionButtons(fyExists,fyExists1,fyExists3,fyExists4,fyExists5,fyExists6) {
         
         const sectionAButton = document.getElementById('sectionA');
         if (fyExists) {
@@ -284,6 +290,17 @@
             sectionP7Button.innerHTML = '<i>Create</i>';
             sectionP7Button.classList.remove('btn-warning');
             sectionP7Button.classList.add('btn-primary');
+        }
+
+        const sectionP8Button = document.getElementById('sectionP8');
+        if (fyExists6) {
+            sectionP8Button.innerHTML = '<i>Edit</i>';
+            sectionP8Button.classList.remove('btn-primary');
+            sectionP8Button.classList.add('btn-warning');
+        } else {
+            sectionP8Button.innerHTML = '<i>Create</i>';
+            sectionP8Button.classList.remove('btn-warning');
+            sectionP8Button.classList.add('btn-primary');
         }
     }
     
@@ -342,6 +359,17 @@
             }
          }
     });
+
+    document.getElementById('sectionP8').addEventListener('click', function() {
+        if (fyId) {
+            if (brsrValue5.some(item => item.fy_id == fyid)) {
+                window.location.href = `/user/brsr/sectionP8edit/${mastid }`;
+           } else {
+                window.location.href = `/user/brsr/sectionP8create/${fyId}`;
+            }
+         }
+    });
+
 
 
 
