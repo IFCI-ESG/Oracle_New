@@ -31,7 +31,7 @@ class HomeController extends Controller
                     ->join('sector_master as sm','sm.id','users.sector_id')
                     ->join('comp_type_master as ctm','ctm.id','users.comp_type_id')
                     ->where('users.id',$user->id)
-                    ->first(['users.*','sm.name as sector_name_org','ctm.name as com_type']);
+                    ->first(['users.*','sm.name as sector_name','ctm.name as com_type']);
         
         // $retail_user = DB::table('users as u')->where('id',$user->id)->first();
 
@@ -137,9 +137,9 @@ class HomeController extends Controller
 
     public function contact()
     {
-        $services_mast = DB::table('services_master')->where('status','1')->orderby('id')->get();
+        $services_mast = DB::table('SERVICEMASTER')->where('status','1')->orderby('id')->get();
 
-        return view('landing.contact-us',compact('services_mast'));
+        return view('landing.contact-us1',compact('services_mast'));
     }
 
     public function inquiryMail(Request  $request)
@@ -150,7 +150,7 @@ class HomeController extends Controller
             'email' => 'required|email',
             'mobile' => 'required|numeric|digits:10',
             'services' => 'nullable|array',
-            'services.*' => 'exists:services_master,id',
+            'services.*' => 'exists:SERVICEMASTER,id',
         ]);
 
         if($valid->fails()) {
@@ -166,10 +166,11 @@ class HomeController extends Controller
                     $inquiry->services = implode(',', $request->services);
                     $inquiry->mobile = $request->mobile;
                     $inquiry->message = $request->message;
+
                 $inquiry->save();
 
                 $serviceIds = $request->services;
-                $services = DB::table('services_master')->whereIn('id', $serviceIds)->pluck('services'); // Fetch service names
+                $services = DB::table('SERVICEMASTER')->whereIn('id', $serviceIds)->pluck('services'); // Fetch service names
                 $serviceNames = $services->implode(',');
                 // dd($serviceNames);
 
