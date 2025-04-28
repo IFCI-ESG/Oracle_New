@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.master_march')
 
 @push('styles')
     <style>
@@ -9,78 +9,47 @@
         #resendOtpBtn:hover {
             background: #e64a19;
         }
+
+        .disabled-overlay {
+            pointer-events: none; /* Prevents interactions */
+            opacity: 0.5; /* Makes it look disabled */
+        }
     </style>
 @endpush
 
 @section('content')
     <!--====== Know Your Carbon Footprint PART START ======-->
-    <div class="calcuator-main-sec">
-    <div class="award-section individual-calculator">
+    <div class="carbon-footprint-sec">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="section-title text-animation mt-30">
-                        <h2>Your Carbon Footprint</h2>
-                        {{-- <div class="dash-and-paragraph text-animation">
-                            <div class="dash"></div> --}}
-                        <!-- <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p> -->
-                        {{-- </div> --}}
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-md-3 col-sm-12">
-                    <div class="calculator-box">
-                        <ul class="award-img-group text-animation">
-                            <li class="">
-                                <div class="award-img"><img src="assets/images/individual-calculator-img/Household-img8.jpg"
-                                        alt=""></div>
-                            </li>
-                            <li class="">
-                                <div class="award-img"><img src="assets/images/individual-calculator-img/travel-img8.jpg"
-                                        alt=""></div>
-                            </li>
-                            <li class="">
-                                <div class="award-img"><img
-                                        src="assets/images/individual-calculator-img/electricity-img4.jpg" alt="">
+            <div class="carbon-footprint-head">
+                <h2 class="text-center">Your Carbon Footprint</h2>
+                    <div class="carbon-footprint-info">
+                        <div class="carbon-footprint-header-sec" id="otpForm">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="">Name:</label>
+                                        <input type="text" class="form-control form-control-sm" id="name"
+                                                    name="name">
+                                    </div>
                                 </div>
-                            </li>
-                            <li class="">
-                                <div class="award-img">
-                                    <img src="assets/images/individual-calculator-img/Household-img8.jpg" alt="">
-                                    {{-- <img src="assets/images/individual-calculator-img/cooking-fuel-consumption-img1.jpg" alt=""> --}}
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="">Mobile:</label>
+                                        <input type="number" class="form-control form-control-sm" id="mobile"
+                                                    name="mobile">
+                                    </div>
                                 </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="col-lg-9 col-md-9 col-sm-12">
-                    <div class="table-responsive">
-                        <div id="otpForm">
-                            <table class="individual-calculator-table">
-                                <tbody>
-                                    <tr class="calculator-sec1">
-                                        <th class="text-left heading-sec name">Name</th>
-                                        <th class="name-input">
-                                            <input type="text" class="form-control form-control-sm" id="name"
-                                                name="name">
-                                        </th>
-                                        <th class="text-center mobile">Mobile</th>
-                                        <td class="opt-btn">
-                                            <input type="number" class="form-control form-control-sm" id="mobile"
-                                                name="mobile">
-                                            <button type="button" class="button button-opt" id="submit">
-                                                <p class="description">Submit</p>
-                                            </button>
-                                            {{-- <button type="button" class="button button-opt" id="sendOtpBtn">
-                                                <p class="description">Send OTP</p>
-                                            </button> --}}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                <div class="col-md-4 submit-btn">
+                                    <button type="button" class="carbon-footprint-submit-btn" id="submit">
+                                    Submit
+                                    </button>
+                                    {{-- <button type="button" class="carbon-footprint-submit-btn" id="sendOtpBtn">
+                                        Send OTP
+                                    </button> --}}
+                                </div>
+                            </div>
                         </div>
-
                         {{-- <div id="otpVerificationForm" style="display:none;">
                             <div style="display:flex; justify-content: center; align-items: center; background-color: #f9f9f9;">
                                 <div style="background: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 10px 20px; display: flex; align-items: center; gap: 10px; max-width: 800px;">
@@ -99,207 +68,224 @@
                         </div> --}}
 
 
-
-                        <div id="calculatorForm" style="display:none;">
-                            <!-- Calculator Section -->
-                            <table class="individual-calculator-table">
+                        <div id="calculatorForm" class="">
+                            <div class="carbon-footprint-info-sec">
+                                {{-- {{dd($ques_mast)}}  --}}
                                 @foreach ($ques_mast as $key => $ques)
-                                    <tr class="calculator-sec3">
-                                        <td data-label="Award" class="heading-sec" colspan="1">
-                                            <a href="javascript:void(0)"
-                                                @if ($ques->id == 1) class="active-cl" data-src="assets/images/individual-calculator-img/Household-img8.jpg"
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <div class="icon-sec">
+                                                @if ($ques->id == 1)
+                                                    <i class="fa-solid fa-house-chimney"></i>
                                                 @elseif($ques->id == 2)
-                                                    data-src="assets/images/individual-calculator-img/travel-img8.jpg"
+                                                    <i class="fa-solid fa-car"></i>
                                                 @elseif($ques->id == 3)
-                                                    data-src="assets/images/individual-calculator-img/electricity-img4.jpg"
+                                                    <i class="fa-solid fa-bolt"></i>
                                                 @elseif($ques->id == 4)
-                                                    data-src="assets/images/individual-calculator-img/cooking-fuel-consumption-img1.jpg" @endif>
-                                                {{ $ques->heading }}
-                                                <i class="fa-solid fa-arrow-right"></i>
-                                            </a>
-                                        </td>
-                                        <td data-label="Platform" colspan="2">
-                                            {{ $ques->question }}
-                                            @if ($ques->id == 2 || $ques->id == 3)
-                                                ({{ $subques_mast->where('ques_id', $ques->id)->first()->unit }})
-                                            @elseif($ques->id == 4)
-                                                (Number/Rupees)
-                                            @endif
-                                        </td>
-                                        <td data-label="Year" class="m-DN">
-                                            @if ($ques->id != 1)
-                                                @if ($ques->id == 2)
-                                                    @for ($i = 1; $i < 4; $i++)
-                                                        <select class="form-control form-control-sm tot mb-2"
-                                                            id="travel_{{ $i }}">
-                                                            <option value="" disabled selected> Select</option>
-                                                            @foreach ($subques_mast->where('ques_id', $ques->id) as $sub)
-                                                                <option value="{{ $sub->emission_factor }}">
-                                                                    {{ $sub->subques }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    @endfor
-                                                @else
-                                                    <select class="form-control form-control-sm tot"
-                                                        @if ($ques->id == 3) id="electricity"
-                                                        @elseif ($ques->id == 4)
-                                                            id="fuel" @endif>
-                                                        <option value="" disabled selected> Select</option>
-                                                        @foreach ($subques_mast->where('ques_id', $ques->id) as $sub)
-                                                            <option value="{{ $sub->emission_factor }}">{{ $sub->subques }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
+                                                    <i class="fa-solid fa-kitchen-set"></i>
                                                 @endif
-                                            @endif
-                                        </td>
-                                        <td data-label="Platform" class="text-center">
-                                            @if ($ques->id == 2)
-                                                @for ($i = 1; $i < 4; $i++)
-                                                    <input type="text" class="form-control form-control-sm tot mb-2"
-                                                        id="travel_val_{{ $i }}">
-                                                @endfor
-                                            @else
-                                                <input type="text" class="form-control form-control-sm tot"
-                                                    @if ($ques->id == 1) id="house_val"
-                                                    @elseif ($ques->id == 3)
-                                                        id="electricity_val"
-                                                    @elseif ($ques->id == 4)
-                                                        id="fuel_val" @endif>
-                                            @endif
-                                        </td>
-                                    </tr>
+                                                <h4>{{ $ques->heading }}</h4>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <div class="footprint-text">
+                                                <h4>
+                                                    {{ $ques->question }}
+                                                    {{-- @if ($ques->id == 2 || $ques->id == 3)
+                                                        ({{ $subques_mast->where('ques_id', $ques->id)->first()->unit }})
+                                                    @elseif($ques->id == 4)
+                                                        (Number/Rupees)
+                                                    @endif --}}
+                                                </h4>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="row border-bottom-0 pt-2 pb-2">
+                                                <div class="col-md-6">
+                                                    <div class="select-form-sec disabled-overlay">
+                                                        @if ($ques->id != 1)
+                                                            @if ($ques->id == 2)
+                                                                @for ($i = 1; $i < 4; $i++)
+                                                                    <select class="form-select tot"
+                                                                        id="travel_{{ $i }}">
+                                                                        <option value="" disabled selected> Select</option>
+                                                                        @foreach ($subques_mast->where('ques_id', $ques->id) as $sub)
+                                                                            <option value="{{ $sub->emission_factor }}">
+                                                                                {{ $sub->subques }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                @endfor
+                                                            @else
+                                                                <select class="form-select tot"
+                                                                    @if ($ques->id == 3) id="electricity"
+                                                                    @elseif ($ques->id == 4)
+                                                                        id="fuel" @endif>
+                                                                    <option value="" disabled selected> Select</option>
+                                                                    @foreach ($subques_mast->where('ques_id', $ques->id) as $sub)
+                                                                        <option value="{{ $sub->emission_factor }}">{{ $sub->subques }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+                                                            @endif
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group disabled-overlay">
+                                                        @if ($ques->id == 2)
+                                                            @for ($i = 1; $i < 4; $i++)
+                                                                <div class="d-flex align-items-center gap-1">
+                                                                    <input type="text" class="form-control tot" id="travel_val_{{ $i }}">
+                                                                    <span>&nbsp;{{ $subques_mast->where('ques_id', $ques->id)->first()->unit }}</span>
+                                                                </div>
+                                                            @endfor
+                                                        @else
+                                                            <div class="d-flex align-items-center gap-1">
+                                                                <input type="text" class="form-group tot"
+                                                                    @if ($ques->id == 1) 
+                                                                        id="house_val"
+                                                                    @elseif ($ques->id == 3)
+                                                                        style="width: 130px;" id="electricity_val"
+                                                                    @elseif ($ques->id == 4)
+                                                                        style="width: 130px;" id="fuel_val" @endif>
+                                                                    @if ($ques->id == 3)
+                                                                        &nbsp;{{ $subques_mast->where('ques_id', $ques->id)->first()->unit }}
+                                                                    @elseif($ques->id == 4)
+                                                                        &nbsp;Number/Rupees
+                                                                    @endif
+                                                            </div>
+                                                        @endif
+                                                    </div>  
+                                                </div>  
+                                            </div>
+                                        </div>
+                                    </div>
                                 @endforeach
 
-                                <tr class="calculator-sec4">
-                                    <td colspan="3" class="text-left">
-                                        <strong> Total Emissions for Individual per Month (Kg CO<sub>2</sub>e)</strong>
-                                    </td>
-                                    <td class="text-center animation-btn-css">
+                                <div class="row border-bottom-0 checkbox-sec">
+                                    <div class="col-md-12">
+                                        <input type="checkbox" name="data_confirmation"> Check the box to store your data
+                                    </div>
+                                </div>
+                            </div>
 
-
-                                        <div class="button-icon">
-                                            <button class="button" onclick="Total(this)" data-toggle="modal" data-target="">
-                                                <p class="title">Calculate</p>
-                                                <img src="assets/images/calculator-icon.png" alt="">
-                                                <p class="description">Calculate</p>
-                                            </button>
-
-                                            <button class="button" id="modelShow" style="display: none;" data-toggle="modal"
-                                                data-target="#exampleModal"> </button>
-                                        </div>
-
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control form-control-sm tot height"
-                                            id="total_emisssion" disabled="">
-                                    </td>
-                                </tr>
-                            </table>
+                            <div class="calculate-sec">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <div class="footprint-text">
+                                            <h4 class="mb-0"> Total Emissions for Individual per Month (Kg CO<sub>2</sub>e)</h4>
+                                    </div>
+                                    </div>
+                                    <div class="col-md-4 calc-btn">
+                                        <button onclick="Total(this)" class="calculate-btn hexLink active" data-toggle="modal" data-target="">Calculate</button>
+                                        <button class="button" id="modelShow" style="display: none;" data-toggle="modal"
+                                                        data-target="#certificate"> </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+
+
+                
                 </div>
             </div>
         </div>
     </div>
-</div>
     <!--====== Individual Calculator PART ENDS ======-->
 
 
 
     {{-- popup --}}
     <!-- Modal services 1 -->
-    <div class="modal fade meterGauge" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+    <div class="modal fade services-popup" id="certificate" tabindex="-1" aria-labelledby="certificateLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
-                    {{-- <h5 class="modal-title" id="exampleModalLabel">Meter Gauge</h5> --}}
-                    <img src="assets/images/logo/ESG-Prakrit-logo4.png" alt="">
+                <!-- <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">heading text</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                </div>
+                </div> -->
 
-                <div class="modal-body meterGauge">
-                    <div class="meterGauge-text">
-                        <h4 id="person_name"></h4>
-                    </div>
-                    {{-- <canvas id="meterGauge" width="400" height="200">  </canvas> --}}
-                    <div class="celebration-dec">
-                        <div class="row">
-                            {{-- <div class="col-lg-6">
-                            <canvas id="meterGauge" width="400" height="200"></canvas>
-                        </div> --}}
+                <div class="modal-body services-modal">
+                    <div class="modal-body text-center">
+                        <div class="modal-body-header">
+                            <h2 id="person_name"></h2>
+                        </div>
 
+                        <div class="modal-body-batch-logo">
+                            <img src="{{ asset('assets-v1/img/batch-logo.png') }}" alt="Result Image" class="img-fluid">
+                        </div>
+
+                        <div class="Footprint-info">
+                            <h4>Your Carbon Footprint : <span><div style="font-size: 2.3rem;" id="emissionValue"></div> </span></h4>
+                        </div>
+
+                        <div class="esg-prakrit-champion">
+                            {{-- <h4 id="prakrit_msg">
+                                Incredible! You are an ESG PRAKRIT CHAMPION!
+                            </h4> --}}
+                            <h4><span id="category"></span></h4>
+                            <span id="message"></span>
+                        </div>
+
+                        <div class="Share-sec">
                             <div class="col-lg-12">
-                                {{-- <img src="assets/images/batch-logo-1.png" alt=""> --}}
-                                <img src="assets/images/blank-batch-logo1.png" alt="" class="img-fluid">
-                                <div id="emissionValue" class="overlay-text"></div>
-                                <div class="calc-kg"><strong>(Kg CO<sub>2</sub>e)</strong></div>
-
+                                <div class="meterGauge-social-media">
+                                    <ul>
+                                        <li><a href="#"><h4>Share</h4><i class="fa-solid fa-share-from-square"></i></a></li>
+                                        <li>
+                                            <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                                        </li>
+                                        <li>
+                                            <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+                                        </li>
+                                        <li>
+                                            {{-- <a href="#"><i class="fa-brands fa-instagram"></i></a> --}}
+                                            <a href="#"><img class="instagram-icon" src="{{ asset('assets-v1/img/instagram-icon.png') }}" alt=""></a>
+                                        </li>
+                                        <li>
+                                            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                                        </li>
+                                        <li>
+                                            <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="dashboard-info-video">
-                        <img src="../assets/images/video/confetti-party-popper.gif" alt="">
-                    </div>
-
-                    <div class="col-lg-12">
-                        <div class="meterGauge-text">
-                            <h4>Incredible! You are an <br />ESG PRAKRIT CHAMPION!</h4>
+                        <div class="footer-sec">
+                            <!-- <p>Information: India's average per capita GHG emission for 2023 are <br> 2.1 Tonne CO2e/capita. <br> -->
+                            </p>
+                            <p class="mt-1" style="font-size: 12px;"><i> <b>Disclaimer: The information above is based on self-declared data and is provided solely for the purpose of raising awareness. </i></b></p>
                         </div>
                     </div>
-
-                    <div class="col-lg-12">
-                        <div class="meterGauge-social-media">
-                            <ul>
-                                <li>
-                                    <a href="#">
-                                        <h4>Share</h4><i class="fa-solid fa-share-from-square"></i>
-                                    </a>
-
-                                </li>
-                                <li>
-                                    <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-                                </li>
-                                <li>
-                                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-                                </li>
-                                <li>
-                                    <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-12">
-                        <p
-                            style="font-size: 12px;font-style: italic;color: #555;text-align: center;margin-top: 10px;font-weight: 600;">
-                            <strong>Disclaimer:</strong> Calculations are based on self-declared data.
-                        </p>
-
-                    </div>
-
                 </div>
 
             </div>
         </div>
     </div>
-    <!-- Modal services 1 end -->
-    {{-- popup end --}}
 
 
 @endsection
 @push('scripts')
-    {{-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> --}}
-    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script> --}}
 
     <script>
-        $(".individual-calculator .individual-calculator-table tbody tr td a").mouseover(function() {
-            var value = $(this).attr('data-src');
-            $(".award-img img").attr("src", value);
-        })
+        // $(".individual-calculator .individual-calculator-table tbody tr td a").mouseover(function() {
+        //     var value = $(this).attr('data-src');
+        //     $(".award-img img").attr("src", value);
+        // })
+
+        document.getElementById("submit").addEventListener("click", function() {
+            document.querySelectorAll(".disabled-overlay").forEach(function(element) {
+                element.classList.remove("disabled-overlay");
+            });
+        });
+
 
         $('#submit').on('click', function() {
             var name = $('#name').val();
@@ -316,8 +302,10 @@
                 return;
             }
 
-            $('#calculatorForm').show();
+            // $('#calculatorForm').show();
         });
+
+
 
         // Handle "Send OTP" button click
         $('#sendOtpBtn').on('click', function() {
@@ -344,7 +332,7 @@
                     _token: '{{ csrf_token() }}'
                 },
                 success: function(response) {
-                    // console.log(response);
+                    console.log(response);
                     if (response.success) {
                         // alert('OTP sent');
                         $('#otpVerificationForm').show(); // Show OTP verification form
@@ -510,11 +498,34 @@
 
             var name = document.getElementById("name").value;
             document.getElementById("person_name").innerText = name;
+            document.getElementById("emissionValue").innerHTML = tot_emiss.toFixed(2) + " Kg CO<sub>2</sub>e";
+
+            let category = "";
+            let message = "";
+
+            if (tot_emiss >= 0 && tot_emiss <= 90) {
+                category = "ESG PRAKRIT Champion";
+                message = "Congratulations! Kudos to your Sustainable lifestyle.";
+            } else if (tot_emiss >= 91 && tot_emiss <= 175) {
+                category = "ESG PRAKRIT STEWARD";
+                message = "Well Done! You are a Sustainability Steward, keep going!";
+            } else if (tot_emiss >= 176 && tot_emiss <= 284) {
+                category = "ESG PRAKRIT Aspirant";
+                message = "Well Done Aspirant!, keep moving with Eco-consciousness.";
+            } else if (tot_emiss >= 285) {
+                category = "ESG PRAKRIT Warrior";
+                message = "Keep Working with your efforts towards a Greener tomorrow, Warrior.";
+            }
+
+            // Display the result
+            document.getElementById("category").innerText = category;
+            document.getElementById("message").innerText = message;
+
 
             $("#modelShow").trigger('click');
 
             // Update the meter gauge with total emissions
-            updateGauge(tot_emiss);
+            // updateGauge(tot_emiss);
         }
 
         function updateGauge(tot_emiss) {
@@ -530,7 +541,6 @@
 
             // Update the value in the div
             document.getElementById('emissionValue').innerText = data.value.toFixed(2);
-
 
             // Chart.js chart's configuration
             // We are using a Doughnut type chart to
@@ -575,5 +585,5 @@
             var chartCtx = document.getElementById('meterGauge').getContext('2d');
             gaugeChart = new Chart(chartCtx, config);
         }
-    </script>
+    </script>   
 @endpush
