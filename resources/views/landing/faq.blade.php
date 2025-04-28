@@ -1,5 +1,133 @@
-@extends('layouts.master')
+@extends('layouts.master_march')
+
+@section('title')
+    ESG Prakrit
+@endsection
+
+<style>
+/* faq css */
+
+.faq {
+    padding: 50px 0 60px;
+  background:#fff;
+  padding-top: 150px;
+}
+.faq .faq-title h2 {
+  margin-bottom: 18px;
+  font-weight: 600;
+  font-size: 26px;
+  color: #5dc269;
+  text-transform: capitalize;
+  display: none;
+}
+.faq .accordion .card {
+  border: none;
+  /* margin-bottom: 30px; */
+  margin-bottom: 17px;
+}
+.faq .btn-link {
+  display: block;
+  width: 100%;
+  text-align: left;
+  position: relative;
+  /* background: #242c42; */
+  background: linear-gradient(90deg, #067e4f 23%, #9cc959 100%);
+  /* background: linear-gradient(90deg, #005936 23%, #9cc959 100%); */
+  /* background: linear-gradient(90deg, #005936 -75%, #9cc959 100%); */
+  color: #fff;
+  border-radius: 0;
+  padding: 7px 15px 12px;
+  font-size: 16px;
+  overflow: hidden;
+  border: none;
+  font-weight:600;
+  font-weight: 400;
+}
+.faq .btn-link:hover, .faq .btn-link:focus {
+  text-decoration: none;
+  color: #fff;
+}
+.faq .btn-link:after {
+  position: absolute;
+  content: '-';
+  /* right: 15px;
+  top: 50%; */
+  right: 28px;
+  top: 42%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  font-family: fontawesome;
+  font-weight: 700;
+  font-size: 25px;
+}
+.faq .btn-link.collapsed:after {
+  content: '\2b';
+  top: 50%;
+  font-size: 15px;
+}
+.faq .btn-link:before {
+  position: absolute;
+  content: '';
+  /* background: #28a745; */
+  background: #9cc959;
+  -webkit-transform: skew(-35deg);
+  transform: skew(-35deg);
+  height: 100%;
+  width: 50%;
+  left: 90%;
+  top: 0;
+}
+.faq .card-header {
+  padding: 0;
+  background: transparent;
+  border-bottom: none;
+}
+.faq .card-body {
+  position: relative;
+  /* background-color: #f3f3f3; */
+
+  background-image: url(/assets/images/login.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  /* background-position: center center; */
+  background-blend-mode: overlay;
+  background-position: 100% 25%;
+}
+.faq .card-body p{
+    text-align: justify;
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #000000;
+    font-weight: 400;
+}
+.faq .card-body p strong{
+  font-weight: 700;
+}
+.faq .card-body:after {
+  position: absolute;
+  content: '';
+  height: 2px;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  /* background: #242c42; */
+  background: linear-gradient(90deg, #005936 23%, #9cc959 100%);
+}
+.faq .card-body:before {
+  position: absolute;
+  content: '';
+  height: 2px;
+  width: 50%;
+  left: 0;
+  bottom: 0;
+  /* background: #86bc42; */
+  z-index: 1;
+}
+/* faq css end */
+    </style>
 @section('content')
+
     <!--====== PAGE BANNER PART start ======-->
     {{-- <section class="bg_cover contact-us-bg_cover faq-bg_cover" style="background-image: url(./assets/images/faq-img.jpg);background-repeat: no-repeat;background-size: cover;">
         <div class="container">
