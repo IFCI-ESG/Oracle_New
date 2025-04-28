@@ -1,47 +1,26 @@
-@extends('layouts.master')
-<link rel="stylesheet" href="{{asset('css/bootstrap-multiselect.css')}}">
-<!-- <link rel="stylesheet" href="{{asset('assets/layout_css/coreui_css/coreui.min.css')}}"> -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.0.4/popper.js"></script>
+@extends('layouts.master_march')
+
+@section('title')
+    ESG Prakrit
+@endsection
+
+
+
 
 @section('content')
 
-<style type="text/css">
-   .form-check-input{
-        width: auto!important;
-        height: auto!important;
-    }
 
-    #ms1 {
-        width : 50%;
-    } 
- 
-
-
-    
-
-</style>
-<section class="bg_cover contact-us-bg_cover" style="background-image: url(assets/images/contactusesg.jpg)">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-
-            </div>
-        </div>
+    <!-- connect-us-hero-sec -->
+    <div class="connect-us-hero-sec">
+        <img src="{{asset('assets-v1/img/logo/ESG-Prakrit.png')}}" alt="ESG Logo">
     </div>
-</section>
+    <!-- connect-us-hero-sec end -->
 
-<!--====== PAGE BANNER PART ENDS ======-->
-
-
-
-
-<!--====== contact-us PART START ======-->
-
-<section  class="contact-us gray-bg">
-    <div class="container">
-        <div class="row">
-               <div class="row" style="margin-top:10px">
-                    <div class="col-12 ">
+   
+    <div class="address-section">
+            <div class="container">
+               <div class="row justify-content-end" style="margin-top:10px">
+                    <div class="col-md-6">
                 @if (session('success'))
                     <div class="alert alert-success">
                         {{ session('success') }}
@@ -59,227 +38,122 @@
 
             </div>
         </div>
-        </div>
         
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-4 col-md-4 col-sm-4">
-                <div class="contact-address">
-                    <div class="contact-heading">
-                        <h5>Address</h5>
-                        {{-- <p>IFCI Ltd.</p> --}}
+   
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="address-sec">
+                        <h2>Address</h2>
+                        <div class="address-info">
+                            <p><i class="fa-solid fa-location-dot"></i>IFCI Tower,61 Nehru Place, New Delhi-110 019.</p>
+                            <p><i class="fa-solid fa-phone-volume"></i>+91 9560969186</p>
+                            <p><i class="fa-regular fa-envelope"></i>esg@ifciltd.com</p>
+                        </div>
                     </div>
-                    <ul>
-                        <li>
-                            <div class="single-address">
-                                <div class="icon">
-                                    <i class="fa fa-home"></i>
-                                </div>
-                                <div class="cont">
-                                    <p>IFCI Tower, 61 Nehru Place, New Delhi-110 019</p>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="single-address">
-                                <div class="icon">
-                                    <i class="fa fa-phone"></i>
-                                </div>
-                                <div class="cont">
-                                    <p><strong>Phone Nos :</strong></p>
-                                    <p>+91 9560969186</p>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="single-address">
-                                <div class="icon">
-                                    <i class="fa fa-envelope"></i>
-                                </div>
-                                <div class="cont">
-                                    <p><strong>Enquiry Mail :</strong></p>
-                                    <p>esg@ifciltd.com</p>
-                                </div>
-                            </div>
-                        </li>
-                        {{-- <li>
-                            <div class="single-address">
-                                <div class="icon">
-                                    <i class="fa fa-envelope"></i>
-                                </div>
-                                <div class="cont">
-                                    <p><strong>Portal Issues :</strong></p>
-                                    <p>info@testmail.com</p>
-                                </div>
-                            </div>
-                        </li> --}}
-                        <!-- <li>
-                            <div class="single-address">
-                                <div class="icon">
-                                    <i class="fa fa-globe"></i>
-                                </div>
-                                <div class="cont">
-                                    <p>www.yoursite.com</p>
-                                    <p>www.example.com</p>
-                                </div>
-                            </div>
-                        </li> -->
-                    </ul>
                 </div>
 
-            </div>
-
-            <div class="col-lg-8 col-md-8 col-sm-8">
-                <div class="contact-from">
-                    <div class="section-title">
-                        <h5>Connect With Us</h5>
-                        <!-- <h2>Get In Touch</h2> -->
-                    </div>
-                    <div class="main-form">
-                        <form action="{{ route('inquiry') }}" id="" role="form" method="post"
+                <div class="col-lg-6">
+                    <div class="connect-info">
+                        <h2>To know more about ESG PRAKRIT, Please share your contact details.</h2>
+                                 <form action="{{ route('inquiry') }}" id="" role="form" method="post"
                             class='form-horizontal prevent_multiple_submit' files=true enctype='multipart/form-data'
                             accept-charset="utf-8">
-                            @csrf
+                            @csrf                            
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="single-form form-group">
-                                        <input type="text" placeholder="Your name" required="required" name="name">
-                                        @error('name')
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Full Name"  required="required" name="name" value="{{ old('name') }}">
+                                          @error('name')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
-                                        {{-- <div class="help-block with-errors"></div> --}}
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="single-form form-group">
-                                        <input type="email" placeholder="Email" required="required" name="email">
-                                        @error('email')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                        {{-- <div class="help-block with-errors"></div> --}}
-                                    </div>
-                                </div>
-                                {{-- <div class="col-md-6">
-                                    <div class="single-form form-group">
-                                        <input type="text" placeholder="Subject" required="required">
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-                                </div> --}}
 
-                                    <div class="col-md-6" >
-                                    <br />
-                                    <div class=" form-group">
-                                     <select id="ms1"  multiple="multiple" name="services[]" class="form-multi-select" >
-                                       
-                                    <option value="" disabled selected hidden>Please Select Services</sub>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input type="email" class="form-control" placeholder="Email"  required="required" name="email" value="{{ old('email') }}">
+                                         @error('email')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="row">
+                                <div class="col-md-6" >
+                                  <div class="mt-0">
+                                    <select class="selectpicker" placeholder="Please Select Services" multiple  name="services[]" aria-label="Default select example" data-live-search="true">
+                                      
+                                    @foreach ($services_mast as $serv)
+                                    <option value="{{ $serv->id }}" {{ (collect(old('services'))->contains($serv->id)) ? 'selected' : '' }}>
+                                    {{ $serv->services }}
                                     </option>
-                                        @foreach ($services_mast as $serv)
-                                            <option value="{{$serv->id}}">{{$serv->services}}</option>
-                                        @endforeach
+                                    @endforeach
+
+
                                     </select>
-
-                                    </div>
-                                    </div>
-
-                                   
-                                           
-
-      <!--                           <div class="col-md-6">
-                                    <div class="single-form form-group">
-                                        <div class="multiselect">
-                                            <div class="selectBox" >
-                                                <select class="form-multi-select" name="services[]" id="ms12" multiple data-coreui-search="true" multiple="multiple">
-                                                    <option value="" selected disabled>Please Select Services</option>
-                                                    @foreach ($services_mast as $serv)
-                                                        <option value="{{$serv->id}}">{{$serv->services}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="help-block with-errors"></div>
-
-                                    </div>
-                                </div> -->
+                                  </div>
 
 
-
+                                  </div>
+              
+                                  
+                              
                                 <div class="col-md-6">
-                                    <div class="single-form form-group">
-                                        <input type="text" placeholder="Phone" required="required" name="mobile">
-                                        @error('mobile')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                        {{-- <div class="help-block with-errors"></div> --}}
+                                    <div class="form-group">
+                                        <input type="tel" class="form-control" placeholder="Phone Number"  name="mobile"   pattern="[1-9]{1}[0-9]{9}" maxlength="10"  value="{{ old('mobile') }}">
                                     </div>
                                 </div>
+                              </div>
+                              <div class="row">
                                 <div class="col-md-12">
-                                    <div class="single-form form-group">
-                                        <textarea placeholder="Message" required="required" name="message"></textarea>
-                                        <div class="help-block with-errors"></div>
+                                    <div class="form-group">
+                                        <textarea class="form-control" placeholder="Message" name="message"> {{ old('message') }}</textarea>
                                     </div>
                                 </div>
-                                <p class="form-message"></p>
+                              </div>
+                              <div class="row">
                                 <div class="col-md-12">
-                                    <div class="single-form animation-btn-css">
-                                        <button type="submit" class="animation-btn">Submit</button>
+                                    <div class="submit-btn-sec">
+                                        <button type="submit" class="submit-btn" >Submit</button>
                                     </div>
                                 </div>
+                              </div>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
-</section>
-<div class="map map-big">
-    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3504.657077874119!2d77.25025167456943!3d28.55002538782435!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce3c59b2e8e17%3A0xb9d54a6d9773171e!2sIFCI%20Limited!5e0!3m2!1sen!2sin!4v1723729316342!5m2!1sen!2sin" width="100%" height="450" style="border:0;display: block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-</div>
+
+
+    <link rel="stylesheet" href="{{asset('css/bootstrap-multiselect.css')}}">
+    <!-- <link rel="stylesheet" href="{{asset('assets/layout_css/coreui_css/coreui.min.css')}}"> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.0.4/popper.js"></script>
+    
+    
+    <link rel="stylesheet" href="{{asset('assets-v1/css/bootstrap.min.css')}}">
+    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"> --}}
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css">
+    
+
+
+
+    <script src="{{asset('assets-v1/js/jquery-1.12.4.min.js')}}"></script>
+    <script src="{{asset('js/bootstrap.bundle.js')}}"></script>
+    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>` --}}
+
+    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script> --}}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js"></script>
+
+    {{-- <script src="{{asset('js/bootstrap-multiselect.js')}}"></script> --}}
+    {{-- <script src="{{asset('js/bootstrap.bundle.js')}}"></script> --}}
+
+<!-- Connect With Us js -->
+
 
 @endsection
-
-@push('scripts')
-
-<!-- <script src="{{asset('js/jquery.nice-select.min.js')}}"></script> -->
-<script src="{{asset('js/bootstrap-multiselect.js')}}"></script>
-<script src="{{asset('js/bootstrap.bundle.js')}}"></script>
-<!-- <script src="{{asset('assets/layout_js/coreuijs/coreui.js')}}"></script> -->
-    <script>
-
-        $(document).ready(function() {
-            // $('#multiselect').multiselect({
-            //     buttonWidth: '400px'
-            // });
-
-              $('#ms1').multiselect();
-        });
-        // multiselect js
-
-        // var expanded = false;
-
-        // function showCheckboxes() {
-        //     var checkboxes = document.getElementById("checkboxes");
-        //     if (!expanded) {
-        //         checkboxes.style.display = "block";
-        //         expanded = true;
-        //     } else {
-        //         checkboxes.style.display = "none";
-        //         expanded = false;
-        //     }
-        // }
-
-    // multiselect js end
-
-    </script>
-
-@endpush
-
-
-
-
-
-

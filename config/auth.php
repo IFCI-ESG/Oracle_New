@@ -77,7 +77,7 @@ return [
             'model' => App\Models\AdminUser::class,
         ],
 
-        'users' => [
+        'admins' => [
             'driver' => 'eloquent',
             'model' => App\Models\AdminUser::class, // Admin user model
         ],
@@ -106,7 +106,7 @@ return [
             'throttle' => 60,
         ],
 
-        'users' => [
+        'admins' => [
             'provider' => 'users',
             'table' => 'password_resets',
             'expire' => 60,

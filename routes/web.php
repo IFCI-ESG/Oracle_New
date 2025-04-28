@@ -495,7 +495,20 @@ Route::name('user.')->prefix('user')->middleware(['role:ActiveUser', 'verified',
     Route::get('/brsr/sectionBedit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionBedit'])->name('brsr.sectionBedit');
     Route::post('/brsr/sectionbstore', [\App\Http\Controllers\User\BrsrController::class,'sectionbstore'])->name('brsr.sectionbstore');
     Route::post('/brsr/sectionbupdate', [\App\Http\Controllers\User\BrsrController::class,'sectionbupdate'])->name('brsr.sectionbupdate');
+ Route::get('/brsr/sectionP1create/{fy_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP1create'])->name('brsr.sectionP1create');
+    Route::post('/brsr/sectionp1store', [\App\Http\Controllers\User\BrsrController::class,'sectionp1store'])->name('brsr.sectionp1store');
+    Route::get('/brsr/sectionP1edit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP1edit'])->name('brsr.sectionP1edit');
+    Route::post('/brsr/sectionp1update', [\App\Http\Controllers\User\BrsrController::class,'sectionp1update'])->name('brsr.sectionp1update');
 
+    Route::get('/brsr/sectionP2create/{fy_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP2create'])->name('brsr.sectionP2create');
+    Route::post('/brsr/sectionp2store', [\App\Http\Controllers\User\BrsrController::class,'sectionp2store'])->name('brsr.sectionp2store');
+    Route::get('/brsr/sectionP2edit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP2edit'])->name('brsr.sectionP2edit');
+    Route::post('/brsr/sectionp2update', [\App\Http\Controllers\User\BrsrController::class,'sectionp2update'])->name('brsr.sectionp2update');
+
+    Route::get('/brsr/sectionP7create/{fy_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP7create'])->name('brsr.sectionP7create');
+    Route::post('/brsr/sectionp7store', [\App\Http\Controllers\User\BrsrController::class,'sectionp7store'])->name('brsr.sectionp7store');
+    Route::get('/brsr/sectionP7edit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP7edit'])->name('brsr.sectionP7edit');
+    Route::post('/brsr/sectionp7update', [\App\Http\Controllers\User\BrsrController::class,'sectionp7update'])->name('brsr.sectionp7update');
 //  Route::resource('brsr', 'User\BrsrController', ['except' => 'create','update']);
 //     Route::get('/brsr/create/{fy_id}', 'User\BrsrController@create')->name('brsr.create');
 //     Route::post('brsr/store', 'User\BrsrController@store')->name('brsr');
@@ -514,6 +527,6 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 
 Route::post('/check-credentials', [\App\Http\Controllers\Auth\OtpController::class, 'checkCredentials'])->name('check.credentials');
 Route::post('/verify-otp', [\App\Http\Controllers\Auth\OtpController::class, 'verifyOtp'])->name('verify.otp');
-
+Route::post('/send-otp', [App\Http\Controllers\PassChangeController::class, 'sendOTP'])->name('send.otp');
 // Route for sending OTP
-Route::post('/send-otp', [App\Http\Controllers\Auth\OTPController::class, 'sendOTP'])->name('send.otp');
+// Route::post('/send-otp', [App\Http\Controllers\Auth\OTPController::class, 'sendOTP'])->name('send.otp');

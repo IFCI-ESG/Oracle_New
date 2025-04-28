@@ -137,7 +137,7 @@ class HomeController extends Controller
 
     public function contact()
     {
-        $services_mast = DB::table('services_master')->where('status','1')->orderby('id')->get();
+        $services_mast = DB::table('servicemaster')->where('status','1')->orderby('id')->get();
 
         return view('landing.contact-us',compact('services_mast'));
     }
