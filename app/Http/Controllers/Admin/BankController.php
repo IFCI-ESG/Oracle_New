@@ -165,6 +165,7 @@ class BankController extends Controller
 
                 // Update password
                 $user->password = Hash::make($request->new_password);
+                $user->password_changed = 1; 
             }
 
             // Save user changes
