@@ -1,3 +1,4 @@
+<meta name="csrf-token" content="{{ csrf_token() }}">
 @if(auth()->user()->password_changed == 0)
 <script>
     window.onload = function() {
@@ -254,6 +255,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
 @endif
 
 function togglePasswordVisibility(fieldId, iconElement) {
