@@ -530,3 +530,4 @@ Route::post('/verify-otp', [\App\Http\Controllers\Auth\OtpController::class, 've
 Route::post('/send-otp', [App\Http\Controllers\PassChangeController::class, 'sendOTP'])->name('send.otp');
 // Route for sending OTP
 // Route::post('/send-otp', [App\Http\Controllers\Auth\OTPController::class, 'sendOTP'])->name('send.otp');
+Route::post('/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLink'])->name('password.email');
