@@ -337,7 +337,7 @@
                     @endphp
                     
                     @if ($imagePath)
-                        <img src="{{ asset('storage/' . $imagePath) }}" alt="User Profile" class="profile-photo">
+                        <img src="{{ asset(auth()->user()->image) }}" alt="User Profile" class="profile-photo">
                     @else
                         <img src="{{ asset('assets-v1/img/profile-pic/bank-profile-img.png') }}" alt="User Profile" class="profile-photo">
                     @endif
