@@ -20,7 +20,7 @@
 
 
               @if (auth()->user()->image)
-                        <img src="{{ asset('storage/' . auth()->user()->image) }}" alt="user-image"
+                        <img src="{{ asset(auth()->user()->image) }}" alt="user-image" height="42"
                             alt="user-img"class="rounded-circle avatar-md">
                     @else
                         <img src="/images/user-profile.jpg" alt="user-image" alt="user-img" title="Mat Helme" class="rounded-circle avatar-md">
@@ -124,8 +124,9 @@
                                 <div class="collapse" id="sidebarenvironment">
                                     <ul class="sub-menu">
                                         <li class="menu-item">
-                                            <a href="{{ route('admin.bank_dash_environment') }}" class="menu-link"><span
-                                                    class="menu-text">CF AND FE</span></a>
+                                            <a href="{{ route('admin.bank_dash_environment') }}" class="menu-link">
+                                                <span class="menu-text">Carbon Footprint AND  <br>
+                                                Financed Emissions</span></a>
                                         </li>
                                         <li class="menu-item">
                                             <a href="{{ route('admin.bank_dash_climate_risk') }}" class="menu-link"><span
@@ -240,7 +241,8 @@
                                     <ul class="sub-menu">
                                         <li class="menu-item">
                                             <a href="{{ route('admin.dash_environment') }}" class="menu-link"><span
-                                                    class="menu-text">CF AND FE</span></a>
+                                                    class="menu-text">Carbon Footprint AND  <br>
+                                                Financed Emissions</span></a>
                                         </li>
                                         <li class="menu-item">
                                             <a href="{{ route('admin.dash_climate_risk') }}" class="menu-link"><span

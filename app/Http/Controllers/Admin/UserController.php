@@ -969,15 +969,15 @@ class UserController extends Controller
 
         // Sandbox details
         // $urlcin = 'https://api.probe42.in/probe_pro_sandbox/companies/'.$cin.'/base-details'
-         $url = 'https://api.probe42.in/probe_pro_sandbox/companies/'.$request->pan.'/comprehensive-details?identifier_type=PAN';
-        $api_key = '07wvsOWBoq9iwpjhMm2C22eKOymlpqht9WmtYEFb';
+        //  $url = 'https://api.probe42.in/probe_pro_sandbox/companies/'.$request->pan.'/comprehensive-details?identifier_type=PAN';
+        // $api_key = '07wvsOWBoq9iwpjhMm2C22eKOymlpqht9WmtYEFb';
 
         // Production Details
         // API URL
-        // $url = 'https://api.probe42.in/probe_pro/companies/'.$request->pan.'/comprehensive-details?identifier_type=PAN';
+        $url = 'https://api.probe42.in/probe_pro/companies/'.$request->pan.'/comprehensive-details?identifier_type=PAN';
 
         // // API Key
-        // $api_key = '6NM20CtNSx6J22J4NgG6fH2bZN51hnt8EYmtRpRc';
+        $api_key = '6NM20CtNSx6J22J4NgG6fH2bZN51hnt8EYmtRpRc';
 
         // Headers
         $headers = [

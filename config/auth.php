@@ -72,15 +72,14 @@ return [
     */
 
     'providers' => [
-
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\User::class,
-        ],
-        
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\AdminUser::class,
+        ],
+
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\AdminUser::class, // Admin user model
         ],
     ],
 
@@ -98,6 +97,7 @@ return [
     | they have less time to be guessed. You may change this as needed.
     |
     */
+
     'passwords' => [
         'users' => [
             'provider' => 'users',
@@ -105,12 +105,7 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
-        'users' => [
-            'provider' => 'users',
-            'table' => 'password_resets',
-            'expire' => 60,
-            'throttle' => 60,
-        ],
+
         'admins' => [
             'provider' => 'users',
             'table' => 'password_resets',

@@ -1003,8 +1003,15 @@ class BrsrController extends Controller
             $Results[$id] = $values;
         }
 
-        $previous_rnd = isset($Results['X2']) ? number_format($Results['X2'] * 100, 2) . '%' : '0%';
-        $previous_capex = isset($Results['X5']) ? number_format($Results['X5'] * 100, 2) . '%' : '0%';
+        // $previous_rnd = isset($Results['X2']) ? number_format($Results['X2'] * 100, 2) . '%' : '0%';
+        // $previous_capex = isset($Results['X5']) ? number_format($Results['X5'] * 100, 2) . '%' : '0%';
+    $previous_rnd = (isset($Results['X2']) && is_numeric($Results['X2']))
+    ? number_format((float)$Results['X2'] * 100, 2) . '%'
+    : '0%';
+
+$previous_capex = (isset($Results['X5']) && is_numeric($Results['X5']))
+    ? number_format((float)$Results['X5'] * 100, 2) . '%'
+    : '0%';
 
         $brsrMap1 = [
             'X4' => 'L4',

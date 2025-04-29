@@ -1,3 +1,4 @@
+<meta name="csrf-token" content="{{ csrf_token() }}">
 @if(auth()->user()->password_changed == 0)
 <script>
     window.onload = function() {
@@ -51,7 +52,7 @@
                 <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown"
                     href="#" role="button" aria-haspopup="false" aria-expanded="false">
                     @if (auth()->user()->image)
-                        <img src="{{ asset('storage/' . auth()->user()->image) }}" alt="user-image"
+                        <img src="{{ asset(auth()->user()->image) }}" alt="user-image"
                             class="rounded-circle">
                     @else
                         <img src="/images/user-profile.jpg" alt="user-image" class="rounded-circle">
@@ -172,7 +173,7 @@
                         <div class="mb-4">
                             <label for="new_password" class="form-label font-weight-bold" style="color: #333;">New Password</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="new_password" name="new_password" required
+                                <input type="password" class="form-control" id="new_password" name="new_password"
                                     style="border-radius: 8px; border: 1px solid #ddd;" onkeyup="validatePasswords()">
                                 <span class="input-group-text" style="cursor: pointer;" onclick="togglePasswordVisibility('new_password', this)">
                                     <i class="fas fa-eye"></i>
@@ -183,7 +184,7 @@
                         <div class="mb-4">
                             <label for="confirm_password" class="form-label font-weight-bold" style="color: #333;">Confirm Password</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password"
                                     style="border-radius: 8px; border: 1px solid #ddd;" onkeyup="validatePasswords()">
                                 <span class="input-group-text" style="cursor: pointer;" onclick="togglePasswordVisibility('confirm_password', this)">
                                     <i class="fas fa-eye"></i>
@@ -202,7 +203,7 @@
 
                         <div id="otp_field" class="mb-4" style="display: none;">
                             <label for="otp" class="form-label font-weight-bold" style="color: #333;">Enter OTP</label>
-                            <input type="text" class="form-control" id="otp" name="otp" required
+                            <input type="text" class="form-control" id="otp" name="otp"
                                 style="border-radius: 8px; border: 1px solid #ddd;"
                                 maxlength="6" 
                                 pattern="[0-9]{6}"
@@ -254,6 +255,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
 @endif
 
 function togglePasswordVisibility(fieldId, iconElement) {
@@ -397,11 +399,18 @@ function validateOTP() {
 }
 
 function confirmUpdate() {
+    var resetPasswordChecked = document.getElementById('reset_password').checked;
     var newPassword = document.getElementById('new_password').value;
     var confirmPassword = document.getElementById('confirm_password').value;
     var otp = document.getElementById('otp').value;
     var generatedOtp = document.getElementById('generated_otp').value;
 
+    // If reset password is not checked, only validate email and image
+    if (!resetPasswordChecked) {
+        return true;
+    }
+
+    // If reset password is checked, validate password fields
     if (!newPassword || !confirmPassword) {
         alert("Please fill both password fields!");
         return false;
