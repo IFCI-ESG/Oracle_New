@@ -90,10 +90,10 @@ class RbiDisclosureController extends Controller
     {
         // dd($request,$request->fy_id);
         // try {
-            $rbi_mast = RbiDisclosureMast::where('bank_id', Auth::user()->id)->where('fy_id',$request->fy_id)->first();
-            DB::transaction(function () use ($request)
+            $rbi = RbiDisclosureMast::where('bank_id', Auth::user()->id)->where('fy_id',$request->fy_id)->first();
+            DB::transaction(function () use ($request,$rbi)
             {
-                if(!$rbi_mast){
+                if(!$rbi){
                     $rbi = new RbiDisclosureMast;
                         $rbi->bank_id = Auth::user()->id;
                         $rbi->status = 'D';

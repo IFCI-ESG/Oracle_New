@@ -93,7 +93,7 @@
                     @endif
                    </li>
 
-                    <li class="menu-item ">
+              <!--       <li class="menu-item ">
                         <a class="menu-link" href="#climate_risk" data-bs-toggle="collapse">
                             <span class="menu-text">Climate Risk</span>
                             <span class="menu-arrow"></span>
@@ -111,7 +111,7 @@
                                 </li>
                             </ul>
                         </div>
-                    </li>
+                    </li> -->
                     </ul>
                 </div>
             </li>
