@@ -122,16 +122,8 @@
             </div>
         </div>
     </div>
-@endsection
-@push('scripts')
-    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    {!! JsValidator::formRequest('App\Http\Requests\User\RbiDisclosureRequest', '#rbi_disclosure') !!} --}}
-    @include('partials.js.prevent_multiple_submit')
-    <script>
-        $(document).ready(function() {
-
-        });
-
+    <script type="text/javascript">
+        
         function calc(e)
         {
             var Id = $(e).attr('id');
@@ -145,6 +137,17 @@
                 detail.hide();
             }
         }
+
+    </script>
+@endsection
+@push('scripts')
+    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {!! JsValidator::formRequest('App\Http\Requests\User\RbiDisclosureRequest', '#rbi_disclosure') !!} --}}
+    @include('partials.js.prevent_multiple_submit')
+    <script>
+        $(document).ready(function() {
+
+        });
 
 
     </script>

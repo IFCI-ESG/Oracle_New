@@ -361,7 +361,8 @@ body {
 }
 
 .hero-sec-info .hero-content .logo-sec img {
-    max-width: 512px;
+    max-width: 380px;
+    min-width: 200px;
     width: 100%;
 }
 

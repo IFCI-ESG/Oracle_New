@@ -284,7 +284,7 @@
                     <div class="col-md-12">
                         <div class="esg-prakrit-info border-sec">
                             {{-- <h2></h2> --}}
-                            <span>Validation by the Indian Institute of Technology Delhi (IIT Delhi).</span>
+                            <span>Validation by the Indian Institute of Technology Delhi ( <b>IIT Delhi </b>).</span>
                            
                         </div>
                     </div>
@@ -425,7 +425,7 @@ $finale_word=substr($word_of_the[$randomKey], 0, 100);
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h2 class="mb-5">Our Partners</h2>
+                    <h2 class="mb-5">Standards & Alignments</h2>
                 </div>
                 <div class="col-md-12">
                     <div class="customer-logo logos-slider slider pb-4">
@@ -475,7 +475,7 @@ $finale_word=substr($word_of_the[$randomKey], 0, 100);
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
-                        <h2 class="mb-5 sec-heading">Standards & Alignments</h2>
+                        <h2 class="mb-5 sec-heading">Prominent Features</h2>
                     </div>
 
                     <div class="col-md-3">
