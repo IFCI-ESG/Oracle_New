@@ -200,7 +200,7 @@
                             <div class="col-md-2 offset-md-3">
                              <button type="submit" id="submit" class="btn btn-primary btn-sm form-control form-control-sm"><i
                                             class="fas fa-save"></i>
-                                        Submit</button>
+                                        Update</button>
                               
                             </div>
                         </div>
