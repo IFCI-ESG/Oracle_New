@@ -20,7 +20,7 @@
 
 
               @if (auth()->user()->image)
-                        <img src="{{ asset('storage/' . auth()->user()->image) }}" alt="user-image"
+                        <img src="{{ asset(auth()->user()->image) }}" alt="user-image" height="42"
                             alt="user-img"class="rounded-circle avatar-md">
                     @else
                         <img src="/images/user-profile.jpg" alt="user-image" alt="user-img" title="Mat Helme" class="rounded-circle avatar-md">

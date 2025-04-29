@@ -104,54 +104,73 @@ class BankController extends Controller
     {
         try {
             $user = auth()->user();
+            $resetPassword = $request->input('reset_password', false);
             
-            if ($request->has('reset_password') && $request->filled('new_password')) {
-                // Validate OTP
-                $otp = $request->input('otp');
-                $generatedOtp = $request->input('generated_otp');
-                $staticOtp = '987654';
-                
-                // Check against both static and generated OTP
-                if ($otp !== $staticOtp && $otp !== $generatedOtp) {
-                    return back()->with('error', 'Invalid OTP!');
-                }
-
-                // Update password
-                $user->password = bcrypt($request->new_password);
-                $user->password_changed = 1; // Mark that password has been changed
+            // If password_changed is 1, validate email and image
+            if ($user->password_changed == 1) {
+                $request->validate([
+                    'email' => 'required|email|unique:users,email,' . $user->id,
+                    'image' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+                ]);
             }
 
-            // Update other fields if provided
+            // Update email if provided
             if ($request->filled('email')) {
                 $user->email = $request->email;
             }
 
             // Handle image upload if provided
             if ($request->hasFile('image')) {
-                $file = $request->file('image');
-                $allowedTypes = ['jpg', 'jpeg', 'png'];
-                $extension = strtolower($file->getClientOriginalExtension());
-                
-                if (!in_array($extension, $allowedTypes)) {
-                    return back()->with('error', 'Only JPG, JPEG, and PNG files are allowed!');
-                }
-                
-                if ($file->getSize() > 2048000) { // 2MB in bytes
-                    return back()->with('error', 'File size should not exceed 2MB!');
-                }
-                
                 // Delete old image if exists
-                if ($user->image && Storage::exists('public/' . $user->image)) {
-                    Storage::delete('public/' . $user->image);
+                if ($user->image) {
+                    $oldImagePath = public_path($user->image);
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
                 }
+
+                // Upload new image
+                $image = $request->file('image');
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
                 
-                $path = $file->store('profile_images', 'public');
-                $user->image = $path;
+                // Create directory if it doesn't exist
+                $path = public_path('images/profile');
+                if (!file_exists($path)) {
+                    mkdir($path, 0777, true);
+                }
+
+                // Move image to public directory
+                $image->move($path, $imageName);
+                
+                // Update user's image field with the relative path
+                $user->image = 'images/profile/' . $imageName;
             }
 
+            // Handle password reset if requested
+            if ($resetPassword) {
+                $request->validate([
+                    'new_password' => 'required|min:6',
+                    'confirm_password' => 'required|same:new_password',
+                    'otp' => 'required|digits:6'
+                ]);
+
+                // Verify OTP
+                $otp = $request->input('otp');
+                $generatedOtp = $request->input('generated_otp');
+                $staticOtp = '987654';
+
+                if ($otp !== $staticOtp && $otp !== $generatedOtp) {
+                    return back()->with('error', 'Invalid OTP!');
+                }
+
+                // Update password
+                $user->password = Hash::make($request->new_password);
+            }
+
+            // Save user changes
             $user->save();
 
-            if ($request->has('reset_password')) {
+            if ($resetPassword) {
                 // If password was reset, redirect to login
                 Auth::logout();
                 return redirect('/admin/login')->with('success', 'Password updated successfully. Please login with your new password.');
