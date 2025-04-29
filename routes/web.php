@@ -505,6 +505,11 @@ Route::name('user.')->prefix('user')->middleware(['role:ActiveUser', 'verified',
     Route::get('/brsr/sectionP2edit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP2edit'])->name('brsr.sectionP2edit');
     Route::post('/brsr/sectionp2update', [\App\Http\Controllers\User\BrsrController::class,'sectionp2update'])->name('brsr.sectionp2update');
 
+    Route::get('/brsr/sectionP4create/{fy_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP4create'])->name('brsr.sectionP4create');
+    Route::post('/brsr/sectionp4store', [\App\Http\Controllers\User\BrsrController::class,'sectionp4store'])->name('brsr.sectionp4store');
+    Route::get('/brsr/sectionP4edit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP4edit'])->name('brsr.sectionP4edit');
+    Route::post('/brsr/sectionp4update', [\App\Http\Controllers\User\BrsrController::class,'sectionp4update'])->name('brsr.sectionp4update');
+
     Route::get('/brsr/sectionP7create/{fy_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP7create'])->name('brsr.sectionP7create');
     Route::post('/brsr/sectionp7store', [\App\Http\Controllers\User\BrsrController::class,'sectionp7store'])->name('brsr.sectionp7store');
     Route::get('/brsr/sectionP7edit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP7edit'])->name('brsr.sectionP7edit');
@@ -514,6 +519,11 @@ Route::name('user.')->prefix('user')->middleware(['role:ActiveUser', 'verified',
     Route::post('/brsr/sectionp8store', [\App\Http\Controllers\User\BrsrController::class,'sectionp8store'])->name('brsr.sectionp8store');
     Route::get('/brsr/sectionP8edit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP8edit'])->name('brsr.sectionP8edit');
     Route::post('/brsr/sectionp8update', [\App\Http\Controllers\User\BrsrController::class,'sectionp8update'])->name('brsr.sectionp8update');
+
+    Route::get('/brsr/sectionP9create/{fy_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP9create'])->name('brsr.sectionP9create');
+    Route::post('/brsr/sectionp9store', [\App\Http\Controllers\User\BrsrController::class,'sectionp9store'])->name('brsr.sectionp9store');
+    Route::get('/brsr/sectionP9edit/{brsr_mast_id}', [\App\Http\Controllers\User\BrsrController::class,'sectionP9edit'])->name('brsr.sectionP9edit');
+    Route::post('/brsr/sectionp9update', [\App\Http\Controllers\User\BrsrController::class,'sectionp9update'])->name('brsr.sectionp9update');
     
 
     //  Route::resource('brsr', 'User\BrsrController', ['except' => 'create','update']);

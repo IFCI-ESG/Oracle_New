@@ -187,6 +187,8 @@
     let brsrValue3 = @json($brsr_sectionp2); 
     let brsrValue4 = @json($brsr_sectionp7);
     let brsrValue5 = @json($brsr_sectionp8);
+    let brsrValue6 = @json($brsr_sectionp9);
+    let brsrValue7 = @json($brsr_sectionp4);
     let fyData = @json($fys);  
     
     function setFyId(id, fy, ids,mastId) {
@@ -232,10 +234,20 @@
             return item.fy_id == fyid;   
         });
 
-        updateSectionButtons(fyExists,fyExists1,fyExists3,fyExists4,fyExists5,fyExists6);
+        const fyExists7 = brsrValue6.some(item => {
+            console.log("Checking if item.fy_id:", item.fy_id, "matches fyId:", fyId);
+            return item.fy_id == fyid;   
+        });
+        
+        const fyExists8 = brsrValue7.some(item => {
+            console.log("Checking if item.fy_id:", item.fy_id, "matches fyId:", fyId);
+            return item.fy_id == fyid;   
+        });
+
+        updateSectionButtons(fyExists,fyExists1,fyExists3,fyExists4,fyExists5,fyExists6,fyExists7,fyExists8);
     }
 
-    function updateSectionButtons(fyExists,fyExists1,fyExists3,fyExists4,fyExists5,fyExists6) {
+    function updateSectionButtons(fyExists,fyExists1,fyExists3,fyExists4,fyExists5,fyExists6,fyExists7,fyExists8) {
         
         const sectionAButton = document.getElementById('sectionA');
         if (fyExists) {
@@ -301,6 +313,28 @@
             sectionP8Button.innerHTML = '<i>Create</i>';
             sectionP8Button.classList.remove('btn-warning');
             sectionP8Button.classList.add('btn-primary');
+        }
+        
+        const sectionP9Button = document.getElementById('sectionP9');
+        if (fyExists7) {
+            sectionP9Button.innerHTML = '<i>Edit</i>';
+            sectionP9Button.classList.remove('btn-primary');
+            sectionP9Button.classList.add('btn-warning');
+        } else {
+            sectionP9Button.innerHTML = '<i>Create</i>';
+            sectionP9Button.classList.remove('btn-warning');
+            sectionP9Button.classList.add('btn-primary');
+        }
+
+        const sectionP4Button = document.getElementById('sectionP4');
+        if (fyExists8) {
+            sectionP4Button.innerHTML = '<i>Edit</i>';
+            sectionP4Button.classList.remove('btn-primary');
+            sectionP4Button.classList.add('btn-warning');
+        } else {
+            sectionP4Button.innerHTML = '<i>Create</i>';
+            sectionP4Button.classList.remove('btn-warning');
+            sectionP4Button.classList.add('btn-primary');
         }
     }
     
@@ -370,8 +404,25 @@
          }
     });
 
+    document.getElementById('sectionP9').addEventListener('click', function() {
+        if (fyId) {
+            if (brsrValue6.some(item => item.fy_id == fyid)) {
+                window.location.href = `/user/brsr/sectionP9edit/${mastid }`;
+           } else {
+                window.location.href = `/user/brsr/sectionP9create/${fyId}`;
+            }
+         }
+    });
 
-
+    document.getElementById('sectionP4').addEventListener('click', function() {
+        if (fyId) {
+            if (brsrValue7.some(item => item.fy_id == fyid)) {
+                window.location.href = `/user/brsr/sectionP4edit/${mastid }`;
+           } else {
+                window.location.href = `/user/brsr/sectionP4create/${fyId}`;
+            }
+         }
+    });
 
 </script>
 
