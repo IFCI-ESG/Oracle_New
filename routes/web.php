@@ -445,8 +445,9 @@
     Route::post('/refresh-dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'refreshDashboard'])->name('admin.dashboard.refresh');
     });
 
-    Route::post('/check-credentials', [\App\Http\Controllers\Auth\OtpController::class, 'checkCredentials'])->name('check.credentials');
-    Route::post('/verify-otp', [\App\Http\Controllers\Auth\OtpController::class, 'verifyOtp'])->name('verify.otp');
-    Route::post('/send-otp', [App\Http\Controllers\PassChangeController::class, 'sendOTP'])->name('send.otp');
-    // Route for sending OTP
-    // Route::post('/send-otp', [App\Http\Controllers\Auth\OTPController::class, 'sendOTP'])->name('send.otp');
+Route::post('/check-credentials', [\App\Http\Controllers\Auth\OtpController::class, 'checkCredentials'])->name('check.credentials');
+Route::post('/verify-otp', [\App\Http\Controllers\Auth\OtpController::class, 'verifyOtp'])->name('verify.otp');
+Route::post('/send-otp', [App\Http\Controllers\PassChangeController::class, 'sendOTP'])->name('send.otp');
+// Route for sending OTP
+// Route::post('/send-otp', [App\Http\Controllers\Auth\OTPController::class, 'sendOTP'])->name('send.otp');
+Route::post('/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLink'])->name('password.email');
