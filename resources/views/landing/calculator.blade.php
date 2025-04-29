@@ -29,15 +29,18 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="">Name:</label>
-                                        <input type="text" class="form-control form-control-sm" id="name"
-                                                    name="name">
+                                       <input  type="text" id="name" name="name" class="form-control form-control-sm" placeholder="Enter your full name" required  pattern="[A-Za-z\s]{2,50}" title="Name should contain only letters and spaces (2–50 characters)">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="">Mobile:</label>
-                                        <input type="number" class="form-control form-control-sm" id="mobile"
-                                                    name="mobile">
+                                        <input class="form-control form-control-sm" id="mobile"   type="tel" name="mobile" pattern="[6-9]{1}[0-9]{9}"maxlength="10" minlength="10" required placeholder="Enter 10-digit mobile number"
+
+
+
+
+                                        >
                                     </div>
                                 </div>
                                 <div class="col-md-4 submit-btn">
@@ -151,7 +154,10 @@
                                                                     @if ($ques->id == 3)
                                                                         &nbsp;{{ $subques_mast->where('ques_id', $ques->id)->first()->unit }}
                                                                     @elseif($ques->id == 4)
-                                                                        &nbsp;Number/Rupees
+                                                                        &nbsp;
+                                                                        <span id="fuel_number" class="d-none">Number</span>
+                                                                         <span id="fuel_inr" class="d-none">INR</span>
+                                                                       
                                                                     @endif
                                                             </div>
                                                         @endif
@@ -251,7 +257,7 @@
                                             <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
                                         </li>
                                         <li>
-                                            <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                                            <a href="#"><i class="fa-brands fa-linkedin"  style="color: #0A66C2;"></i></a>
                                         </li>
                                     </ul>
                                 </div>
@@ -275,10 +281,30 @@
 @push('scripts')
 
     <script>
+
+  $(document).ready(function() {
+      $('#fuel').on('change', function() {
+        var value = $(this).val();
+        if (value === '44.8052656') {
+          $('#fuel_number').removeClass('d-none');
+          $('#fuel_inr').addClass('d-none');
+        } else if (value === '.042737') {
+          $('#fuel_number').addClass('d-none');
+          $('#fuel_inr').removeClass('d-none');
+        } else {
+          $('#fuel_number').addClass('d-none');
+          $('#fuel_inr').addClass('d-none');
+        }
+      });
+    });
+
+
         // $(".individual-calculator .individual-calculator-table tbody tr td a").mouseover(function() {
         //     var value = $(this).attr('data-src');
         //     $(".award-img img").attr("src", value);
         // })
+
+
 
         document.getElementById("submit").addEventListener("click", function() {
             document.querySelectorAll(".disabled-overlay").forEach(function(element) {

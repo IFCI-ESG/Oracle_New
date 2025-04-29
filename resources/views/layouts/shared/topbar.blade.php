@@ -117,6 +117,7 @@
                 <form method="POST" action="{{ Auth::guard('admin')->check() ? route('admin.new_admin.bank.updateAccount') : route('user.updateAccount') }}" 
                     id="updateAccountForm" onsubmit="return confirmUpdate();" enctype="multipart/form-data">
                     @csrf
+                    <meta name="csrf-token" content="{{ csrf_token() }}">
                     <input type="hidden" id="generated_otp" name="generated_otp" value="">
 
                     @if(auth()->user()->password_changed == 1)
@@ -290,7 +291,8 @@ function handleOTPSend() {
         },
         data: {
             otp: otp,
-            email: '{{ auth()->user()->email }}'
+            email: '{{ auth()->user()->email }}',
+            action: 'send_otp'
         },
         success: function(response) {
             if (response.success) {
@@ -488,33 +490,9 @@ use Illuminate\Support\Facades\Mail;
 
 function sendOTPEmail($email, $otp) {
     try {
-        $data = [
-            'otp' => $otp,
-            'email' => $email
-        ];
-        
-        Mail::send([], $data, function($message) use ($email, $otp) {
+        Mail::raw("Your OTP for password reset is: " . $otp, function($message) use ($email) {
             $message->to($email)
-                ->subject('Password Reset OTP - ESG Portal')
-                ->html("
-                    <div style='font-family: Arial, sans-serif;'>
-                        <div style='max-width: 600px; margin: 0 auto; padding: 20px;'>
-                            <div style='background-color: #296243; color: white; padding: 20px; text-align: center;'>
-                                <h2 style='margin: 0;'>Password Reset OTP</h2>
-                            </div>
-                            <div style='padding: 20px; border: 1px solid #ddd;'>
-                                <p>Dear User,</p>
-                                <p>You have requested to reset your password. Please use the following OTP to proceed:</p>
-                                <div style='background-color: #f8f9fa; padding: 15px; text-align: center; margin: 20px 0;'>
-                                    <h1 style='margin: 0; color: #296243; letter-spacing: 5px;'>" . $otp . "</h1>
-                                </div>
-                                <p>This OTP will expire in 10 minutes.</p>
-                                <p>If you did not request this password reset, please ignore this email.</p>
-                                <p style='margin-top: 30px;'>Best regards,<br>ESG Portal Team</p>
-                            </div>
-                        </div>
-                    </div>
-                ");
+                   ->subject('Password Reset OTP - ESG Portal');
         });
         
         return true;
@@ -525,12 +503,12 @@ function sendOTPEmail($email, $otp) {
 }
 @endphp
 
-@if(request()->isMethod('post') && request('action') == 'send_otp')
+@if(request()->ajax() && request('action') == 'send_otp')
     @php
-    $success = sendOTPEmail(request('email'), request('otp'));
-    header('Content-Type: application/json');
-    echo json_encode(['success' => $success]);
-    exit;
+    $email = request('email');
+    $otp = request('otp');
+    $success = sendOTPEmail($email, $otp);
+    return response()->json(['success' => $success]);
     @endphp
 @endif
  
