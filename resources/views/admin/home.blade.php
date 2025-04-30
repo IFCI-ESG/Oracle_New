@@ -254,196 +254,389 @@
 <!-- Start Content-->
 <div class="container-fluid mt-3">
     <!-- Welcome Banner -->
-    <div class="dashboard-welcome">
-        <div class="row align-items-center">
-            <div class="col-lg-8">
-                <h2>Welcome to ESG PRAKRIT Dashboard</h2>
-                <p class="mb-0 opacity-75">Environmental, Social, and Governance monitoring platform for banking sector</p>
-            </div>
-            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                <span>{{ $currentDate }}</span>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Stats Section -->
-    <div class="dashboard-section">
-        <h5 class="section-title">
-            <i class="bi bi-bar-chart-fill"></i> Banking Sector Overview
-        </h5>
-        <div class="row">
-            <!-- Total Banks -->
-            <div class="col-md-6 col-xl-4 mb-4">
-                <div class="simple-stat-card">
-                    <h5 class="card-title">Total Banks</h5>
-                    <div class="icon-circle green-gradient text-white">
-                        <i class="bi bi-bank"></i>
-                    </div>
-                    <h2 class="stat-value">{{ $totalBanks }}</h2>
-                    <div class="stat-trend trend-up">
-                        <i class="bi bi-arrow-up-right me-1"></i> 5.3% since last month
-                    </div>
-                    <div class="progress-thin mt-4">
-                        <div class="progress-bar bg-success" style="width: 100%"></div>
-                    </div>
+    @if (Auth::user()->hasRole('Admin') && Auth::user()->hasRole('SubAdmin') &&  Auth::user()->hasRole('Bank'))
+        <div class="dashboard-welcome">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h2>Welcome to ESG PRAKRIT Dashboard</h2>
+                    <p class="mb-0 opacity-75">Environmental, Social, and Governance monitoring platform for banking sector</p>
                 </div>
-            </div>
-            
-            <!-- Active Banks -->
-            <div class="col-md-6 col-xl-4 mb-4">
-                <div class="simple-stat-card">
-                    <h5 class="card-title">Active Banks</h5>
-                    <div class="icon-circle blue-gradient text-white">
-                        <i class="bi bi-building-check"></i>
-                    </div>
-                    <h2 class="stat-value">{{ $activeBanksCount }}</h2>
-                    <div class="stat-trend trend-up">
-                        <i class="bi bi-arrow-up-right me-1"></i> 2.1% since last month
-                    </div>
-                    <div class="progress-thin mt-4">
-                        <div class="progress-bar bg-primary" style="width: {{ $activePercentage }}%"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Total Companies -->
-            <div class="col-md-6 col-xl-4 mb-4">
-                <div class="simple-stat-card">
-                    <h5 class="card-title">Total Companies</h5>
-                    <div class="icon-circle yellow-gradient text-white">
-                        <i class="bi bi-building"></i>
-                    </div>
-                    <h2 class="stat-value">{{ $totalCompanies }}</h2>
-                    <div class="stat-trend trend-up">
-                        <i class="bi bi-arrow-up-right me-1"></i> 8.7% since last month
-                    </div>
-                    <div class="progress-thin mt-4">
-                        <div class="progress-bar bg-warning" style="width: 100%"></div>
-                    </div>
+                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                    <span>{{ $currentDate }}</span>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <!-- Bank Categories Section with Charts -->
-    <div class="dashboard-section">
-        <h5 class="section-title">
-            <i class="bi bi-pie-chart-fill"></i> Bank Categories
-        </h5>
-        <div class="row">
-            <!-- Public vs Private Banks Pie Chart -->
-            <div class="col-md-6 col-xl-4 mb-4">
-                <div class="simple-stat-card">
-                    <h5 class="card-title">Bank Sector Distribution</h5>
-                    <div class="chart-container mb-3">
-                        <canvas id="bankSectorChart"></canvas>
-                    </div>
-                    <div class="card-metric">
-                        <div class="metric-item">
-                            <div class="metric-color" style="background: #20bf55;"></div>
-                            <span class="metric-label">Public ({{ $publicPercentage }}%)</span>
+        
+        <!-- Stats Section -->
+        <div class="dashboard-section">
+            <h5 class="section-title">
+                <i class="bi bi-bar-chart-fill"></i> Banking Sector Overview
+            </h5>
+            <div class="row">
+                <!-- Total Banks -->
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="simple-stat-card">
+                        <h5 class="card-title">Total Banks</h5>
+                        <div class="icon-circle green-gradient text-white">
+                            <i class="bi bi-bank"></i>
                         </div>
-                        <div class="metric-item">
-                            <div class="metric-color" style="background: #2563eb;"></div>
-                            <span class="metric-label">Private ({{ $privatePercentage }}%)</span>
+                        <h2 class="stat-value">{{ $totalBanks }}</h2>
+                        <div class="stat-trend trend-up">
+                            <i class="bi bi-arrow-up-right me-1"></i> 5.3% since last month
+                        </div>
+                        <div class="progress-thin mt-4">
+                            <div class="progress-bar bg-success" style="width: 100%"></div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Public Sector Banks -->
-            <div class="col-md-6 col-xl-4 mb-4">
-                <div class="simple-stat-card">
-                    <h5 class="card-title">Public Sector Banks</h5>
-                    <div class="icon-circle green-gradient text-white">
-                        <i class="bi bi-building-fill"></i>
-                    </div>
-                    <h2 class="stat-value">{{ $publicSectorBanksCount }}</h2>
-                    <div class="progress-thin mt-2 mb-2">
-                        <div class="progress-bar bg-success" style="width: {{ $publicPercentage }}%"></div>
-                    </div>
-                    <p class="small text-muted mb-0">{{ $publicPercentage }}% of total banks</p>
-                </div>
-            </div>
-            
-            <!-- Active vs Inactive Pie Chart -->
-            <div class="col-md-6 col-xl-4 mb-4">
-                <div class="simple-stat-card">
-                    <h5 class="card-title">Banks Participation Status</h5>
-                    <div class="chart-container mb-3">
-                        <canvas id="bankStatusChart"></canvas>
-                    </div>
-                    <div class="card-metric">
-                        <div class="metric-item">
-                            <div class="metric-color" style="background: #f59e0b;"></div>
-                            <span class="metric-label">Active ({{ $activePercentage }}%)</span>
+                
+                <!-- Active Banks -->
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="simple-stat-card">
+                        <h5 class="card-title">Active Banks</h5>
+                        <div class="icon-circle blue-gradient text-white">
+                            <i class="bi bi-building-check"></i>
                         </div>
-                        <div class="metric-item">
-                            <div class="metric-color" style="background: #6c757d;"></div>
-                            <span class="metric-label">Inactive ({{ 100 - $activePercentage }}%)</span>
+                        <h2 class="stat-value">{{ $activeBanksCount }}</h2>
+                        <div class="stat-trend trend-up">
+                            <i class="bi bi-arrow-up-right me-1"></i> 2.1% since last month
+                        </div>
+                        <div class="progress-thin mt-4">
+                            <div class="progress-bar bg-primary" style="width: {{ $activePercentage }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Total Companies -->
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="simple-stat-card">
+                        <h5 class="card-title">Total Companies</h5>
+                        <div class="icon-circle yellow-gradient text-white">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <h2 class="stat-value">{{ $totalCompanies }}</h2>
+                        <div class="stat-trend trend-up">
+                            <i class="bi bi-arrow-up-right me-1"></i> 8.7% since last month
+                        </div>
+                        <div class="progress-thin mt-4">
+                            <div class="progress-bar bg-warning" style="width: 100%"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- Second row for detailed stats -->
-        <div class="row">
-            <!-- Private Sector Banks -->
-            <div class="col-md-6 col-xl-4 mb-4">
-                <div class="simple-stat-card">
-                    <h5 class="card-title">Private Sector Banks</h5>
-                    <div class="icon-circle blue-gradient text-white">
-                        <i class="bi bi-building"></i>
+        <!-- Bank Categories Section with Charts -->
+        <div class="dashboard-section">
+            <h5 class="section-title">
+                <i class="bi bi-pie-chart-fill"></i> Bank Categories
+            </h5>
+            <div class="row">
+                <!-- Public vs Private Banks Pie Chart -->
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="simple-stat-card">
+                        <h5 class="card-title">Bank Sector Distribution</h5>
+                        <div class="chart-container mb-3">
+                            <canvas id="bankSectorChart"></canvas>
+                        </div>
+                        <div class="card-metric">
+                            <div class="metric-item">
+                                <div class="metric-color" style="background: #20bf55;"></div>
+                                <span class="metric-label">Public ({{ $publicPercentage }}%)</span>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-color" style="background: #2563eb;"></div>
+                                <span class="metric-label">Private ({{ $privatePercentage }}%)</span>
+                            </div>
+                        </div>
                     </div>
-                    <h2 class="stat-value">{{ $privateSectorBanksCount }}</h2>
-                    <div class="progress-thin mt-2 mb-2">
-                        <div class="progress-bar bg-primary" style="width: {{ $privatePercentage }}%"></div>
+                </div>
+                
+                <!-- Public Sector Banks -->
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="simple-stat-card">
+                        <h5 class="card-title">Public Sector Banks</h5>
+                        <div class="icon-circle green-gradient text-white">
+                            <i class="bi bi-building-fill"></i>
+                        </div>
+                        <h2 class="stat-value">{{ $publicSectorBanksCount }}</h2>
+                        <div class="progress-thin mt-2 mb-2">
+                            <div class="progress-bar bg-success" style="width: {{ $publicPercentage }}%"></div>
+                        </div>
+                        <p class="small text-muted mb-0">{{ $publicPercentage }}% of total banks</p>
                     </div>
-                    <p class="small text-muted mb-0">{{ $privatePercentage }}% of total banks</p>
+                </div>
+                
+                <!-- Active vs Inactive Pie Chart -->
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="simple-stat-card">
+                        <h5 class="card-title">Banks Participation Status</h5>
+                        <div class="chart-container mb-3">
+                            <canvas id="bankStatusChart"></canvas>
+                        </div>
+                        <div class="card-metric">
+                            <div class="metric-item">
+                                <div class="metric-color" style="background: #f59e0b;"></div>
+                                <span class="metric-label">Active ({{ $activePercentage }}%)</span>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-color" style="background: #6c757d;"></div>
+                                <span class="metric-label">Inactive ({{ 100 - $activePercentage }}%)</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <!-- Participation Rate -->
-            <div class="col-md-6 col-xl-4 mb-4">
-                <div class="simple-stat-card">
-                    <h5 class="card-title">Participation Rate</h5>
-                    <div class="icon-circle yellow-gradient text-white">
-                        <i class="bi bi-activity"></i>
+            <!-- Second row for detailed stats -->
+            <div class="row">
+                <!-- Private Sector Banks -->
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="simple-stat-card">
+                        <h5 class="card-title">Private Sector Banks</h5>
+                        <div class="icon-circle blue-gradient text-white">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <h2 class="stat-value">{{ $privateSectorBanksCount }}</h2>
+                        <div class="progress-thin mt-2 mb-2">
+                            <div class="progress-bar bg-primary" style="width: {{ $privatePercentage }}%"></div>
+                        </div>
+                        <p class="small text-muted mb-0">{{ $privatePercentage }}% of total banks</p>
                     </div>
-                    <h2 class="stat-value">{{ $activePercentage }}%</h2>
-                    <div class="progress-thin mt-2 mb-2">
-                        <div class="progress-bar bg-warning" style="width: {{ $activePercentage }}%"></div>
-                    </div>
-                    <p class="small text-muted mb-0">{{ $activeBanksCount }} active out of {{ $totalBanks }} total banks</p>
                 </div>
-            </div>
-            
-            <!-- ESG Impact Bar Chart -->
-            <div class="col-md-6 col-xl-4 mb-4">
-                <div class="simple-stat-card">
-                    <h5 class="card-title">ESG Impact Score</h5>
-                    <div class="chart-container mb-3">
-                        <canvas id="esgImpactChart"></canvas>
+                
+                <!-- Participation Rate -->
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="simple-stat-card">
+                        <h5 class="card-title">Participation Rate</h5>
+                        <div class="icon-circle yellow-gradient text-white">
+                            <i class="bi bi-activity"></i>
+                        </div>
+                        <h2 class="stat-value">{{ $activePercentage }}%</h2>
+                        <div class="progress-thin mt-2 mb-2">
+                            <div class="progress-bar bg-warning" style="width: {{ $activePercentage }}%"></div>
+                        </div>
+                        <p class="small text-muted mb-0">{{ $activeBanksCount }} active out of {{ $totalBanks }} total banks</p>
                     </div>
-                    <div class="card-metric">
-                        <div class="metric-item">
-                            <div class="metric-color" style="background: #20bf55;"></div>
-                            <span class="metric-label">Environmental</span>
+                </div>
+                
+                <!-- ESG Impact Bar Chart -->
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="simple-stat-card">
+                        <h5 class="card-title">ESG Impact Score</h5>
+                        <div class="chart-container mb-3">
+                            <canvas id="esgImpactChart"></canvas>
                         </div>
-                        <div class="metric-item">
-                            <div class="metric-color" style="background: #2563eb;"></div>
-                            <span class="metric-label">Social</span>
-                        </div>
-                        <div class="metric-item">
-                            <div class="metric-color" style="background: #f59e0b;"></div>
-                            <span class="metric-label">Governance</span>
+                        <div class="card-metric">
+                            <div class="metric-item">
+                                <div class="metric-color" style="background: #20bf55;"></div>
+                                <span class="metric-label">Environmental</span>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-color" style="background: #2563eb;"></div>
+                                <span class="metric-label">Social</span>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-color" style="background: #f59e0b;"></div>
+                                <span class="metric-label">Governance</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    @elseif(Auth::user()->hasRole('Admin') && Auth::user()->hasRole('SubAdmin') && Auth::user()->hasRole('Corporate'))
+        <div class="dashboard-welcome">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h2>Welcome to ESG PRAKRIT Dashboard</h2>
+                    <p class="mb-0 opacity-75">Environmental, Social, and Governance monitoring platform for Corporate Sector</p>
+                </div>
+                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                    <span>{{ $currentDate }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stats Section -->
+        <div class="dashboard-section">
+            <h5 class="section-title">
+                <i class="bi bi-bar-chart-fill"></i> Corporte Sector Overview
+            </h5>
+            <div class="row">
+                <!-- Total Banks -->
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="simple-stat-card">
+                        <h5 class="card-title">Total Banks</h5>
+                        <div class="icon-circle green-gradient text-white">
+                            <i class="bi bi-bank"></i>
+                        </div>
+                        <h2 class="stat-value">{{ $totalBanks }}</h2>
+                        <div class="stat-trend trend-up">
+                            <i class="bi bi-arrow-up-right me-1"></i> 5.3% since last month
+                        </div>
+                        <div class="progress-thin mt-4">
+                            <div class="progress-bar bg-success" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Active Banks -->
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="simple-stat-card">
+                        <h5 class="card-title">Active Banks</h5>
+                        <div class="icon-circle blue-gradient text-white">
+                            <i class="bi bi-building-check"></i>
+                        </div>
+                        <h2 class="stat-value">{{ $activeBanksCount }}</h2>
+                        <div class="stat-trend trend-up">
+                            <i class="bi bi-arrow-up-right me-1"></i> 2.1% since last month
+                        </div>
+                        <div class="progress-thin mt-4">
+                            <div class="progress-bar bg-primary" style="width: {{ $activePercentage }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Total Companies -->
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="simple-stat-card">
+                        <h5 class="card-title">Total Companies</h5>
+                        <div class="icon-circle yellow-gradient text-white">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <h2 class="stat-value">{{ $totalCompanies }}</h2>
+                        <div class="stat-trend trend-up">
+                            <i class="bi bi-arrow-up-right me-1"></i> 8.7% since last month
+                        </div>
+                        <div class="progress-thin mt-4">
+                            <div class="progress-bar bg-warning" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bank Categories Section with Charts -->
+        <div class="dashboard-section">
+            <h5 class="section-title">
+                <i class="bi bi-pie-chart-fill"></i> Bank Categories
+            </h5>
+            <div class="row">
+                <!-- Public vs Private Banks Pie Chart -->
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="simple-stat-card">
+                        <h5 class="card-title">Bank Sector Distribution</h5>
+                        <div class="chart-container mb-3">
+                            <canvas id="bankSectorChart"></canvas>
+                        </div>
+                        <div class="card-metric">
+                            <div class="metric-item">
+                                <div class="metric-color" style="background: #20bf55;"></div>
+                                <span class="metric-label">Public ({{ $publicPercentage }}%)</span>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-color" style="background: #2563eb;"></div>
+                                <span class="metric-label">Private ({{ $privatePercentage }}%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Public Sector Banks -->
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="simple-stat-card">
+                        <h5 class="card-title">Public Sector Banks</h5>
+                        <div class="icon-circle green-gradient text-white">
+                            <i class="bi bi-building-fill"></i>
+                        </div>
+                        <h2 class="stat-value">{{ $publicSectorBanksCount }}</h2>
+                        <div class="progress-thin mt-2 mb-2">
+                            <div class="progress-bar bg-success" style="width: {{ $publicPercentage }}%"></div>
+                        </div>
+                        <p class="small text-muted mb-0">{{ $publicPercentage }}% of total banks</p>
+                    </div>
+                </div>
+                
+                <!-- Active vs Inactive Pie Chart -->
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="simple-stat-card">
+                        <h5 class="card-title">Banks Participation Status</h5>
+                        <div class="chart-container mb-3">
+                            <canvas id="bankStatusChart"></canvas>
+                        </div>
+                        <div class="card-metric">
+                            <div class="metric-item">
+                                <div class="metric-color" style="background: #f59e0b;"></div>
+                                <span class="metric-label">Active ({{ $activePercentage }}%)</span>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-color" style="background: #6c757d;"></div>
+                                <span class="metric-label">Inactive ({{ 100 - $activePercentage }}%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Second row for detailed stats -->
+            <div class="row">
+                <!-- Private Sector Banks -->
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="simple-stat-card">
+                        <h5 class="card-title">Private Sector Banks</h5>
+                        <div class="icon-circle blue-gradient text-white">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <h2 class="stat-value">{{ $privateSectorBanksCount }}</h2>
+                        <div class="progress-thin mt-2 mb-2">
+                            <div class="progress-bar bg-primary" style="width: {{ $privatePercentage }}%"></div>
+                        </div>
+                        <p class="small text-muted mb-0">{{ $privatePercentage }}% of total banks</p>
+                    </div>
+                </div>
+                
+                <!-- Participation Rate -->
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="simple-stat-card">
+                        <h5 class="card-title">Participation Rate</h5>
+                        <div class="icon-circle yellow-gradient text-white">
+                            <i class="bi bi-activity"></i>
+                        </div>
+                        <h2 class="stat-value">{{ $activePercentage }}%</h2>
+                        <div class="progress-thin mt-2 mb-2">
+                            <div class="progress-bar bg-warning" style="width: {{ $activePercentage }}%"></div>
+                        </div>
+                        <p class="small text-muted mb-0">{{ $activeBanksCount }} active out of {{ $totalBanks }} total banks</p>
+                    </div>
+                </div>
+                
+                <!-- ESG Impact Bar Chart -->
+                <div class="col-md-6 col-xl-4 mb-4">
+                    <div class="simple-stat-card">
+                        <h5 class="card-title">ESG Impact Score</h5>
+                        <div class="chart-container mb-3">
+                            <canvas id="esgImpactChart"></canvas>
+                        </div>
+                        <div class="card-metric">
+                            <div class="metric-item">
+                                <div class="metric-color" style="background: #20bf55;"></div>
+                                <span class="metric-label">Environmental</span>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-color" style="background: #2563eb;"></div>
+                                <span class="metric-label">Social</span>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-color" style="background: #f59e0b;"></div>
+                                <span class="metric-label">Governance</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div> <!-- container -->
 @endsection
 
