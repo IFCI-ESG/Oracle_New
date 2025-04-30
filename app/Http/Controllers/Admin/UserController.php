@@ -2051,54 +2051,65 @@ class UserController extends Controller
 
     public function existsubmit(Request $request)
     {
-        // dd($request);
-        try{
-
-            DB::transaction(function () use ($request)
-            {
+        try {
+            DB::transaction(function () use ($request) {
                 foreach ($request->fy as $value) {
-                    $fincial = new BankFinancialDetails;
-                        $fincial->fy_id = $value['fy_id'];
-                        $fincial->com_id = $request->user_id;
-                        $fincial->bank_id = Auth::user()->id;
-                        $fincial->zone = $request->zone ;
-                        $fincial->class_type_id = $request->asset_class ;
-                        $fincial->borrowings = $value['borrowings'];
-                        $fincial->bank_exposure = $value['bank_exposure'];
-                        $fincial->total_equity = $value['total_equity'];
-                        $fincial->net_revenue = $value['net_revenue'];
-                        $fincial->profit_after_tax = $value['profit_after_tax'];
-                        $fincial->rating = $value['rating'];
-                        $fincial->rating_date = $value['rating_date'];
-                        $fincial->rating_agency = $value['rating_agency'];
-                    $fincial->save();
+                    // Check if record already exists with these exact values
+                    $existingRecord = BankFinancialDetails::where([
+                        'fy_id' => $value['fy_id'],
+                        'com_id' => $request->user_id,
+                        'bank_id' => Auth::user()->id,
+                        'zone' => $request->zone,
+                        'class_type_id' => $request->asset_class
+                    ])->first();
+
+                    if ($existingRecord) {
+                        // Update existing record
+                        $existingRecord->update([
+                            'borrowings' => $value['borrowings'] ?? 0.00,
+                            'bank_exposure' => $value['bank_exposure'] ?? 0.00,
+                            'total_equity' => $value['total_equity'] ?? 0.00,
+                            'net_revenue' => $value['net_revenue'] ?? 0.00,
+                            'profit_after_tax' => $value['profit_after_tax'] ?? 0.00,
+                            'rating' => $value['rating'] ?? null,
+                            'rating_date' => $value['rating_date'] ?? null,
+                            'rating_agency' => $value['rating_agency'] ?? null,
+                            'updated_at' => now()
+                        ]);
+                    } else {
+                        // First get the next sequence value
+                        $sequence = DB::selectOne("SELECT BANK_FINANCIAL_DETAILS_SEQ.NEXTVAL AS ID FROM DUAL");
+                        
+                        // Create new record with explicit ID from sequence
+                        DB::table('bank_financial_details')->insert([
+                            'id' => $sequence->id,
+                            'fy_id' => $value['fy_id'],
+                            'com_id' => $request->user_id,
+                            'bank_id' => Auth::user()->id,
+                            'zone' => $request->zone,
+                            'class_type_id' => $request->asset_class,
+                            'borrowings' => $value['borrowings'] ?? 0.00,
+                            'bank_exposure' => $value['bank_exposure'] ?? 0.00,
+                            'total_equity' => $value['total_equity'] ?? 0.00,
+                            'net_revenue' => $value['net_revenue'] ?? 0.00,
+                            'profit_after_tax' => $value['profit_after_tax'] ?? 0.00,
+                            'rating' => $value['rating'] ?? null,
+                            'rating_date' => $value['rating_date'] ?? null,
+                            'rating_agency' => $value['rating_agency'] ?? null,
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ]);
+                    }
                 }
-
-                $user = AdminUser::find($request->user_id);
-
-                // $data = array('name'=>$user->name,'email'=>$user->email, 'bank_name'=>Auth::user()->name);
-
-                //             //  dd($data);
-
-                // Mail::send('emails.existuser_mail', $data, function($message) use($data) {
-                //    $message->to($data ['email'],$data ['name'])->subject
-                //        ('ESG - Prakrit ');
-                //         // $message->cc('pliwg@ifciltd.com');
-                //         // $message->bcc('shweta.rai@ifciltd.com');
-                //   });
             });
 
-            // alert()->success('Data Inserted Successfully', 'Success!')->persistent('Close');
-               session()->flash('success', 'Data Inserted Successfully');
+            session()->flash('success', 'Data Inserted Successfully');
             return redirect()->route('admin.user.existuser_edit',['id' => encrypt($request->user_id)]);
-            // return redirect()->back();
-        }catch (\Exception $e)
-        {
-            alert()->Warning('Something Went Wrong', 'Warning!')->persistent('Close');
+        } catch (\Exception $e) {
+            \Log::error('Bank Financial Details Error: ' . $e->getMessage());
+            session()->flash('error', 'Error inserting data. Please check if a record with these values already exists.');
             return redirect()->back();
         }
-
-
     }
 
     public function retail_existsubmit(Request $request)
