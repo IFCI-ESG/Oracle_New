@@ -1838,7 +1838,7 @@ class UserController extends Controller
 
     }
 
-    public function update(Request $request)
+   public function update(Request $request)
     {
         // dd($request);
         try{
@@ -1864,7 +1864,6 @@ class UserController extends Controller
                     $user->pan = $request->pan;
                     $user->contact_person = $request->auth_name;
                     $user->sector_id = $request->sector ;
-                     $newuser->sector_name = $request->has('sector_name') ? $request->sector_name : null;
                 $user->save();
 
 
@@ -1893,7 +1892,6 @@ class UserController extends Controller
         // return view('admin.user.edituser', compact('user'));
 
     }
-
     public function retail_update(Request $request)
     {
         // dd($request);
