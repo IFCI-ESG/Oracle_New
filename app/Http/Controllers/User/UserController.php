@@ -206,7 +206,7 @@ class UserController extends Controller
             if ($resetPassword) {
                 // If password was reset, redirect to login
                 Auth::logout();
-                return redirect('/login')->with('success', 'Password updated successfully. Please login with your new password.');
+                return redirect('/admin/login')->with('success', 'Password updated successfully. Please login with your new password.');
             }
 
             return back()->with('success', 'Account updated successfully!');

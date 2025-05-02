@@ -64,7 +64,7 @@
                                             <td class="shadow-none textcolor">
                                                 <input type="text" id="ifsc_code" name="ifsc_code"
                                                     class="form-control " 
-                                                    oninput="validateIFSC()" placeholder="ABCD0123456"   value="{{ old('ifsc_code') }}"  required />
+                                                    oninput="validateIFSC()" placeholder="ABCD0123456"   value="{{ old('ifsc_code') }}"  required maxlength="11" />
                                                 <div id="ifsc-error-message"
                                                     style="color: red; display: none; font-size: 0.9rem;"></div>
                                             </td>
@@ -103,8 +103,10 @@
                                             <th class="text-center align-middle shadow-none textcolor" style="font-size: 0.9rem">Pincode <span style="color: red;">*</span></th>
                                             <td class="shadow-none textcolor">
                                                 <input type="number" id="pincode" name="pincode"
-                                                    class="form-control " 
-                                                    oninput="fetchLocationDetails()" placeholder="Enter Pincode"  value="{{ old('pincode') }}" required
+                                                    class="form-control "  inputmode="numeric"
+       pattern="\d*"
+       oninput="this.value = this.value.replace(/\D/g, '').slice(0, 6); fetchLocationDetails();"
+       placeholder="Enter Pincode"  value="{{ old('pincode') }}" required
                                                     minlength="6" maxlength="6" />
                                                 <span
                                                     style="color: #262626; font-size: 0.8rem; display: block; margin-top: 5px;">(Please
@@ -150,10 +152,15 @@
                                                     style="color: red;">*</span>
                                             </th>
                                             <td class="shadow-none textcolor">
-                                                <input type="text" id="contact_person" name="contact_person"
-                                                    class="form-control " 
-                                                    placeholder="Enter Contact Person"  value="{{ old('contact_person') }}" required />
-                                                <div id="contact_person-error-message" style="color: red; display: none; font-size: 0.9rem;"></div>
+                                            <input type="text" id="contact_person" name="contact_person"
+       class="form-control"
+       placeholder="Enter Contact Person"
+       value="{{ old('contact_person') }}"
+       required
+       oninput="validateContactPerson()"
+       onkeydown="restrictInvalidChars(event)" />
+<div id="contact_person-error-message" style="color: red; display: none; font-size: 0.9rem;"></div>
+
                                             </td>
                                         </tr>
                                         <tr>
@@ -161,11 +168,14 @@
                                             <th class="text-center align-middle shadow-none textcolor" style="font-size: 0.9rem">Designation <span style="color: red;">*</span>
                                             </th>
                                             <td class="shadow-none textcolor">
-                                                <input type="text" id="designation" name="designation"
-                                                    class="form-control "  value="{{ old('designation') }}"
-                                                    placeholder="Enter Designation" />
-                                                <div id="designation-error-message" style="color: red; display: none; font-size: 0.9rem;"></div>
-                                            </td>
+                                            <input type="text" id="designation" name="designation"
+       class="form-control"
+       value="{{ old('designation') }}"
+       placeholder="Enter Designation"
+       oninput="validateDesignation()"
+       onkeydown="restrictDesignationChars(event)" />
+<div id="designation-error-message" style="color: red; display: none; font-size: 0.9rem;"></div>
+</td>
                                         </tr>
                                         <tr>
                                             <th class="text-center align-middle shadow-none textcolor" style="font-size: 0.9rem">11.</th>
@@ -215,7 +225,15 @@
         function validateIFSC() {
             let ifscCode = document.getElementById("ifsc_code").value.trim();
             
-            let ifscPattern = /^[A-Z]{4}0[A-Z0-9]{6}$/;
+            let ifscPattern = /^[A-Z0-9]{11}$/; 
+            if (!/^[A-Z0-9]*$/.test(ifscCode)) {
+            document.getElementById("ifsc_code").value = ifscCode.replace(/[^A-Z0-9]/g, ''); // Remove invalid characters
+        }
+
+        // Check if the IFSC code matches the valid pattern
+        if (ifscCode.length > 11) {
+            document.getElementById("ifsc_code").value = ifscCode.substring(0, 11); // Limit to 11 characters
+        }
             let errorMessage = document.getElementById("ifsc-error-message");
             let branchNameField = document.getElementById("branch_name");
             let micrField = document.getElementById("micr_code");
@@ -280,10 +298,10 @@
             let districtField = document.getElementById("district");
 
             if (!/^\d{6}$/.test(pincode)) {
-                stateField.value = "";
-                districtField.value = "";
-                return;
-            }
+        stateField.value = "";
+        districtField.value = "";
+        return;
+    }
             
             if (pincode) {
                    $.ajax({
@@ -367,35 +385,80 @@
             }
         }
 
-        function validateContactPerson() {
-            const contactPerson = document.getElementById("contact_person").value;
-            const errorMessage = document.getElementById("contact_person-error-message");
-            const regex = /^[A-Za-z\s]+$/;
-            
-            if (!regex.test(contactPerson)) {
-                errorMessage.textContent = "Special Characters And Integers Are Not Allowed";
-                errorMessage.style.display = "block";
-                return false;
-            } else {
-                errorMessage.style.display = "none";
-                return true;
-            }
-        }
+        // Prevent user from typing anything except letters and space
+function restrictInvalidChars(event) {
+    const key = event.key;
+    const isLetterOrSpace = /^[A-Za-z ]$/.test(key);
 
-        function validateDesignation() {
-            const designation = document.getElementById("designation").value;
-            const errorMessage = document.getElementById("designation-error-message");
-            const regex = /^[A-Za-z\s]+$/;
-            
-            if (!regex.test(designation)) {
-                errorMessage.textContent = "Special Characters And Integers Are Not Allowed";
-                errorMessage.style.display = "block";
-                return false;
-            } else {
-                errorMessage.style.display = "none";
-                return true;
-            }
-        }
+    // Allow backspace, arrow keys, tab, etc.
+    const allowedKeys = ['Backspace', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab', 'Delete'];
+
+    if (!isLetterOrSpace && !allowedKeys.includes(key)) {
+        event.preventDefault();
+    }
+
+    // Prevent space at the beginning
+    const input = event.target;
+    if (key === ' ' && input.selectionStart === 0) {
+        event.preventDefault();
+    }
+}
+
+// Show error if pasted or injected text is invalid
+function validateContactPerson() {
+    const input = document.getElementById("contact_person");
+    const errorMessage = document.getElementById("contact_person-error-message");
+    const value = input.value.trim();
+
+    const regex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+
+    if (!regex.test(value)) {
+        errorMessage.textContent = "Only letters and single spaces are allowed. No numbers or special characters.";
+        errorMessage.style.display = "block";
+        return false;
+    } else {
+        errorMessage.style.display = "none";
+        return true;
+    }
+}
+
+
+
+        // Prevent invalid characters while typing
+function restrictDesignationChars(event) {
+    const key = event.key;
+    const isLetterOrSpace = /^[A-Za-z ]$/.test(key);
+    const allowedKeys = ['Backspace', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab', 'Delete'];
+
+    // Prevent first character as space
+    const input = event.target;
+    if (key === ' ' && input.selectionStart === 0) {
+        event.preventDefault();
+        return;
+    }
+
+    if (!isLetterOrSpace && !allowedKeys.includes(key)) {
+        event.preventDefault();
+    }
+}
+
+// Validate on paste or input
+function validateDesignation() {
+    const input = document.getElementById("designation");
+    const errorMessage = document.getElementById("designation-error-message");
+    const value = input.value.trim();
+
+    const regex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+
+    if (!regex.test(value)) {
+        errorMessage.textContent = "Only letters and single spaces are allowed. No numbers or special characters.";
+        errorMessage.style.display = "block";
+        return false;
+    } else {
+        errorMessage.style.display = "none";
+        return true;
+    }
+}
 
         function toggleSaveButton() {
             const ifscCode = document.getElementById("ifsc_code").value;

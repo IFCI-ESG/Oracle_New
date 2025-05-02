@@ -66,91 +66,96 @@
 <style>
     /* Lighten the placeholder text */
     #ifsc_code::placeholder {
-        color: #d3d3d3; /* Light gray color for placeholder */
+        color:rgb(182, 175, 175);/* Light gray color for placeholder */
     }
 </style>
 
                                     </tr>
 
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 2. </th>
-                                        <th style="font-size: 0.9rem">
-                                            Bank Name <span style="color: red;">*</span>
-                                        </th>
-                                        <td>
-                                            <input type="text" id="bank_name" name="bank_name"
-                                                class="form-control form-control-sm text-right"  value="{{ old('bank_name') }}" style="width:50%"
-                                                readonly required />
-                                        </td>
-                                    </tr>
+    <th class="text-center" style="font-size: 0.9rem"> 2. </th>
+    <th style="font-size: 0.9rem">
+        Bank Name <span style="color: red;">*</span>
+    </th>
+    <td>
+        <input type="text" id="bank_name" name="bank_name"
+            class="form-control form-control-sm text-right" value="{{ old('bank_name') }}" style="width:50%; background-color: #f0f0f0;" 
+            readonly required />
+    </td>
+</tr>
 
-                                    <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 3. </th>
-                                        <th style="font-size: 0.9rem">
-                                            Bank Code <span style="color: red;">*</span>
-                                        </th>
-                                        <td>
-                                            <input type="text" id="bank_code" name="bank_code"
-                                                class="form-control form-control-sm text-right"  value="{{ old('bank_code') }}" style="width:50%"
-                                                readonly required />
-                                        </td>
-                                    </tr>
+<tr>
+    <th class="text-center" style="font-size: 0.9rem"> 3. </th>
+    <th style="font-size: 0.9rem">
+        Bank Code <span style="color: red;">*</span>
+    </th>
+    <td>
+        <input type="text" id="bank_code" name="bank_code"
+            class="form-control form-control-sm text-right" value="{{ old('bank_code') }}" style="width:50%; background-color: #f0f0f0;" 
+            readonly required />
+    </td>
+</tr>
 
-                                    <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 4. </th>
-                                        <th style="font-size: 0.9rem">
-                                            MICR <span style="color: red;">*</span>
-                                        </th>
-                                        <td>
-                                            <input type="text" id="micr_code" name="micr_code"
-                                                class="form-control form-control-sm text-right"  value="{{ old('micr_code') }}" style="width:50%"
-                                                readonly required />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 5. </th>
-                                        <th style="font-size: 0.9rem">
-                                            State <span style="color: red;">*</span>
-                                        </th>
-                                        <td>
-                                            <input type="text" id="state" name="state"
-                                                class="form-control form-control-sm text-right"  value="{{ old('state') }}" style="width:50%"
-                                                readonly required />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 6. </th>
-                                        <th style="font-size: 0.9rem">
-                                            District <span style="color: red;">*</span>
-                                        </th>
-                                        <td>
-                                            <input type="text" id="district" name="district"
-                                                class="form-control form-control-sm text-right" value="{{ old('district') }}" style="width:50%"
-                                                readonly required />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 7. </th>
-                                        <th style="font-size: 0.9rem">
-                                            City <span style="color: red;">*</span>
-                                        </th>
-                                        <td>
-                                            <input type="text" id="city" name="city"
-                                                class="form-control form-control-sm text-right"  value="{{ old('city') }}" style="width:50%"
-                                                readonly required />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 8. </th>
-                                        <th style="font-size: 0.9rem">
-                                            Address <span style="color: red;">*</span>
-                                        </th>
-                                        <td>
-                                            <input type="text" id="full_address" name="full_address"
-                                                class="form-control form-control-sm text-right"  value="{{ old('full_address') }}" style="width:50%"
-                                                readonly required />
-                                        </td>
-                                    </tr>
+<tr>
+    <th class="text-center" style="font-size: 0.9rem"> 4. </th>
+    <th style="font-size: 0.9rem">
+        MICR <span style="color: red;">*</span>
+    </th>
+    <td>
+        <input type="text" id="micr_code" name="micr_code"
+            class="form-control form-control-sm text-right" value="{{ old('micr_code') }}" style="width:50%; background-color: #f0f0f0;" 
+            readonly required />
+    </td>
+</tr>
+
+<tr>
+    <th class="text-center" style="font-size: 0.9rem"> 5. </th>
+    <th style="font-size: 0.9rem">
+        State <span style="color: red;">*</span>
+    </th>
+    <td>
+        <input type="text" id="state" name="state"
+            class="form-control form-control-sm text-right" value="{{ old('state') }}" style="width:50%; background-color: #f0f0f0;" 
+            readonly required />
+    </td>
+</tr>
+
+<tr>
+    <th class="text-center" style="font-size: 0.9rem"> 6. </th>
+    <th style="font-size: 0.9rem">
+        District <span style="color: red;">*</span>
+    </th>
+    <td>
+        <input type="text" id="district" name="district"
+            class="form-control form-control-sm text-right" value="{{ old('district') }}" style="width:50%; background-color: #f0f0f0;" 
+            readonly required />
+    </td>
+</tr>
+
+<tr>
+    <th class="text-center" style="font-size: 0.9rem"> 7. </th>
+    <th style="font-size: 0.9rem">
+        City <span style="color: red;">*</span>
+    </th>
+    <td>
+        <input type="text" id="city" name="city"
+            class="form-control form-control-sm text-right" value="{{ old('city') }}" style="width:50%; background-color: #f0f0f0;" 
+            readonly required />
+    </td>
+</tr>
+
+<tr>
+    <th class="text-center" style="font-size: 0.9rem"> 8. </th>
+    <th style="font-size: 0.9rem">
+        Address <span style="color: red;">*</span>
+    </th>
+    <td>
+        <input type="text" id="full_address" name="full_address"
+            class="form-control form-control-sm text-right" value="{{ old('full_address') }}" style="width:50%; background-color: #f0f0f0;" 
+            readonly required />
+    </td>
+</tr>
+
                                     <tr>
                                         <th class="text-center" style="font-size: 0.9rem">9.</th>
                                          <th style="font-size: 0.9rem">
@@ -181,7 +186,7 @@
 <style>
     /* Lighten the placeholder text */
     #pan::placeholder {
-        color: #d3d3d3; /* Light gray color for placeholder */
+        color:rgb(182, 175, 175); /* Light gray color for placeholder */
     }
 </style>
 
@@ -198,27 +203,30 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 12. </th>
-                                        <th style="font-size: 0.9rem">
-                                            Valid From <span style="color: red;">*</span>
-                                        </th>
-                                        <td>
-                                            <input type="date" id="valid_from" name="valid_from"
-                                                class="form-control form-control-sm text-right" style="width:50%"  value="{{ old('valid_from') }}"
-                                                required onchange="setMinValidToDate(); enableValidToDate()" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 13. </th>
-                                        <th style="font-size: 0.9rem">
-                                            Valid To <span style="color: red;">*</span>
-                                        </th>
-                                        <td>
-                                            <input type="date" id="valid_to" name="valid_to"
-                                                class="form-control form-control-sm text-right"  value="{{ old('valid_to') }}"  style="width:50%"
-                                                required disabled />
-                                        </td>
-                                    </tr>
+    <th class="text-center" style="font-size: 0.9rem"> 12. </th>
+    <th style="font-size: 0.9rem">
+        Valid From <span style="color: red;">*</span>
+    </th>
+    <td>
+        <input type="date" id="valid_from" name="valid_from"
+            class="form-control form-control-sm text-right" style="width:50%" value="{{ old('valid_from') }}"
+            required onchange="setMinValidToDate(); enableValidToDate()" 
+            onkeydown="return false;" oninput="return false;" />
+    </td>
+</tr>
+
+<tr>
+    <th class="text-center" style="font-size: 0.9rem"> 13. </th>
+    <th style="font-size: 0.9rem">
+        Valid To <span style="color: red;">*</span>
+    </th>
+    <td>
+        <input type="date" id="valid_to" name="valid_to"
+            class="form-control form-control-sm text-right" value="{{ old('valid_to') }}" style="width:50%"
+            required disabled onkeydown="return false;" oninput="return false;" />
+    </td>
+</tr>
+
                                     <tr>
                                         <th class="text-center" style="font-size: 0.9rem"> 14. </th>
                                         <th style="font-size: 0.9rem"> Email <span style="color: red;">*</span></th>
@@ -233,7 +241,7 @@
 <style>
     /* Lighten the placeholder text */
     #email::placeholder {
-        color: #d3d3d3; /* Light gray color for placeholder */
+        color:rgb(182, 175, 175); /* Light gray color for placeholder */
     }
 </style>
 
@@ -251,6 +259,12 @@
                                                 style="color: #888; font-size: 0.8rem; display: block; margin-top: 5px;">(Contact
                                                 Person - Special Characters And Integers Are Not Allowed)</span>
                                         </td>
+                                        <style>
+    /* Lighten the placeholder text */
+    #contact_person::placeholder {
+        color:rgb(182, 175, 175); /* Light gray color for placeholder */
+    }
+</style>
                                     </tr>
                                     <tr>
                                         <th class="text-center" style="font-size: 0.9rem"> 16. </th>
@@ -266,6 +280,12 @@
                                                 - Special Characters And Integers Are Not Allowed)</span>
                                         </td>
                                     </tr>
+                                    <style>
+    /* Lighten the placeholder text */
+    #designation::placeholder {
+        color:rgb(182, 175, 175); /* Light gray color for placeholder */
+    }
+</style>
                                     <tr>
                                         <th class="text-center" style="font-size: 0.9rem"> 17. </th>
                                         <th style="font-size: 0.9rem"> Mobile No. <span style="color: red;">*</span>
@@ -284,6 +304,12 @@
                                             <div id="mobile-error-message" style="color: red; display: none; font-size: 0.9rem;"></div>
                                         </td>
                                     </tr>
+                                    <style>
+    /* Lighten the placeholder text */
+    #mobile::placeholder {
+        color:rgb(182, 175, 175); /* Light gray color for placeholder */
+    }
+</style>
                                     <tr>
                                         <th class="text-center" style="font-size: 0.9rem"> 18. </th>
                                         <th style="font-size: 0.9rem"> Alternate Mobile No. <span style="color: red;">*</span> </th>
@@ -301,7 +327,12 @@
                                             <div id="altr_mobile-error-message" style="color: red; display: none; font-size: 0.9rem;"></div>
                                         </td>
                                     </tr>
-
+                                    <style>
+    /* Lighten the placeholder text */
+    #altr_mobile::placeholder {
+        color:rgb(182, 175, 175); /* Light gray color for placeholder */
+    }
+</style>
                                     <tr>
                                         <th class="text-center" style="font-size: 0.9rem"> 19. </th>
                                         <th style="font-size: 0.9rem"> Services <span style="color: red;">*</span>

@@ -264,6 +264,35 @@
 
             // Clear any existing error messages
             document.getElementById('error-message').style.display = 'none';
+            
+            // Reset OTP timer and states before new login attempt
+            clearInterval(otpTimer);
+            timeLeft = 120;
+            const otpModal = document.getElementById('otpModal');
+            if (otpModal) {
+                const timerContainer = otpModal.querySelector('#otpTimer');
+                if (timerContainer) timerContainer.style.display = 'none';
+                const resendBtn = otpModal.querySelector('#resendOtpBtn');
+                if (resendBtn) {
+                    resendBtn.style.display = 'none';
+                    resendBtn.disabled = false;
+                    resendBtn.innerHTML = 'Resend OTP';
+                }
+                const otpMessage = otpModal.querySelector('#otpMessage');
+                if (otpMessage) otpMessage.style.display = 'none';
+                const otpInput = otpModal.querySelector('#otp');
+                if (otpInput) {
+                    otpInput.value = '';
+                    otpInput.disabled = false;
+                }
+                const verifyBtn = otpModal.querySelector('#verifyOtp');
+                if (verifyBtn) verifyBtn.style.display = 'none';
+                const sendInitialOtp = otpModal.querySelector('#sendInitialOtp');
+                if (sendInitialOtp) {
+                    sendInitialOtp.style.display = 'block';
+                    sendInitialOtp.disabled = false;
+                }
+            }
 
             var id = document.getElementById("identity");
             var pwd = document.getElementById("password");
@@ -406,20 +435,11 @@
                 
                 if (timeLeft <= 0) {
                     clearInterval(otpTimer);
-                    if (resendAttempts < MAX_RESEND_ATTEMPTS) {
-                        resendBtn.style.display = 'block';
-                        resendBtn.disabled = false;
-                        document.getElementById('otp').disabled = true;
-                        document.getElementById('verifyOtp').style.display = 'none';
-                    } else {
-                        const otpMessage = document.getElementById('otpMessage');
-                        otpMessage.className = 'alert alert-danger';
-                        otpMessage.textContent = 'Maximum resend attempts reached. Please try logging in again.';
-                        otpMessage.style.display = 'block';
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 3000);
-                    }
+                    resendBtn.style.display = 'block';
+                    resendBtn.disabled = false;
+                    resendBtn.innerHTML = 'Resend OTP'; // Reset button text
+                    document.getElementById('otp').disabled = true;
+                    document.getElementById('verifyOtp').style.display = 'none';
                 }
                 timeLeft--;
             }, 1000);
@@ -434,25 +454,35 @@
 
         // Reset modal state when closed
         document.getElementById('otpModal').addEventListener('hidden.bs.modal', function () {
+            // Clear the timer
             clearInterval(otpTimer);
+            timeLeft = 120;
+            
             const otpInput = document.getElementById('otp');
             const otpMessage = document.getElementById('otpMessage');
             const resendBtn = document.getElementById('resendOtpBtn');
             const otpInputContainer = document.getElementById('otpInputContainer');
+            const timerContainer = document.getElementById('otpTimer');
+            const sendInitialOtp = document.getElementById('sendInitialOtp');
             
             // Reset all states
-            otpInput.value = '';
-            otpInput.disabled = true;
-            otpMessage.style.display = 'none';
-            otpInputContainer.style.display = 'none';
-            resendBtn.style.display = 'none';
-            resendBtn.disabled = false;
+            if (otpInput) {
+                otpInput.value = '';
+                otpInput.disabled = true;
+            }
+            if (otpMessage) otpMessage.style.display = 'none';
+            if (otpInputContainer) otpInputContainer.style.display = 'none';
+            if (timerContainer) timerContainer.style.display = 'none';
+            if (resendBtn) {
+                resendBtn.style.display = 'none';
+                resendBtn.disabled = false;
+                resendBtn.innerHTML = 'Resend OTP';
+            }
+            if (sendInitialOtp) {
+                sendInitialOtp.style.display = 'block';
+                sendInitialOtp.disabled = false;
+            }
             document.getElementById('verifyOtp').style.display = 'none';
-            document.getElementById('sendInitialOtp').style.display = 'block';
-            document.getElementById('sendInitialOtp').disabled = false;
-            document.getElementById('timer').classList.remove('warning');
-            timeLeft = 120;
-            resendAttempts = 0;
         });
 
         // Add Verify OTP handler
@@ -563,9 +593,6 @@
                     this.style.display = 'none';
                     document.getElementById('verifyOtp').style.display = 'none';
                     
-                    // Increment resend attempts
-                    resendAttempts++;
-                    
                     // Reset and start timer
                     timeLeft = 120;
                     startOtpTimer();
@@ -597,8 +624,6 @@
         // Initialize variables for OTP timer
         let otpTimer;
         let timeLeft = 120; // 2 minutes
-        let resendAttempts = 0;
-        const MAX_RESEND_ATTEMPTS = 3;
 
         document.addEventListener("DOMContentLoaded", function () {
             const togglePasswordButtons = document.querySelectorAll("#toggle-password");

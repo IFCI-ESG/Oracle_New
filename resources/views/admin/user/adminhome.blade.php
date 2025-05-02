@@ -653,10 +653,10 @@
             }
             
             function validatePAN(pan) {
-                // Validate PAN format (5 letters, 4 numbers, 1 letter)
-                const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
-                return panRegex.test(pan);
-            }
+    // Trim spaces and check PAN format
+    const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
+    return panRegex.test(pan.trim());
+}
             
             function validateContactPerson(name) {
                 // Validate name (minimum 3 characters, letters and spaces only)
@@ -665,9 +665,18 @@
             }
             
             function validateDesignation(designation) {
-                // Validate designation (minimum 2 characters)
-                return designation.trim().length >= 2;
-            }
+    // Ensure no leading/trailing spaces and minimum 2 letters
+    const trimmed = designation.trim();
+
+    // Regex: must start with a letter, followed by letters or spaces only
+    const validFormat = /^[A-Za-z](?:[A-Za-z ]*[A-Za-z])?$/.test(trimmed);
+
+    // Count only letters
+    const letterCount = trimmed.replace(/[^A-Za-z]/g, '').length;
+
+    return validFormat && letterCount >= 2;
+}
+
             
             // Update field validation status
             function updateFieldStatus(field, isValid, errorElement) {

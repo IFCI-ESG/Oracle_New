@@ -293,5 +293,10 @@ class HomeController extends Controller
     {
         return view('landing.tool');
     }
+    public function explore()
+    {
+        return view('landing.explore');
+    }
+
 
 }
