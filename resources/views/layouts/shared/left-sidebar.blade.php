@@ -30,13 +30,13 @@
                     > {{ auth()->user()->contact_person }}</a>
                 
             </div>
-            <p class="text-muted mb-0">{{ auth()->user()->designation }}</p>
+            <p class="text-muted mb-0">{{ auth()->user()->name }}</p>
         </div>
 
         <!--- Sidemenu -->
 
         <ul id="side-menu" class="menu">
-                     <li class="menu-title">Navigation</li>
+                     <!-- <li class="menu-title">Navigation</li> -->
             @if (Auth::user()->hasRole('SuperAdmin'))
 
 	    

@@ -123,7 +123,7 @@
                                     </tr>
                                     <tr>
                                         <th class="text-center" style="font-size: 0.9rem">10.</th>
-                                        <th style="font-size: 0.9rem">Mobile</th>
+                                        <th style="font-size: 0.9rem">Mobile No.</th>
                                         <td>
                                             <input type="tel" id="mobile" name="mobile" value="{{$bank_details->mobile}}"
                                                 class="form-control form-control-sm text-right" style="width:50%" readonly />
@@ -131,7 +131,7 @@
                                     </tr>
                                     <tr>
                                         <th class="text-center" style="font-size: 0.9rem">11.</th>
-                                        <th style="font-size: 0.9rem">Alternate Mobile</th>
+                                        <th style="font-size: 0.9rem">Alternate Mobile No.</th>
                                         <td>
                                             <input type="number" id="altr_mobile" name="altr_mobile" value="{{$bank_details->altr_mobile}}"
                                                 class="form-control form-control-sm text-right" style="width:50%" readonly />
