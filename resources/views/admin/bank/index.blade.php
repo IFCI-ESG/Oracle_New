@@ -251,8 +251,10 @@
     $(document).ready(function() {
         // Add custom date sorting function
         $.fn.dataTable.ext.type.order['date-format-pre'] = function(d) {
-            if (!d) return 0;
-            return moment(d, 'YYYY-MM-DD HH:mm:ss').valueOf();
+            // Return 0 for empty or invalid dates
+            if (!d || d === '--') return 0;
+            // Parse the date using moment.js
+            return moment(d).unix();
         };
 
         // Create hidden DataTable buttons
@@ -290,11 +292,21 @@
             ordering: true,
             info: true,
             columnDefs: [
-                { targets: 7, type: 'date-format' }, // Created At column
-                { targets: 8, type: 'date-format' }, // Updated At column
-                { targets: 9, orderable: false }  // Action column
+                { 
+                    targets: 7,
+                    type: 'date-format'
+                },
+                { 
+                    targets: 8,
+                    type: 'date-format'
+                },
+                { 
+                    targets: 9,
+                    orderable: false
+                }
             ],
-            order: [[7, 'desc']] // Default sort by Created At in descending order
+            order: [[7, 'desc']], // Sort by Created At column in descending order
+            pageLength: 25 // Show 25 entries per page
         });
         
         // Connect custom search box
