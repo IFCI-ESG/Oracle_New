@@ -78,13 +78,13 @@
                         <div id="error-message" class="alert alert-danger" style="display: none; margin-bottom: 15px;"></div>
                         
                         <div class="mb-3">
-                            <label for="emailaddress" class="form-label">Username</label>
+                            <label for="emailaddress" class="form-label">Username<span style="color: red;">*</span></label>
                             <input id="identity" type="text"
                                 class="form-control @if ($errors->has('unique_login_id')) {{ $errors->has('unique_login_id') ? ' is-invalid' : '' }} @elseif($errors->has('email')) {{ $errors->has('email') ? ' is-invalid' : '' }} @endif"
                                 name="identity" value="{{ old('identity') }}" placeholder="" required autofocus>
                         </div>
                         <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
+                            <label for="password" class="form-label">Password<span style="color: red;">*</span></label>
                             <div class="input-group input-group-merge">
                                 <input id="password" type="password"
                                     class="form-control @error('password') is-invalid @enderror" name="password"

@@ -530,20 +530,34 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="mobile" style="color:black;">Mobile</label>
-                                <input type="text" name="mobile" class="form-control" id="mobile" value="{{ isset($users) ? $users->mobile : 'NA' }}" required>
+                                <input type="text" name="mobile" class="form-control" id="mobile" 
+                                       value="{{ isset($users) ? $users->mobile : 'NA' }}" 
+                                       required 
+                                       maxlength="10" 
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                 <div class="error-message" id="mobile-error">Please enter a valid 10-digit mobile number</div>
                             </div>
 
                             @if (Auth::user()->hasRole('Admin'))
                             <div class="col-md-6 mb-3">
                                 <label for="pan" style="color:black;">PAN</label>
-                                <input type="text" name="pan" class="form-control" id="pan" value="{{ isset($users) ? $users->pan : 'NA' }}" required>
+                                <input type="text" name="pan" class="form-control" id="pan" 
+                                       value="{{ isset($users) ? $users->pan : 'NA' }}" 
+                                       required 
+                                       maxlength="10" 
+                                       oninput="this.value = this.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase()"
+                                       style="text-transform: uppercase;">
                                 <div class="error-message" id="pan-error">Please enter a valid PAN number (e.g., ABCDE1234F)</div>
                             </div>
                             @else 
                             <div class="col-md-6 mb-3">
                                 <label for="pan" style="color:black;">PAN</label>
-                                <input type="text" name="pan" class="form-control" id="pan" value="{{ isset($users) ? $users->pan : 'NA' }}">
+                                <input type="text" name="pan" class="form-control" id="pan" 
+                                       value="{{ isset($users) ? $users->pan : 'NA' }}" 
+                                       required 
+                                       maxlength="10" 
+                                       oninput="this.value = this.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase()"
+                                       style="text-transform: uppercase;">
                                 <div class="error-message" id="pan-error">Please enter a valid PAN number (e.g., ABCDE1234F)</div>
                             </div>
                             @endif
@@ -553,13 +567,21 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="contact_person" style="color:black;">Contact Person</label>
-                                <input type="text" name="contact_person" class="form-control" id="contact_person" value="{{ isset($users) ? $users->contact_person : 'NA' }}" required>
-                                <div class="error-message" id="contact-person-error">Please enter a valid name (min 3 characters)</div>
+                                <input type="text" name="contact_person" class="form-control" id="contact_person" 
+                                       value="{{ isset($users) ? $users->contact_person : 'NA' }}" 
+                                       required
+                                       oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '').replace(/^\s+/g, '')"
+                                       minlength="3">
+                                <div class="error-message" id="contact-person-error">Please enter a valid name (minimum 3 letters)</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="designation" style="color:black;">Designation</label>
-                                <input type="text" name="designation" class="form-control" id="designation" value="{{ isset($users) ? $users->designation : 'NA' }}" required>
-                                <div class="error-message" id="designation-error">Please enter a valid designation (min 2 characters)</div>
+                                <input type="text" name="designation" class="form-control" id="designation" 
+                                       value="{{ isset($users) ? $users->designation : 'NA' }}" 
+                                       required
+                                       oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '').replace(/^\s+/g, '')"
+                                       minlength="2">
+                                <div class="error-message" id="designation-error">Please enter a valid designation (minimum 2 letters)</div>
                             </div>
                         </div>
 
@@ -646,37 +668,204 @@
                 return isValid;
             }
             
-            function validateMobile(mobile) {
-                // Validate exactly 10-digit mobile number
-                const mobileRegex = /^[0-9]{10}$/;
-                return mobileRegex.test(mobile);
+            function validateMobile(mobileNumber) {
+                // Get the error element
+                const errorElement = document.getElementById('mobile-error');
+                
+                // Basic format check (10 digits)
+                if (!/^[0-9]{10}$/.test(mobileNumber)) {
+                    errorElement.textContent = "Please enter a valid 10-digit mobile number";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // Check if all digits are same
+                if (/^(\d)\1{9}$/.test(mobileNumber)) {
+                    errorElement.textContent = "Invalid mobile number: All digits cannot be the same";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // Check if number is in ascending or descending sequence
+                if (/^(0123456789|9876543210)$/.test(mobileNumber)) {
+                    errorElement.textContent = "Invalid mobile number: Cannot be a sequential number";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // Check if number starts with 0
+                if (mobileNumber.startsWith('0')) {
+                    errorElement.textContent = "Invalid mobile number: Cannot start with 0";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // Check for repeated patterns
+                if (/^(\d{5})\1$/.test(mobileNumber) || 
+                    /^(\d{4})\1\d{2}$/.test(mobileNumber) ||
+                    /^(\d{3})\1\d{4}$/.test(mobileNumber) ||
+                    /^(\d{2})\1\d{6}$/.test(mobileNumber)) {
+                    errorElement.textContent = "Invalid mobile number: Cannot have repeated digit patterns";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // If all validations pass
+                errorElement.style.display = "none";
+                return true;
             }
             
-            function validatePAN(pan) {
-    // Trim spaces and check PAN format
-    const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
-    return panRegex.test(pan.trim());
-}
+            function validatePAN(panNumber) {
+                // Get the error element
+                const errorElement = document.getElementById('pan-error');
+                
+                // Basic format check (10 characters)
+                if (!panNumber || panNumber === 'NA' || panNumber.length !== 10) {
+                    errorElement.textContent = "PAN number must be exactly 10 characters";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // Check format: First 5 chars should be letters, next 4 should be numbers, last should be letter
+                const panFormat = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
+                if (!panFormat.test(panNumber)) {
+                    errorElement.textContent = "Invalid PAN format. Format should be: ABCDE1234F";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // Check for repeated characters in first 5 letters
+                const firstFiveLetters = panNumber.substring(0, 5);
+                if (/^(.)\1{4}$/.test(firstFiveLetters)) {
+                    errorElement.textContent = "First 5 letters cannot all be the same";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // Check for repeated digits in middle 4 numbers
+                const middleFourNumbers = panNumber.substring(5, 9);
+                if (/^(.)\1{3}$/.test(middleFourNumbers)) {
+                    errorElement.textContent = "Middle 4 digits cannot all be the same";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // Check for sequential letters in first 5 characters
+                const isSequentialLetters = (str) => {
+                    const sequence = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                    const reverseSequence = sequence.split('').reverse().join('');
+                    return sequence.includes(str) || reverseSequence.includes(str);
+                };
+                
+                if (isSequentialLetters(firstFiveLetters)) {
+                    errorElement.textContent = "First 5 letters cannot be in sequence";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // Check for sequential numbers in middle 4 digits
+                if (/1234|2345|3456|4567|5678|6789|9876|8765|7654|6543|5432|4321/.test(middleFourNumbers)) {
+                    errorElement.textContent = "Middle 4 digits cannot be sequential";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // If all validations pass
+                errorElement.style.display = "none";
+                return true;
+            }
             
             function validateContactPerson(name) {
-                // Validate name (minimum 3 characters, letters and spaces only)
-                const nameRegex = /^[A-Za-z\s]{3,}$/;
-                return nameRegex.test(name);
+                const errorElement = document.getElementById('contact-person-error');
+                
+                // Remove NA check
+                if (!name || name === 'NA') {
+                    errorElement.textContent = "Contact person name is required";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // Trim the name
+                name = name.trim();
+                
+                // Check for minimum length (3 characters)
+                if (name.length < 3) {
+                    errorElement.textContent = "Name must be at least 3 characters long";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // Check if starts with space
+                if (name.startsWith(' ')) {
+                    errorElement.textContent = "Name cannot start with a space";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // Check for valid name format (only letters and spaces)
+                if (!/^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/.test(name)) {
+                    errorElement.textContent = "Name can only contain letters and single spaces between words";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // Check for multiple consecutive spaces
+                if (/\s\s/.test(name)) {
+                    errorElement.textContent = "Name cannot contain consecutive spaces";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // If all validations pass
+                errorElement.style.display = "none";
+                return true;
             }
             
             function validateDesignation(designation) {
-    // Ensure no leading/trailing spaces and minimum 2 letters
-    const trimmed = designation.trim();
-
-    // Regex: must start with a letter, followed by letters or spaces only
-    const validFormat = /^[A-Za-z](?:[A-Za-z ]*[A-Za-z])?$/.test(trimmed);
-
-    // Count only letters
-    const letterCount = trimmed.replace(/[^A-Za-z]/g, '').length;
-
-    return validFormat && letterCount >= 2;
-}
-
+                const errorElement = document.getElementById('designation-error');
+                
+                // Remove NA check
+                if (!designation || designation === 'NA') {
+                    errorElement.textContent = "Designation is required";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // Trim the designation
+                designation = designation.trim();
+                
+                // Check for minimum length (2 characters)
+                if (designation.length < 2) {
+                    errorElement.textContent = "Designation must be at least 2 characters long";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // Check if starts with space
+                if (designation.startsWith(' ')) {
+                    errorElement.textContent = "Designation cannot start with a space";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // Check for valid designation format (only letters and spaces)
+                if (!/^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/.test(designation)) {
+                    errorElement.textContent = "Designation can only contain letters and single spaces between words";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // Check for multiple consecutive spaces
+                if (/\s\s/.test(designation)) {
+                    errorElement.textContent = "Designation cannot contain consecutive spaces";
+                    errorElement.style.display = "block";
+                    return false;
+                }
+                
+                // If all validations pass
+                errorElement.style.display = "none";
+                return true;
+            }
             
             // Update field validation status
             function updateFieldStatus(field, isValid, errorElement) {
