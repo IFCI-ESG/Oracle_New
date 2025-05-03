@@ -24,7 +24,6 @@ use Validator;
 
 use Illuminate\Support\Facades\File;
 use SimpleXMLElement;
-use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -143,77 +142,80 @@ class UserController extends Controller
 
     public function updateAccount(Request $request)
     {
-        try {
-            $user = auth()->user();
-            $resetPassword = $request->input('reset_password', false);
-            
-            // If password_changed is 1, validate email and image
-            if ($user->password_changed == 1) {
-                $request->validate([
-                    'email' => 'required|email|unique:users,email,' . $user->id,
-                    'image' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
-                ]);
-            }
+      try {
 
-            // Update email if provided
-            if ($request->filled('email')) {
-                $user->email = $request->email;
-            }
+          $user = User::find(auth()->user()->id);
 
-            // Handle image upload if provided
-            if ($request->hasFile('image')) {
-                // Delete old image if exists
-                if ($user->image) {
-                    Storage::disk('public')->delete($user->image);
-                }
+          if($user->password_changed == 1){
 
-                // Upload new image
-                $image = $request->file('image');
-                $imageName = time() . '.' . $image->getClientOriginalExtension();
-                
-                // Store image in public storage
-                $path = $image->storeAs('profile', $imageName, 'public');
-                
-                // Update user's image field with the storage path
-                $user->image = $path;
-            }
+          $request->validate([
+              'email' => 'required|email|unique:users,email,' . auth()->user()->id,
+              'image' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+          ]);
+      }
 
-            // Handle password reset if requested
-            if ($resetPassword) {
-                $request->validate([
-                    'new_password' => 'required|min:6',
-                    'confirm_password' => 'required|same:new_password',
-                    'otp' => 'required|digits:6'
-                ]);
+          if ($request->has('reset_password')) {
+              $request->validate([
+                  'new_password'     => 'required|min:8',
+                  'confirm_password' => 'required|same:new_password',
+                  'otp'              => 'required|numeric',
+              ]);
 
-                // Verify OTP
-                $otp = $request->input('otp');
-                $generatedOtp = $request->input('generated_otp');
-                $staticOtp = '987654';
+          // $SMS = new OtpTemp();
+          // $module = "to update your account";
+          // $smsResponse = $SMS->sendSMS($request->mobile, $module, $otp);
 
-                if ($otp !== $staticOtp && $otp !== $generatedOtp) {
-                    return back()->with('error', 'Invalid OTP!');
-                }
+              $validOtp = '987654';
 
-                // Update password
-                $user->password = Hash::make($request->new_password);
-                $user->password_changed = 1; 
-            }
+              if ($request->otp != $validOtp) {
+                  return redirect()->back()->with('error', 'Invalid OTP!');
+              }
+          }
 
-            // Save user changes
-            $user->save();
 
-            if ($resetPassword) {
-                // If password was reset, redirect to login
-                Auth::logout();
-                return redirect('/admin/login')->with('success', 'Password updated successfully. Please login with your new password.');
-            }
 
-            return back()->with('success', 'Account updated successfully!');
-        } catch (\Exception $e) {
-            return back()->with('error', 'An error occurred while updating your account: ' . $e->getMessage());
-        }
-    }
+          if (! $user) {
+              return redirect()->back()->with('error', 'User not found!');
+          }
+          if($user->password_changed == 1){
+           $user->email = $request->email;
+          }
+
+          if ($request->has('reset_password')) {
+              $user->password = Hash::make($request->new_password);
+
+              $user->password_changed = 1;
+              $user->save();
+              Auth::Logout($user);
+              return redirect('/login')->with('success', 'Password updated. Please log in.');
+          }
+
+
+          if($user->password_changed == 1){
+          if  ( $request->hasFile('image')) {
+              $imageName = time() . '.' . $request->image->extension();
+              $request->image->storeAs('images', $imageName, 'public');
+              $user->image = 'images/' . $imageName;
+          }
+      }
+
+
+          $user->save();
+
+          return redirect()->back()->with([
+              'success' => 'Account updated successfully!',
+              'password_changed' => 1
+          ]);
+
+       } catch (\Exception $e) {
+          Log::error('Error in updating account: ' . $e->getMessage(), [
+              'exception' => $e,
+              'user_id' => auth()->user()->id
+          ]);
+
+          return redirect()->back()->with('error', 'Please upload Only JPG, JPEG & PNG image format!');
+      }
+  }
 
 
     public function activity_store(Request $request)
