@@ -427,47 +427,87 @@
 
 
         function deleteRow(row_id) {
-            swal({
-                    title: "Do You Want to Delete this Record",
-                    icon: "warning",
-                    buttons: {
-                        cancel: true,
-                        confirm: {
-                            text: "Yes",
-                            value: "Y",
+            Swal.fire({
+                title: "Do You Want to Delete this Record",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                dangerMode: true,
+                closeOnClickOutside: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                    },
-                    dangerMode: true,
-                    closeOnClickOutside: false,
-                })
-                .then((result) => {
-                    if (result == 'Y') {
-                        $.ajax({
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            type: "GET",
-                            url: '../row_delete/' + row_id + '/plant',
-                            success: function(data) {
-                                console.log(data);
-                                if (data == true) {
-                                    swal(
-                                        'Deleted!',
-                                        'Your record has been deleted.',
-                                        'success')
+                        type: "GET",
+                        url: '../row_delete/' + row_id + '/plant',
+                        success: function(data) {
+                            if (data == true) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your record has been deleted.',
+                                    'success'
+                                ).then(() => {
                                     window.location.reload();
-                                } else {
-                                    swal(
-                                        'Not Deleted!',
-                                        'Your record has not been Deleted.',
-                                        'warning')
-
-                                }
+                                });
+                            } else {
+                                Swal.fire(
+                                    'Not Deleted!',
+                                    'Your record has not been Deleted.',
+                                    'warning'
+                                );
                             }
-                        })
-                    }
-                });
+                        }
+                    });
+                }
+            });
         }
     </script>
 
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function deleteRow(row_id) {
+        Swal.fire({
+            title: "Do You Want to Delete this Record",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            dangerMode: true,
+            closeOnClickOutside: false,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    type: "GET",
+                    url: '../row_delete/' + row_id + '/plant',
+                    success: function(data) {
+                        if (data == true) {
+                            Swal.fire(
+                                'Deleted!',
+                                'Your record has been deleted.',
+                                'success'
+                            ).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Not Deleted!',
+                                'Your record has not been Deleted.',
+                                'warning'
+                            );
+                        }
+                    }
+                });
+            }
+        });
+    }
+</script>
+@endpush
