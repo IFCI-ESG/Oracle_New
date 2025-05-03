@@ -2,6 +2,20 @@
 
 @section('css')
 @vite(['node_modules/sweetalert2/dist/sweetalert2.min.css'])
+<style>
+    .form-control[readonly] {
+        background-color: #f8f9fa;
+        cursor: not-allowed;
+    }
+    
+    .form-control[readonly] + .fa-lock {
+        color: #6c757d;
+    }
+    
+    .position-relative .form-control {
+        padding-right: 30px !important;
+    }
+</style>
 @endsection
 
 @section('content')
@@ -78,9 +92,12 @@
         Bank Name <span style="color: red;">*</span>
     </th>
     <td>
-        <input type="text" id="bank_name" name="bank_name"
-            class="form-control form-control-sm text-right" value="{{ old('bank_name') }}" style="width:50%; background-color: #f0f0f0;" 
-            readonly required />
+        <div class="position-relative" style="width:50%">
+            <input type="text" id="bank_name" name="bank_name"
+                class="form-control form-control-sm text-right pe-4" value="{{ old('bank_name') }}" 
+                readonly required />
+            <i class="fas fa-lock text-muted" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 12px;"></i>
+        </div>
     </td>
 </tr>
 
@@ -90,9 +107,12 @@
         Bank Code <span style="color: red;">*</span>
     </th>
     <td>
-        <input type="text" id="bank_code" name="bank_code"
-            class="form-control form-control-sm text-right" value="{{ old('bank_code') }}" style="width:50%; background-color: #f0f0f0;" 
-            readonly required />
+        <div class="position-relative" style="width:50%">
+            <input type="text" id="bank_code" name="bank_code"
+                class="form-control form-control-sm text-right pe-4" value="{{ old('bank_code') }}" 
+                readonly required />
+            <i class="fas fa-lock text-muted" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 12px;"></i>
+        </div>
     </td>
 </tr>
 
@@ -102,9 +122,12 @@
         MICR <span style="color: red;">*</span>
     </th>
     <td>
-        <input type="text" id="micr_code" name="micr_code"
-            class="form-control form-control-sm text-right" value="{{ old('micr_code') }}" style="width:50%; background-color: #f0f0f0;" 
-            readonly required />
+        <div class="position-relative" style="width:50%">
+            <input type="text" id="micr_code" name="micr_code"
+                class="form-control form-control-sm text-right pe-4" value="{{ old('micr_code') }}" 
+                readonly required />
+            <i class="fas fa-lock text-muted" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 12px;"></i>
+        </div>
     </td>
 </tr>
 
@@ -114,9 +137,12 @@
         State <span style="color: red;">*</span>
     </th>
     <td>
-        <input type="text" id="state" name="state"
-            class="form-control form-control-sm text-right" value="{{ old('state') }}" style="width:50%; background-color: #f0f0f0;" 
-            readonly required />
+        <div class="position-relative" style="width:50%">
+            <input type="text" id="state" name="state"
+                class="form-control form-control-sm text-right pe-4" value="{{ old('state') }}" 
+                readonly required />
+            <i class="fas fa-lock text-muted" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 12px;"></i>
+        </div>
     </td>
 </tr>
 
@@ -126,9 +152,12 @@
         District <span style="color: red;">*</span>
     </th>
     <td>
-        <input type="text" id="district" name="district"
-            class="form-control form-control-sm text-right" value="{{ old('district') }}" style="width:50%; background-color: #f0f0f0;" 
-            readonly required />
+        <div class="position-relative" style="width:50%">
+            <input type="text" id="district" name="district"
+                class="form-control form-control-sm text-right pe-4" value="{{ old('district') }}" 
+                readonly required />
+            <i class="fas fa-lock text-muted" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 12px;"></i>
+        </div>
     </td>
 </tr>
 
@@ -138,9 +167,12 @@
         City <span style="color: red;">*</span>
     </th>
     <td>
-        <input type="text" id="city" name="city"
-            class="form-control form-control-sm text-right" value="{{ old('city') }}" style="width:50%; background-color: #f0f0f0;" 
-            readonly required />
+        <div class="position-relative" style="width:50%">
+            <input type="text" id="city" name="city"
+                class="form-control form-control-sm text-right pe-4" value="{{ old('city') }}" 
+                readonly required />
+            <i class="fas fa-lock text-muted" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 12px;"></i>
+        </div>
     </td>
 </tr>
 
@@ -150,9 +182,12 @@
         Address <span style="color: red;">*</span>
     </th>
     <td>
-        <input type="text" id="full_address" name="full_address"
-            class="form-control form-control-sm text-right" value="{{ old('full_address') }}" style="width:50%; background-color: #f0f0f0;" 
-            readonly required />
+        <div class="position-relative" style="width:50%">
+            <input type="text" id="full_address" name="full_address"
+                class="form-control form-control-sm text-right pe-4" value="{{ old('full_address') }}" 
+                readonly required />
+            <i class="fas fa-lock text-muted" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 12px;"></i>
+        </div>
     </td>
 </tr>
 
