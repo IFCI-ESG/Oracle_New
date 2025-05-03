@@ -325,6 +325,17 @@
                 info: "Showing _START_ to _END_ of _TOTAL_ entries",
                 infoEmpty: "Showing 0 entries",
                 infoFiltered: "(filtered from _MAX_ total entries)"
+            },
+            drawCallback: function() {
+                // Scroll to top of table container
+                $('.table-responsive').animate({
+                    scrollTop: 0
+                }, 'fast');
+                
+                // Scroll the window to the top of the table card if needed
+                $('html, body').animate({
+                    scrollTop: $('.card.border-primary').offset().top - 20
+                }, 'fast');
             }
         });
         
