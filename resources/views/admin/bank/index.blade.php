@@ -236,17 +236,26 @@
                 {
                     extend: 'copy',
                     text: 'Copy',
-                    className: 'btn-secondary d-none'
+                    className: 'btn-secondary d-none',
+                    exportOptions: {
+                        columns: [0,1,2,3,4,5,6,7,8]
+                    }
                 },
                 {
                     extend: 'csv',
                     text: 'CSV',
-                    className: 'btn-secondary d-none'
+                    className: 'btn-secondary d-none',
+                    exportOptions: {
+                        columns: [0,1,2,3,4,5,6,7,8]
+                    }
                 },
                 {
                     extend: 'print',
                     text: 'Print',
-                    className: 'btn-secondary d-none'
+                    className: 'btn-secondary d-none',
+                    exportOptions: {
+                        columns: [0,1,2,3,4,5,6,7,8]
+                    }
                 }
             ],
             responsive: true,
