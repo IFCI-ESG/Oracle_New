@@ -54,6 +54,10 @@
                                     </th> -->
                                     <th class="textcolor border" style="padding: 8px 5px; text-align: center; vertical-align: middle;">Status
                                     </th>
+                                    <th class="textcolor border" style="padding: 8px 5px; text-align: center; vertical-align: middle;">Created At
+                                    </th>
+                                    <th class="textcolor border" style="padding: 8px 5px; text-align: center; vertical-align: middle;">Updated At
+                                    </th>
                                     <th class="textcolor" style="text-align: center; vertical-align: middle;">Action
                                     </th>
                                 </tr>
@@ -81,6 +85,10 @@
                                                     <span class="badge bg-warning">Inactive</span>
                                                 @endif
                                             </td>
+                                            <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.8rem;">
+                                            {{ $bank->created_at ?? '--' }}</td>
+                                            <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.8rem;">
+                                            {{ $bank->updated_at ?? '--' }}</td>
                                             <td class="text-center align-middle border shadow-none" style="font-size:0.8rem;">
                                                 <div class="dropdown">
                                                     <button class="btn border dropdown-toggle" type="button"
@@ -188,6 +196,7 @@
                         ordering: true,
                         info: true,
                         paging: true,
+                        order: [[8, 'desc']],
                         columnDefs: [
                             { 
                                 targets: -1, // Last column (Action)
@@ -198,13 +207,25 @@
                             search: "_INPUT_",
                             searchPlaceholder: "Search...",
                             info: "Showing _START_ to _END_ of _TOTAL_ entries",
-                            infoEmpty: "Showing 0 to 0 of 0 entries",
+                            infoEmpty: "No matching records found",
                             infoFiltered: "(filtered from _MAX_ total entries)",
                             paginate: {
                                 first: "First",
                                 last: "Last",
                                 next: "Next",
                                 previous: "Previous"
+                            },
+                            zeroRecords: "No matching records found"
+                        },
+                        drawCallback: function(settings) {
+                            var api = this.api();
+                            var pageInfo = api.page.info();
+                            
+                            // Hide pagination if no results or only one page
+                            if (pageInfo.recordsDisplay <= pageInfo.length) {
+                                $(this).parent().find('.dataTables_paginate').hide();
+                            } else {
+                                $(this).parent().find('.dataTables_paginate').show();
                             }
                         }
                     });
