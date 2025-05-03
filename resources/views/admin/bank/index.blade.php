@@ -55,6 +55,10 @@
                                                 Mobile</th>
                                             <th style="padding: 8px 5px; text-align: center; vertical-align: middle;">
                                                 Status</th>
+                                                <th style="padding: 8px 5px; text-align: center; vertical-align: middle;">
+                                                Created At</th>
+                                                <th style="padding: 8px 5px; text-align: center; vertical-align: middle;">
+                                                Updated At</th>
                                             <th style="padding: 8px 5px; text-align: center; vertical-align: middle;">
                                                 Action</th>
                                         </tr>
@@ -89,6 +93,10 @@
 @endif
 
                                                     </td>
+                                                    <td class="text-center" style="font-size:0.8rem ;">
+                                                    {{ $bank->created_at ? $bank->created_at : '--' }}</td>
+                                                    <td class="text-center" style="font-size:0.8rem ;">
+                                                    {{ $bank->updated_at ? $bank->updated_at : '--' }}</td>
                                                     <td class="text-center">
                                                         <div class="dropdown">
                                                             <button class="btn btn-light dropdown-toggle" type="button"
@@ -134,6 +142,8 @@
                                             @endforeach
                                         @else
                                             <tr>
+                                                <td class="text-center"></td>
+                                                <td class="text-center"></td>
                                                 <td class="text-center"></td>
                                                 <td class="text-center"></td>
                                                 <td class="text-center"></td>
@@ -209,9 +219,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 
 <script>
     $(document).ready(function() {
+        // Add custom date sorting function
+        $.fn.dataTable.ext.type.order['date-format-pre'] = function(d) {
+            if (!d) return 0;
+            return moment(d, 'YYYY-MM-DD HH:mm:ss').valueOf();
+        };
+
         // Create hidden DataTable buttons
         var table = $('#example').DataTable({
             dom: 'Brt<"bottom"ip>', // Buttons (hidden), table, info, pagination
@@ -238,8 +255,11 @@
             ordering: true,
             info: true,
             columnDefs: [
-                { targets: 7, orderable: false }
-            ]
+                { targets: 7, type: 'date-format' }, // Created At column
+                { targets: 8, type: 'date-format' }, // Updated At column
+                { targets: 9, orderable: false }  // Action column
+            ],
+            order: [[7, 'desc']] // Default sort by Created At in descending order
         });
         
         // Connect custom search box
