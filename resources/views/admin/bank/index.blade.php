@@ -232,6 +232,18 @@
     .dropdown .btn {
         padding: 0.25rem 0.5rem;
     }
+    /* Hide pagination when no results */
+    .dataTables_empty + .dataTables_paginate {
+        display: none !important;
+    }
+    /* Style for no data message */
+    .dataTables_empty {
+        padding: 20px !important;
+        font-size: 14px !important;
+        color: #6c757d !important;
+        background-color: #f8f9fa !important;
+        text-align: center !important;
+    }
 </style>
 
 <!-- JavaScript Libraries -->
@@ -306,7 +318,14 @@
                 }
             ],
             order: [[7, 'desc']], // Sort by Created At column in descending order
-            pageLength: 25 // Show 25 entries per page
+            pageLength: 25, // Show 25 entries per page
+            language: {
+                emptyTable: "No records available",
+                zeroRecords: "No matching records found",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                infoEmpty: "Showing 0 entries",
+                infoFiltered: "(filtered from _MAX_ total entries)"
+            }
         });
         
         // Connect custom search box
@@ -316,15 +335,26 @@
         
         // Connect custom buttons to DataTables buttons
         $('#copy-btn').on('click', function() {
-            table.button(0).trigger(); // Trigger first button (copy)
+            table.button(0).trigger();
         });
         
         $('#csv-btn').on('click', function() {
-            table.button(1).trigger(); // Trigger second button (csv)
+            table.button(1).trigger();
         });
         
         $('#print-btn').on('click', function() {
-            table.button(2).trigger(); // Trigger third button (print)
+            table.button(2).trigger();
+        });
+
+        // Hide pagination when no results
+        table.on('draw', function() {
+            if (table.page.info().recordsDisplay === 0) {
+                $('.dataTables_paginate').hide();
+                $('.dataTables_info').hide();
+            } else {
+                $('.dataTables_paginate').show();
+                $('.dataTables_info').show();
+            }
         });
     });
 </script>
