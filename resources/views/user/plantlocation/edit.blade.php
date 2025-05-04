@@ -509,5 +509,53 @@
             }
         });
     }
+
+    $(document).ready(function() {
+        // Disable update button initially
+        $('#submit').prop('disabled', true);
+        
+        // Store initial form values
+        var initialFormData = $('#addForm').serialize();
+        
+        // Function to check if form has changed
+        function checkFormChanged() {
+            var currentFormData = $('#addForm').serialize();
+            if (currentFormData !== initialFormData) {
+                $('#submit').prop('disabled', false);
+            } else {
+                $('#submit').prop('disabled', true);
+            }
+        }
+        
+        // Monitor all form input changes
+        $('#addForm input, #addForm textarea, #addForm select').on('change keyup', function() {
+            checkFormChanged();
+        });
+        
+        // Special handling for plant checkbox
+        $("#plant_check").on('change', function() {
+            checkFormChanged();
+            var plant = $('#plant_check').is(':checked');
+            if (plant) {
+                $('.plant_loc').closest('tr').show();
+            } else {
+                $('.plant_loc').closest('tr').hide();
+            }
+        });
+        
+        // Handle dynamic rows
+        $('#addmore').click(function() {
+            // Your existing addmore code here
+            // ... existing code ...
+            
+            // After adding new row, bind change events to new inputs
+            $('.plant_loc input, .plant_loc textarea, .plant_loc select').off('change keyup').on('change keyup', function() {
+                checkFormChanged();
+            });
+            
+            // New row means form has changed
+            $('#submit').prop('disabled', false);
+        });
+    });
 </script>
 @endpush
