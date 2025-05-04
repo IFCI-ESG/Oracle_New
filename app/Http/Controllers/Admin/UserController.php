@@ -484,7 +484,7 @@ class UserController extends Controller
             ->join('comp_type_master as ctm', 'ctm.id', 'u.comp_type_id')
             ->whereIn('bfd.bank_id', $bank_branch) // No borrower_type filter
             ->distinct() // Remove distinct on CLOB columns
-            ->get(['u.id', 'u.name','u.pan','u.status', 'u.email','u.created_by','u.unique_login_id','u.sector_id','u.sector_name', 'sm.name as sector', 'ctm.name as comp_type']); // Select only necessary columns
+            ->get(['u.id', 'u.name','u.pan','u.status', 'u.email','u.created_by','u.unique_login_id','u.sector_id','u.sector_name', 'sm.name as sector', 'ctm.name as comp_type', 'u.created_at', 'u.updated_at']); // Select only necessary columns
     }
 
     // If the user is a SubAdmin
@@ -495,7 +495,7 @@ class UserController extends Controller
             ->join('comp_type_master as ctm', 'ctm.id', 'u.comp_type_id')
             ->where('bfd.bank_id', $user->id) // No borrower_type filter
             ->distinct() // Remove distinct on CLOB columns
-            ->get(['u.id', 'u.name','u.pan', 'u.email','u.status','u.created_by','u.unique_login_id','u.sector_id','u.sector_name', 'sm.name as sector', 'ctm.name as comp_type']); // Select only necessary columns
+            ->get(['u.id', 'u.name','u.pan', 'u.email','u.status','u.created_by','u.unique_login_id','u.sector_id','u.sector_name', 'sm.name as sector', 'ctm.name as comp_type', 'u.created_at', 'u.updated_at']); // Select only necessary columns
     }
 
     // Fetch retail details (no borrower_type filter)
