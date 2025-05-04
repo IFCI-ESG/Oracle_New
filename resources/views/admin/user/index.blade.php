@@ -49,7 +49,11 @@
                             <th class="border textcolor" style="padding: 8px 5px; text-align: center; vertical-align: middle;">Sector</th>
                             <th class="border textcolor" style="padding: 8px 5px; text-align: center; vertical-align: middle;">PAN</th>
                             <th class="border textcolor" style="padding: 8px 5px; text-align: center; vertical-align: middle;">Unique Login ID</th>
+                            
+
                             <th class="border textcolor" style="padding: 8px 10px 8px 5px; text-align: center; vertical-align: middle; width: 60px;">Status</th>
+                            <th class="border textcolor" style="padding: 8px 5px; text-align: center; vertical-align: middle;">Created At</th>
+                            <th class="border textcolor" style="padding: 8px 5px; text-align: center; vertical-align: middle;">Updated At</th>
                             <th class="border textcolor" style="padding: 8px 15px 8px 5px; text-align: center; vertical-align: middle;width: 60px;">Action</th>
                         </tr>
                     </thead>
@@ -79,6 +83,8 @@
                                             <span class="text-warning"><b>Draft</b></span>
                                         @endif
                                     </td>
+                                    <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.8rem;">{{$user->created_at}}</td>
+                                    <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.8rem;">{{$user->updated_at}}</td>
                                     <td class="text-center shadow-none" style="font-size:0.8rem;">
                                         @if($user->created_by == Auth::user()->id)
                                             <a href="{{route('admin.user.edituser',['id' => encrypt($user->id)])}}" class="btn btn-primary activeeditbg activebg activetext p-2 Custom-btn-edit btn-sm">
