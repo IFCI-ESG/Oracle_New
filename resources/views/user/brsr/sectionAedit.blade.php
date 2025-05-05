@@ -93,6 +93,10 @@
                                                                 <td>
                                                                     <input type="text" style="text-align: left;width:500px;" name="emp[{{ $a }}][response]" class="form-control form-control-sm" value="{{ $user->email }}" readonly>
                                                                 </td>
+                                                            @elseif ($emp->id == 7)
+                                                                <td>
+                                                                    <input type="text" style="text-align: left;width:500px;" name="emp[{{ $a }}][response]" class="form-control form-control-sm" value="{{ $user->mobile }}" readonly>
+                                                                </td>
                                                             @elseif ($emp->id == 12)
                                                                 <td>
                                                                     <textarea style="text-align: left; width: 500px;height:100px;" name="emp[{{ $a }}][response]" class="form-control form-control-sm" required>{{ $social_value_for_current_question ? $social_value_for_current_question->response : '' }}</textarea>
@@ -361,9 +365,7 @@
                         <td class="text-center">{{ $x }}</td>
                         <td style="font-size: 1rem;">
                             {{$emp->question}}
-                           
                             <input type="hidden" value="{{ $brsr_value->where('ques_id',$emp->id)->first()->id }}" name="emp[{{ $a }}][row_id]">
-                           
                         </td>
 
                         <!-- Total (A) -->
@@ -735,12 +737,12 @@
                        </td>
 
                      <td class="text-center">
-                       <textarea style="text-align: left; width: 100px; overflow: hidden; resize: none;" class="form-control form-control-sm empss_{{$a}} t_emp auto-grow" 
+                       <textarea style="text-align: left; overflow: hidden; resize: none;" class="form-control form-control-sm empss_{{$a}} t_emp auto-grow" 
                         name="empss[{{ $a }}][grievance_redressal]" id="grievance_redressal_{{$a}}" oninput="autoResize(this)" required>{{ $compliace_value_for_current_question->grievance_redressal ?? 'NA' }}</textarea>
                      </td>
 
                      <td class="text-center">
-    <textarea style="text-align: left; width: 100px; overflow: hidden; resize: none;" 
+    <textarea style="text-align: left; overflow: hidden; resize: none;" 
         class="form-control form-control-sm empss_{{$a}} t_emp auto-grow" 
         name="empss[{{ $a }}][current_fy_no_of_compliants]" 
         id="current_fy_no_of_compliants_{{$a}}" 
@@ -748,7 +750,7 @@
         required>{{ $compliace_value_for_current_question->current_fy_no_of_compliants ?? 'NA' }}</textarea>
 </td>
 <td class="text-center">
-    <textarea style="text-align: left; width: 100px; overflow: hidden; resize: none;" 
+    <textarea style="text-align: left; overflow: hidden; resize: none;" 
         class="form-control form-control-sm empss_{{$a}} t_emp auto-grow" 
         name="empss[{{ $a }}][current_no_of_pending_compliants]" 
         id="current_no_of_pending_compliants_{{$a}}" 
@@ -756,7 +758,7 @@
         required>{{ $compliace_value_for_current_question->current_no_of_pending_compliants ?? 'NA' }}</textarea>
 </td>
 <td class="text-center">
-    <textarea style="text-align: left; width: 100px; overflow: hidden; resize: none;" 
+    <textarea style="text-align: left;  overflow: hidden; resize: none;" 
         class="form-control form-control-sm empss_{{$a}} t_emp auto-grow" 
         name="empss[{{ $a }}][current_fy_remarks]" 
         id="current_fy_remarks_{{$a}}" 
@@ -765,7 +767,7 @@
 </td>
 
 <td class="text-center">
-    <textarea style="text-align: left; width: 100px; overflow: hidden; resize: none;" 
+    <textarea style="text-align: left;overflow: hidden; resize: none;" 
         class="form-control form-control-sm empss_{{$a}} m_emp auto-grow" 
         name="empss[{{ $a }}][previous_fy_no_of_compliants]" 
         id="previous_fy_no_of_compliants_{{$a}}" 
@@ -773,7 +775,7 @@
         required>{{ $compliace_value_for_current_question->previous_fy_no_of_compliants ?? 'NA' }}</textarea>
 </td>
 <td class="text-center">
-    <textarea style="text-align: left; width: 100px; overflow: hidden; resize: none;" 
+    <textarea style="text-align: left; overflow: hidden; resize: none;" 
         class="form-control form-control-sm empss_{{$a}} m_emp auto-grow" 
         name="empss[{{ $a }}][previous_no_of_pending_compliants]" 
         id="previous_no_of_pending_compliants_{{$a}}" 
@@ -781,7 +783,7 @@
         required>{{ $compliace_value_for_current_question->previous_no_of_pending_compliants ?? 'NA' }}</textarea>
 </td>
 <td class="text-center">
-    <textarea style="text-align: left; width: 100px; overflow: hidden; resize: none;" 
+    <textarea style="text-align: left; overflow: hidden; resize: none;" 
         class="form-control form-control-sm empss_{{$a}} m_emp auto-grow" 
         name="empss[{{ $a }}][previous_fy_remarks]" 
         id="previous_fy_remarks_{{$a}}" 

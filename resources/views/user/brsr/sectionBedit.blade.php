@@ -8,50 +8,56 @@
     <!-- Start Content-->
     <div class="container-fluid">
         @if ($errors->any())
-            @foreach ($errors->all() as $error)
-                <div class="alert alert-danger alert-dismissible bg-danger text-white border-0 fade show" role="alert">
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-                    {{ $error }}
-                </div>
-            @endforeach
-        @endif
+        @foreach ($errors->all() as $error)
+        <div class="alert alert-danger alert-dismissible bg-danger text-white border-0 fade show" role="alert">
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                           {{ $error }}
+        </div>
+        @endforeach
 
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible bg-danger text-white border-0 fade show" role="alert">
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-                {{ session('success') }}
-            </div>
-        @elseif(session('error'))
-            <div class="alert alert-danger alert-dismissible bg-danger text-white border-0 fade show" role="alert">
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-                {{ session('error') }}
-            </div>
-        @endif
+    @endif
 
+  @if(session('success'))
+
+<div class="alert alert-success alert-dismissible bg-danger text-white border-0 fade show" role="alert">
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+       {{ session('success') }}
+    </div>
+    @elseif(session('error'))
+        <div class="alert alert-danger alert-dismissible bg-danger text-white border-0 fade show" role="alert">
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+           {{ session('error') }}
+        </div>
+    @endif
         <div class="row justify-content-center">
             <div class="col-md-12">
-                <form action="{{ route('user.brsr.sectionbupdate') }}" id="social_update" role="form" method="post"
-                      class='form-horizontal prevent_multiple_submit' accept-charset="utf-8">
+                <form action="{{ route('user.brsr.sectionbupdate') }}" id="social_store" role="form" method="post"
+                    class='form-horizontal prevent_multiple_submit'
+                    accept-charset="utf-8">
                     @csrf
+                     
+
                     <div class="card card-success card-outline card-tabs shadow-lg">
                         <div class="card-header p-0 pt-3 border-bottom-0">
                             <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" id="social-tab" data-toggle="pill" href="#social" role="tab" aria-controls="social" aria-selected="true"><b>BRSR Section B (Management and Process Disclosures) Data For FY-{{$fys->fy}}</b></a>
+                                    <a class="nav-link active" id="social-tab" data-toggle="pill" href="#social"
+                                        role="tab" aria-controls="social" aria-selected="true"><b>BRSR Section B (Management and Process Disclosures) Data For FY-{{$fys->fy}}</b></a>
                                 </li>
                             </ul>
                         </div>
                         <div class="card-body">
                             <div class="tab-content" id="custom-tabs-three-tabContent">
                                 <div class="tab-pane fade show active" id="social" role="tabpanel" aria-labelledby="social-tab">
- 
-    <!-- Disclosure Questions Start -->
+
+                               
+                                <!-- Disclosure Questions Start -->
     <div class="card card-success card-outline">
                 <div class="card-header">
                  <b><u>Policy and management processes</u></b><br /><br />
                 </div>
         <div class="card-body p-3">
-       <div style="max-height: 150vh; overflow: auto;">
+       <div style="overflow: auto;">
          <table class="table table-bordered table-hover table-sm table-striped" id="employee_data">
             <thead>
                 <tr class="text-center table-success">
@@ -92,47 +98,47 @@
                       
                      
                        <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp[{{ $a }}][policy_p1]" id="policy_p1_{{$a}}" oninput="autoResize(this)" >{{ $operation->policy_p1 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp[{{ $a }}][policy_p2]" id="policy_p2_{{$a}}" oninput="autoResize(this)" >{{ $operation->policy_p2 }}</textarea>
                         </td>
                         
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left;overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp[{{ $a }}][policy_p3]" id="policy_p3_{{$a}}" oninput="autoResize(this)" >{{ $operation->policy_p3 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp[{{ $a }}][policy_p4]" id="policy_p4_{{$a}}" oninput="autoResize(this)" >{{ $operation->policy_p4 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left;overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp[{{ $a }}][policy_p5]" id="policy_p5_{{$a}}" oninput="autoResize(this)" >{{ $operation->policy_p5 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left;  overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp[{{ $a }}][policy_p6]" id="policy_p6_{{$a}}" oninput="autoResize(this)" >{{ $operation->policy_p6 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp[{{ $a }}][policy_p7]" id="policy_p7_{{$a}}" oninput="autoResize(this)" >{{ $operation->policy_p7 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp[{{ $a }}][policy_p8]" id="policy_p8_{{$a}}" oninput="autoResize(this)" > {{ $operation->policy_p8 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left;  overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp[{{ $a }}][policy_p9]" id="policy_p9_{{$a}}" oninput="autoResize(this)" >{{ $operation->policy_p9 }}</textarea>
                         </td>
  
@@ -154,8 +160,9 @@
 </div>
 <!-- Disclosure Question End -->
 
+
  <!-- Governance Question Start -->
-<div class="card card-success card-outline mt-4">
+ <div class="card card-success card-outline mt-4">
     @php
       $rowCount = 1;
     @endphp
@@ -195,8 +202,8 @@ yes, provide details.</b>
 <!-- Governance Question End -->
 
 
- <!-- Review of NGRBCs Start -->
- <div class="card card-success card-outline">
+<!-- Review of NGRBCs Start -->
+<div class="card card-success card-outline">
     <div class="card-header">
         <b><u>10. Details of Review of NGRBCs by the Company:</u></b><br /><br />
     </div>
@@ -253,26 +260,26 @@ yes, provide details.</b>
                                 </td>
 
                                 {{-- Review Fields P1 to P9 --}}
-                                <td><textarea name="emps[{{ $a }}][review_p1]" id="review_p1_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left; width: 45px; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->review_p1 }}</textarea></td>
-                                <td><textarea name="emps[{{ $a }}][review_p2]" id="review_p2_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left; width: 45px; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->review_p2 }}</textarea></td>
-                                <td><textarea name="emps[{{ $a }}][review_p3]" id="review_p3_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left; width: 45px; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->review_p3 }}</textarea></td>
-                                <td><textarea name="emps[{{ $a }}][review_p4]" id="review_p4_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left; width: 45px; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->review_p4 }}</textarea></td>
-                                <td><textarea name="emps[{{ $a }}][review_p5]" id="review_p5_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left; width: 45px; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->review_p5 }}</textarea></td>
-                                <td><textarea name="emps[{{ $a }}][review_p6]" id="review_p6_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left; width: 45px; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->review_p6 }}</textarea></td>
-                                <td><textarea name="emps[{{ $a }}][review_p7]" id="review_p7_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left; width: 45px; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->review_p7 }}</textarea></td>
-                                <td><textarea name="emps[{{ $a }}][review_p8]" id="review_p8_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left; width: 45px; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->review_p8 }}</textarea></td>
-                                <td><textarea name="emps[{{ $a }}][review_p9]" id="review_p9_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left; width: 45px; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->review_p9 }}</textarea></td>
+                                <td><textarea name="emps[{{ $a }}][review_p1]" id="review_p1_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left;  overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->review_p1 }}</textarea></td>
+                                <td><textarea name="emps[{{ $a }}][review_p2]" id="review_p2_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->review_p2 }}</textarea></td>
+                                <td><textarea name="emps[{{ $a }}][review_p3]" id="review_p3_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left;  overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->review_p3 }}</textarea></td>
+                                <td><textarea name="emps[{{ $a }}][review_p4]" id="review_p4_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->review_p4 }}</textarea></td>
+                                <td><textarea name="emps[{{ $a }}][review_p5]" id="review_p5_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->review_p5 }}</textarea></td>
+                                <td><textarea name="emps[{{ $a }}][review_p6]" id="review_p6_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left;  overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->review_p6 }}</textarea></td>
+                                <td><textarea name="emps[{{ $a }}][review_p7]" id="review_p7_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->review_p7 }}</textarea></td>
+                                <td><textarea name="emps[{{ $a }}][review_p8]" id="review_p8_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left;  overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->review_p8 }}</textarea></td>
+                                <td><textarea name="emps[{{ $a }}][review_p9]" id="review_p9_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->review_p9 }}</textarea></td>
 
                                 {{-- Frequency Fields P1 to P9 --}}
-                                <td><textarea name="emps[{{ $a }}][frequency_p1]" id="frequency_p1_{{$a}}" class="form-control form-control-sm auto-grow"  style="text-align: left; width: 45px; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->frequency_p1 }}</textarea></td>
-                                <td><textarea name="emps[{{ $a }}][frequency_p2]" id="frequency_p2_{{$a}}" class="form-control form-control-sm auto-grow"  style="text-align: left; width: 45px; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->frequency_p2 }}</textarea></td>
-                                <td><textarea name="emps[{{ $a }}][frequency_p3]" id="frequency_p3_{{$a}}" class="form-control form-control-sm auto-grow"  style="text-align: left; width: 45px; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->frequency_p3 }}</textarea></td>
-                                <td><textarea name="emps[{{ $a }}][frequency_p4]" id="frequency_p4_{{$a}}" class="form-control form-control-sm auto-grow"  style="text-align: left; width: 45px; overflow:hidden; resize: none;" oninput="autoResize(this)">{{$ngrbc->frequency_p4 }}</textarea></td>
-                                <td><textarea name="emps[{{ $a }}][frequency_p5]" id="frequency_p5_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left; width: 45px; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->frequency_p5  }}</textarea></td>
-                                <td><textarea name="emps[{{ $a }}][frequency_p6]" id="frequency_p6_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left; width: 45px; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->frequency_p6 }}</textarea></td>
-                                <td><textarea name="emps[{{ $a }}][frequency_p7]" id="frequency_p7_{{$a}}" class="form-control form-control-sm auto-grow"  style="text-align: left; width: 45px; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->frequency_p7 }}</textarea></td>
-                                <td><textarea name="emps[{{ $a }}][frequency_p8]" id="frequency_p8_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left; width: 45px; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->frequency_p8 }}</textarea></td>
-                                <td><textarea name="emps[{{ $a }}][frequency_p9]" id="frequency_p9_{{$a}}" class="form-control form-control-sm auto-grow"  style="text-align: left; width: 45px; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->frequency_p9 }}</textarea></td>
+                                <td><textarea name="emps[{{ $a }}][frequency_p1]" id="frequency_p1_{{$a}}" class="form-control form-control-sm auto-grow"  style="text-align: left;  overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->frequency_p1 }}</textarea></td>
+                                <td><textarea name="emps[{{ $a }}][frequency_p2]" id="frequency_p2_{{$a}}" class="form-control form-control-sm auto-grow"  style="text-align: left;  overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->frequency_p2 }}</textarea></td>
+                                <td><textarea name="emps[{{ $a }}][frequency_p3]" id="frequency_p3_{{$a}}" class="form-control form-control-sm auto-grow"  style="text-align: left;  overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->frequency_p3 }}</textarea></td>
+                                <td><textarea name="emps[{{ $a }}][frequency_p4]" id="frequency_p4_{{$a}}" class="form-control form-control-sm auto-grow"  style="text-align: left;  overflow:hidden; resize: none;" oninput="autoResize(this)">{{$ngrbc->frequency_p4 }}</textarea></td>
+                                <td><textarea name="emps[{{ $a }}][frequency_p5]" id="frequency_p5_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->frequency_p5  }}</textarea></td>
+                                <td><textarea name="emps[{{ $a }}][frequency_p6]" id="frequency_p6_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left;  overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->frequency_p6 }}</textarea></td>
+                                <td><textarea name="emps[{{ $a }}][frequency_p7]" id="frequency_p7_{{$a}}" class="form-control form-control-sm auto-grow"  style="text-align: left; overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->frequency_p7 }}</textarea></td>
+                                <td><textarea name="emps[{{ $a }}][frequency_p8]" id="frequency_p8_{{$a}}" class="form-control form-control-sm auto-grow" style="text-align: left;  overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->frequency_p8 }}</textarea></td>
+                                <td><textarea name="emps[{{ $a }}][frequency_p9]" id="frequency_p9_{{$a}}" class="form-control form-control-sm auto-grow"  style="text-align: left;  overflow:hidden; resize: none;" oninput="autoResize(this)">{{ $ngrbc->frequency_p9 }}</textarea></td>
                                 @php 
                                 $a++; 
                                 @endphp
@@ -289,8 +296,9 @@ yes, provide details.</b>
 </div>
 <!-- Review of NGRBCs End -->
 
+
 <!-- Entity Assessment Questions Start -->
- <div class="card card-success card-outline">
+<div class="card card-success card-outline">
                 <div class="card-header">
  
                 </div>
@@ -335,47 +343,47 @@ yes, provide details.</b>
                        </td>
 
                        <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left;  overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp1[{{ $a }}][policy_p1]" id="policy_p1_{{$a}}" oninput="autoResize(this)" >{{ $entity->policy_p1 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left;overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp1[{{ $a }}][policy_p2]" id="policy_p2_{{$a}}" oninput="autoResize(this)" >{{ $entity->policy_p2 }}</textarea>
                         </td>
                         
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp1[{{ $a }}][policy_p3]" id="policy_p3_{{$a}}" oninput="autoResize(this)" >{{ $entity->policy_p3 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left;overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp1[{{ $a }}][policy_p4]" id="policy_p4_{{$a}}" oninput="autoResize(this)" >{{ $entity->policy_p4 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp1[{{ $a }}][policy_p5]" id="policy_p5_{{$a}}" oninput="autoResize(this)" >{{ $entity->policy_p5 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp1[{{ $a }}][policy_p6]" id="policy_p6_{{$a}}" oninput="autoResize(this)" >{{ $entity->policy_p6 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left;  overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp1[{{ $a }}][policy_p7]" id="policy_p7_{{$a}}" oninput="autoResize(this)" >{{ $entity->policy_p7 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left;  overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp1[{{ $a }}][policy_p8]" id="policy_p8_{{$a}}" oninput="autoResize(this)" >{{ $entity->policy_p8 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left;  overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp1[{{ $a }}][policy_p9]" id="policy_p9_{{$a}}" oninput="autoResize(this)" >{{ $entity->policy_p9 }}</textarea>
                         </td>
 
@@ -397,15 +405,14 @@ yes, provide details.</b>
 </div>
 <!-- Entity Assessment Question End -->
 
-
- <!-- No State Questions Start -->
- <div class="card card-success card-outline">
+<!-- No State Questions Start -->
+<div class="card card-success card-outline">
                 <div class="card-header">
                  <b><u>12. If answer to question (1) above is “No” i.e. not all Principles are covered by a policy,
                  reasons to be stated:</u></b><br /><br />
                 </div>
         <div class="card-body p-3">
-       <div style="max-height: 150vh; overflow: auto;">
+       <div style="overflow: auto;">
          <table class="table table-bordered table-hover table-sm table-striped" id="employee_data">
             <thead>
                 <tr class="text-center table-success">
@@ -445,47 +452,47 @@ yes, provide details.</b>
                        </td>
 
                        <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left;  overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp2[{{ $a }}][policy_p1]" id="policy_p1_{{$a}}" oninput="autoResize(this)" >{{ $state->policy_p1 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left;  overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp2[{{ $a }}][policy_p2]" id="policy_p2_{{$a}}" oninput="autoResize(this)" >{{ $state->policy_p2 }}</textarea>
                         </td>
                         
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left; verflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp2[{{ $a }}][policy_p3]" id="policy_p3_{{$a}}" oninput="autoResize(this)" >{{ $state->policy_p3 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp2[{{ $a }}][policy_p4]" id="policy_p4_{{$a}}" oninput="autoResize(this)" >{{ $state->policy_p4 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left;  overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp2[{{ $a }}][policy_p5]" id="policy_p5_{{$a}}" oninput="autoResize(this)" >{{ $state->policy_p5 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left;  overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp2[{{ $a }}][policy_p6]" id="policy_p6_{{$a}}" oninput="autoResize(this)" >{{ $state->policy_p6 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left;  overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp2[{{ $a }}][policy_p7]" id="policy_p7_{{$a}}" oninput="autoResize(this)" >{{ $state->policy_p7 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp2[{{ $a }}][policy_p8]" id="policy_p8_{{$a}}" oninput="autoResize(this)" >{{ $state->policy_p8 }}</textarea>
                         </td>
 
                         <td class="text-center">
-                        <textarea style="text-align: left; width: 69px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left;  overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp2[{{ $a }}][policy_p9]" id="policy_p9_{{$a}}" oninput="autoResize(this)" >{{ $state->policy_p9 }}</textarea>
                         </td>
 
@@ -507,47 +514,36 @@ yes, provide details.</b>
 </div>
 <!-- No State Question End -->
 
-
-
- 
-
- 
-
- 
-
- 
- 
-
- 
-
- 
-
-  
-                        </div>
+                                   
+                         
+                         
+                         
+                            </div>
+                             </div>
                             </div>
                         </div>
+
 
                         <div class="row pb-2 mt-2">
                             <div class="col-md-2 ml-4">
-                                <a href="{{ route('user.brsr.index') }}" class="btn btn-warning btn-sm float-left">
-                                    <i class="fas fa-arrow-left"></i> Back
-                                </a>
+                                <a href="{{ route('user.brsr.index') }}"
+                                class="btn btn-warning btn-sm float-left"> <i
+                                    class="fas fa-arrow-left"></i> Back </a>
                             </div>
+
                             <div class="col-md-2 offset-md-3">
-                            <div style="display: flex; gap: 10px;">
-                                <button type="submit" id="submit" class="btn btn-primary btn-sm form-control form-control-sm">
-                                    <i class="fas fa-save"></i> Update
-                                </button>
-                                </div>
+                             <button type="submit" id="submit" class="btn btn-primary btn-sm form-control form-control-sm"><i
+                                            class="fas fa-save"></i>
+                                        Submit</button>
+                              
                             </div>
                         </div>
+                        <!-- /.card -->
                     </div>
                 </form>
             </div>
         </div>
-    </div>
-@endsection
-
+     
 @push('scripts')
     {!! JsValidator::formRequest('App\Http\Requests\User\SocialRequest', '#social_store') !!}
     @include('partials.js.prevent_multiple_submit')
@@ -564,3 +560,4 @@ yes, provide details.</b>
 
 
 @endpush
+@endsection
