@@ -27,6 +27,8 @@ use App\Models\BrsrSectionP2OthersQuestionValue;
 use App\Models\BrsrSectionP4QuestionMaster;
 use App\Models\BrsrSectionP4QuestionValue;
 use App\Models\BrsrSectionP4AdditionalQuestionValue;
+use App\Models\BrsrSectionP5QuestionMaster;
+use App\Models\BrsrSectionP5QuestionValue;
 use App\Models\BrsrSectionP7QuestionValue;
 use App\Models\BrsrSectionP8QuestionMaster;
 use App\Models\BrsrSectionP8QuestionValue;
@@ -56,11 +58,13 @@ class BrsrController extends Controller
         $brsr_sectionp1 =  BrsrSectionCP1QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp2 =  BrsrSectionP2QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp4 =  BrsrSectionP4QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
+        $brsr_sectionp5 =  BrsrSectionP5QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp7 =  BrsrSectionP7QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp8 =  BrsrSectionP8QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp9 =  BrsrSectionP9QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
-        $fys = DB::table('fy_masters')->orderBy('id', 'desc')->limit(1)->get();
-        return view('user.brsr.index', compact('brsr_sectionp1','brsr_sectionb','fys','brsr_value','brsr_sectionp2','brsr_sectionp4','brsr_sectionp7','brsr_sectionp8','brsr_sectionp9'));
+        $fys = DB::table('fy_masters')->where('status', 1)->orderBy('id', 'desc')->limit(1)->get();
+        
+        return view('user.brsr.index', compact('brsr_sectionp1','brsr_sectionb','fys','brsr_value','brsr_sectionp2','brsr_sectionp4','brsr_sectionp5','brsr_sectionp7','brsr_sectionp8','brsr_sectionp9'));
     }
 
     public function create($fy_id) {
@@ -96,7 +100,7 @@ class BrsrController extends Controller
       
         $previous_year = substr($fys->fy, 0, 4);
         $prior_previous_year = substr($previous_fy, 0, 4);
-       
+        
         $postData = [
                 'cin' => Auth::user()->cin_llpin,
                 'year' => $previous_year,
@@ -1071,6 +1075,246 @@ $previous_capex = (isset($Results['X5']) && is_numeric($Results['X5']))
 
     }
 
+    public function sectionP5create($fy_id) {
+ 
+        $fy_id = decrypt($fy_id);
+        
+        $user = Auth::user();
+
+        $social_mast = BrsrMast::where('com_id', $user->id)->where('fy_id',$fy_id)->first();
+        DB::transaction(function () use ($fy_id,$user,$social_mast)
+        {
+            if(!$social_mast)
+            {
+                $social = new BrsrMast;
+                    $social->com_id = $user->id;
+                    $social->status = 'D';
+                    $social->fy_id = $fy_id;
+                $social->save();
+            }
+        });
+      
+        $employees_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'emp_worker')->orderby('id')->get();
+        $wages_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'emp_wages')->orderby('id')->get();
+        $salary_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'emp_salary')->orderby('id')->get();
+        $grosswages_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'gross_wage')->orderby('id')->get();
+        $focal_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'focal_point')->orderby('id')->get();
+        $internal_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'internal')->orderby('id')->get();
+        $compliants_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'compliants')->orderby('id')->get();
+        $ppr_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'ppr')->orderby('id')->get();
+        $case_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'case')->orderby('id')->get();
+        $case_ques1 = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'case1')->orderby('id')->get();
+        $assessment_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'emp_assessment')->orderby('id')->get();
+        $risk_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'risk')->orderby('id')->get();
+        $business_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'business_process')->orderby('id')->get();
+        $scope_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'scope')->orderby('id')->get();
+        $entity_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'entity')->orderby('id')->get();
+        $valuechain_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'value_chain')->orderby('id')->get();
+        $action_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'actions')->orderby('id')->get();
+       
+        $fys = DB::table('fy_masters')->where('id',$fy_id)->first();
+        $current_fy = $fys->fy;
+        $startYear = (int)substr($current_fy, 0, 4);
+        $previous_fy = ($startYear - 1) . '-' . substr($startYear, 2, 2);
+        $previous_year = substr($fys->fy, 0, 4);
+       
+
+        // API Integration for P5
+         
+         $token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4OTEyODk1LCJpYXQiOjE3MzczNzY4OTUsImp0aSI6ImFiNjgxMmQxOWFlNTRjMDFhYWQyN2NjODY5ODI2NmUyIiwidXNlcl9pZCI6NH0.fbeXrf5QUjjY4sAUtjE4RjElsaeUWdm6HQ1Fl56Zv6w';
+         $cin = Auth::user()->cin_llpin;
+         $apiUrl = 'http://13.200.249.135:7000/api/get-all-data-by-cin/';
+         $brsrMap1 = [
+             'X10' => 'E1','X13' => 'E1','X16' => 'E1','X28' => 'E1','X31' => 'E1','X34' => 'E1',
+             'X11' => 'E1','X14' => 'E1','X17' => 'E1','X29' => 'E1','X32' => 'E1','X35' => 'E1',
+             'X12' => 'E1','X15' => 'E1','X18' => 'E1','X30' => 'E1','X33' => 'E1','X36' => 'E1',
+         ];
+
+         $brsrMap2 = [
+            'X21' => 'E2','X22' => 'E2','X23' => 'E2','X61' => 'E2','X62' => 'E2','X63' => 'E2','X101' => 'E2','X102' => 'E2','X103' => 'E2','X141' => 'E2','X142' => 'E2','X143' => 'E2',
+            'X25' => 'E2','X29' => 'E2','X33' => 'E2','X65' => 'E2','X69' => 'E2','X73' => 'E2','X105' => 'E2','X109' => 'E2','X113' => 'E2','X145' => 'E2','X149' => 'E2','X153' => 'E2',
+            'X26' => 'E2','X30' => 'E2','X34' => 'E2','X66' => 'E2','X70' => 'E2','X74' => 'E2','X106' => 'E2','X110' => 'E2','X114' => 'E2','X146' => 'E2','X150' => 'E2','X154' => 'E2',
+            'X27' => 'E2','X31' => 'E2','X35' => 'E2','X67' => 'E2','X71' => 'E2','X75' => 'E2','X107' => 'E2','X111' => 'E2','X115' => 'E2','X147' => 'E2','X151' => 'E2','X155' => 'E2',
+            'X28' => 'E2','X32' => 'E2','X36' => 'E2','X68' => 'E2','X72' => 'E2','X76' => 'E2','X108' => 'E2','X112' => 'E2','X116' => 'E2','X148' => 'E2','X152' => 'E2','X156' => 'E2',
+         ];
+
+         $brsrMap3 = [
+            'X13' => 'E6','X15' => 'E6','X17' => 'E6','X19' => 'E6','X21' => 'E6','X23' => 'E6',
+            'X14' => 'E6','X16' => 'E6','X18' => 'E6','X20' => 'E6','X22' => 'E6','X24' => 'E6',
+            'X31' => 'E6','X32' => 'E6','X33' => 'E6','X34' => 'E6','X35' => 'E6','X36' => 'E6',
+            'B6' => 'E3', 'X2' => 'E7','X6' => 'E7','X8' => 'E7', 
+        ];
+
+         $Results1 = [];
+         $Results2 = [];
+         $Results3 = [];
+         
+        foreach ($brsrMap1 as $id => $question) {
+            $postData = [
+                'cin' => $cin,
+                'year' => $previous_year,
+                'Section' => 'P5',
+                'Question' => $question,
+                'BRSR_ID' => $id,
+            ];
+        
+            $response = Http::withToken($token)->post($apiUrl, $postData);
+            $values = '0';
+        
+            if ($response->successful()) {
+                $data = data_get($response->json(), 'data.L1');
+                if (is_array($data)) {
+                    $values = implode(', ', $data);
+                } elseif (!empty($data)) {
+                    $values = $data;
+                }
+            }
+        
+            $Results1[$id] = $values;
+        }
+
+        foreach ($brsrMap2 as $id => $question) {
+            $postData = [
+                'cin' => $cin,
+                'year' => $previous_year,
+                'Section' => 'P5',
+                'Question' => $question,
+                'BRSR_ID' => $id,
+            ];
+        
+            $response = Http::withToken($token)->post($apiUrl, $postData);
+            $values = '0';
+        
+            if ($response->successful()) {
+                $data = data_get($response->json(), 'data.L1');
+                if (is_array($data)) {
+                    $values = implode(', ', $data);
+                } elseif (!empty($data)) {
+                    $values = $data;
+                }
+            }
+        
+            $Results2[$id] = $values;
+        }
+
+        foreach ($brsrMap3 as $id => $question) {
+            $postData = [
+                'cin' => $cin,
+                'year' => $previous_year,
+                'Section' => 'P5',
+                'Question' => $question,
+                'BRSR_ID' => $id,
+            ];
+        
+            $response = Http::withToken($token)->post($apiUrl, $postData);
+            $values = 'NA';
+        
+            if ($response->successful()) {
+                $data = data_get($response->json(), 'data.L1');
+                if (is_array($data)) {
+                    $values = implode(', ', $data);
+                } elseif (!empty($data)) {
+                    $values = $data;
+                }
+            }
+        
+            $Results3[$id] = $values;
+        }
+
+        $previous_permanent_employees = $Results1['X10'] ;$previous_other_than_permanent = $Results1['X13'];$previous_total_employees = $Results1['X16'];$previous_permanent_workers = $Results1['X28'];
+        $previous_other_than_workers = $Results1['X31'];$previous_total_workers = $Results1['X34'];
+
+        $previous_permanent_employees1 = $Results1['X11'];$previous_other_than_permanent1 = $Results1['X14'];$previous_total_employees1 = $Results1['X17'];$previous_permanent_workers1 = $Results1['X29'];
+        $previous_other_than_workers1 = $Results1['X32'];$previous_total_workers1 = $Results1['X35'];
+
+        $previous_permanent_employees2 = $Results1['X12'] == 1 ? '100%' : $Results1['X12'] . '%';$previous_other_than_permanent2 = $Results1['X15'] == 1 ? '100%' : $Results1['X15'] . '%';
+        $previous_total_employees2 = $Results1['X18'] == 1 ? '100%' : $Results1['X18'] . '%';$previous_permanent_workers2 = $Results1['X30'] == 1 ? '100%' : $Results1['X30'] . '%';
+        $previous_other_than_workers2 = $Results1['X33'] == 1 ? '100%' : $Results1['X33'] . '%';$previous_total_workers2 = $Results1['X36'] == 1 ? '100%' : $Results1['X36'] . '%';
+
+        $previous_emp_wage_tot1 = $Results2['X21'];$previous_emp_wage_tot2 = $Results2['X22'];$previous_emp_wage_tot3 = $Results2['X23'];$previous_emp_wage_tot4 = $Results2['X61'];
+        $previous_emp_wage_tot5 = $Results2['X62'];$previous_emp_wage_tot6 = $Results2['X63'];$previous_emp_wage_tot7 = $Results2['X101'];$previous_emp_wage_tot8 = $Results2['X102'];
+        $previous_emp_wage_tot9 = $Results2['X103'];$previous_emp_wage_tot10 = $Results2['X141']; $previous_emp_wage_tot11 = $Results2['X142'];$previous_emp_wage_tot12 = $Results2['X143'];
+        
+        $previous_emp_wage_eq1 = $Results2['X25'];$previous_emp_wage_eq2 = $Results2['X29'];$previous_emp_wage_eq3 = $Results2['X33'];$previous_emp_wage_eq4 = $Results2['X65'];
+        $previous_emp_wage_eq5 = $Results2['X69'];$previous_emp_wage_eq6 = $Results2['X73'];$previous_emp_wage_eq7 = $Results2['X105'];$previous_emp_wage_eq8 = $Results2['X109'];
+        $previous_emp_wage_eq9 = $Results2['X113'];$previous_emp_wage_eq10 = $Results2['X145']; $previous_emp_wage_eq11 = $Results2['X149'];$previous_emp_wage_eq12 = $Results2['X153'];
+         
+        $previous_emp_wage_eqp1 = $Results2['X26'] == 1 ? '100%' : $Results2['X26'] . '%';$previous_emp_wage_eqp2 = $Results2['X30'] == 1 ? '100%' : $Results2['X30'] . '%';$previous_emp_wage_eqp3 = $Results2['X34']== 1 ? '100%' : $Results2['X34'] . '%';$previous_emp_wage_eqp4 = $Results2['X66'] == 1 ? '100%' : $Results2['X66'] . '%';
+        $previous_emp_wage_eqp5 = $Results2['X70'] == 1 ? '100%' : $Results2['X70'] . '%';$previous_emp_wage_eqp6 = $Results2['X74'] == 1 ? '100%' : $Results2['X74'] . '%';$previous_emp_wage_eqp7 = $Results2['X106']== 1 ? '100%' : $Results2['X106'] . '%';$previous_emp_wage_eqp8 = $Results2['X110'] == 1 ? '100%' : $Results2['X110'] . '%';
+        $previous_emp_wage_eqp9 = $Results2['X114']== 1 ? '100%' : $Results2['X114'] . '%';$previous_emp_wage_eqp10 = $Results2['X146']== 1 ? '100%' : $Results2['X146'] . '%'; $previous_emp_wage_eqp11 = $Results2['X150'] == 1 ? '100%' : $Results2['X150'] . '%';$previous_emp_wage_eqp12 = $Results2['X154']== 1 ? '100%' : $Results2['X154'] . '%';
+
+        $previous_emp_wage_min1 = $Results2['X27'];$previous_emp_wage_min2 = $Results2['X31'];$previous_emp_wage_min3 = $Results2['X35'];$previous_emp_wage_min4 = $Results2['X67'];
+        $previous_emp_wage_min5 = $Results2['X71'];$previous_emp_wage_min6 = $Results2['X75'];$previous_emp_wage_min7 = $Results2['X107'];$previous_emp_wage_min8 = $Results2['X111'];
+        $previous_emp_wage_min9 = $Results2['X115'];$previous_emp_wage_min10 = $Results2['X147']; $previous_emp_wage_min11 = $Results2['X151'];$previous_emp_wage_min12 = $Results2['X155'];
+         
+        $previous_emp_wage_minp1 = $Results2['X28']== 1 ? '100%' : $Results2['X28'] . '%';$previous_emp_wage_minp2 = $Results2['X32']== 1 ? '100%' : $Results2['X32'] . '%';$previous_emp_wage_minp3 = $Results2['X36']== 1 ? '100%' : $Results2['X36'] . '%';$previous_emp_wage_minp4 = $Results2['X68']== 1 ? '100%' : $Results2['X68'] . '%';
+        $previous_emp_wage_minp5 = $Results2['X72']== 1 ? '100%' : $Results2['X72'] . '%';$previous_emp_wage_minp6 = $Results2['X76']== 1 ? '100%' : $Results2['X76'] . '%';$previous_emp_wage_minp7 = $Results2['X108']== 1 ? '100%' : $Results2['X108'] . '%';$previous_emp_wage_minp8 = $Results2['X112']== 1 ? '100%' : $Results2['X112'] . '%';
+        $previous_emp_wage_minp9 = $Results2['X116']== 1 ? '100%' : $Results2['X116'] . '%';$previous_emp_wage_minp10 = $Results2['X148']== 1 ? '100%' : $Results2['X148'] . '%'; $previous_emp_wage_minp11 = $Results2['X152']== 1 ? '100%' : $Results2['X152'] . '%';$previous_emp_wage_minp12 = $Results2['X156']== 1 ? '100%' : $Results2['X156'] . '%';
+        
+        $previous_filed1 = $Results3['X13'];$previous_filed2 = $Results3['X15'];$previous_filed3 = $Results3['X17'];$previous_filed4 = $Results3['X19'];
+        $previous_filed5 = $Results3['X21'];$previous_filed6 = $Results3['X23'];
+
+        $previous_pending1 = $Results3['X14'];$previous_pending2 = $Results3['X16'];$previous_pending3 = $Results3['X18'];$previous_pending4 = $Results3['X20'];
+        $previous_pending5 = $Results3['X22'];$previous_pending6 = $Results3['X24'];
+        
+        $previous_remarks1 = $Results3['X31'];$previous_remarks2 = $Results3['X32'];$previous_remarks3 = $Results3['X33'];$previous_remarks4 = $Results3['X34'];
+        $previous_remarks5 = $Results3['X35'];$previous_remarks6 = $Results3['X36']; $previous_gross_wage = isset($Results3['B6']) ? number_format((float)$Results3['B6'] * 100, 2) . '%' : '0%';
+        
+        $previous_total_compliants = $Results3['X2'];$previous_posh = isset($Results3['X6']) ? number_format((float)$Results3['X6'] * 100, 2) . '%' : '0%';$previous_posh_upheld = $Results3['X8'];
+        
+        return view('user.brsr.sectionP5create', compact('social_mast','current_fy','previous_fy','user','fys','fy_id','employees_ques','wages_ques','salary_ques','grosswages_ques','focal_ques','internal_ques','compliants_ques','ppr_ques','case_ques',
+         'case_ques1','assessment_ques','risk_ques','business_ques','scope_ques','entity_ques','valuechain_ques','action_ques','previous_permanent_employees','previous_other_than_permanent','previous_total_employees','previous_permanent_workers','previous_other_than_workers','previous_total_workers',
+         'previous_permanent_employees1','previous_other_than_permanent1','previous_total_employees1','previous_permanent_workers1','previous_other_than_workers1','previous_total_workers1','previous_permanent_employees2','previous_other_than_permanent2','previous_total_employees2','previous_permanent_workers2','previous_other_than_workers2','previous_total_workers2',
+         'previous_emp_wage_tot1','previous_emp_wage_tot2','previous_emp_wage_tot3','previous_emp_wage_tot4','previous_emp_wage_tot5','previous_emp_wage_tot6','previous_emp_wage_tot7','previous_emp_wage_tot8','previous_emp_wage_tot9','previous_emp_wage_tot10','previous_emp_wage_tot11','previous_emp_wage_tot12',
+         'previous_emp_wage_eq1','previous_emp_wage_eq2','previous_emp_wage_eq3','previous_emp_wage_eq4','previous_emp_wage_eq5','previous_emp_wage_eq6','previous_emp_wage_eq7','previous_emp_wage_eq8','previous_emp_wage_eq9','previous_emp_wage_eq10','previous_emp_wage_eq11','previous_emp_wage_eq12',
+         'previous_emp_wage_eqp1','previous_emp_wage_eqp2','previous_emp_wage_eqp3','previous_emp_wage_eqp4','previous_emp_wage_eqp5','previous_emp_wage_eqp6','previous_emp_wage_eqp7','previous_emp_wage_eqp8','previous_emp_wage_eqp9','previous_emp_wage_eqp10','previous_emp_wage_eqp11','previous_emp_wage_eqp12',
+         'previous_emp_wage_min1','previous_emp_wage_min2','previous_emp_wage_min3','previous_emp_wage_min4','previous_emp_wage_min5','previous_emp_wage_min6','previous_emp_wage_min7','previous_emp_wage_min8','previous_emp_wage_min9','previous_emp_wage_min10','previous_emp_wage_min11','previous_emp_wage_min12',
+         'previous_emp_wage_minp1','previous_emp_wage_minp2','previous_emp_wage_minp3','previous_emp_wage_minp4','previous_emp_wage_minp5','previous_emp_wage_minp6','previous_emp_wage_minp7','previous_emp_wage_minp8','previous_emp_wage_minp9','previous_emp_wage_minp10','previous_emp_wage_minp11','previous_emp_wage_minp12',
+         'previous_filed1','previous_filed2','previous_filed3','previous_filed4','previous_filed5','previous_filed6', 'previous_pending1','previous_pending2','previous_pending3','previous_pending4','previous_pending5','previous_pending6','previous_remarks1','previous_remarks2','previous_remarks3','previous_remarks4',
+         'previous_remarks5','previous_remarks6','previous_gross_wage','previous_total_compliants','previous_posh','previous_posh_upheld'));
+
+    }
+
+    public function sectionP5edit($id) {
+ 
+        $id = decrypt($id);
+        
+        $user = Auth::user();
+
+        $brsr_mast = BrsrMast::where('com_id', $user->id)->where('id', $id)->first();
+        $fys = DB::table('fy_masters')->where('id',$brsr_mast->fy_id)->first();
+        $current_fy = $fys->fy;
+        $startYear = (int)substr($current_fy, 0, 4);
+        $previous_fy = ($startYear - 1) . '-' . substr($startYear, 2, 2);
+        $previous_year = substr($fys->fy, 0, 4);
+      
+        $employees_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'emp_worker')->orderby('id')->get();
+        $wages_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'emp_wages')->orderby('id')->get();
+        $salary_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'emp_salary')->orderby('id')->get();
+        $grosswages_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'gross_wage')->orderby('id')->get();
+        $focal_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'focal_point')->orderby('id')->get();
+        $internal_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'internal')->orderby('id')->get();
+        $compliants_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'compliants')->orderby('id')->get();
+        $ppr_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'ppr')->orderby('id')->get();
+        $case_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'case')->orderby('id')->get();
+        $case_ques1 = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'case1')->orderby('id')->get();
+        $assessment_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'emp_assessment')->orderby('id')->get();
+        $risk_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'risk')->orderby('id')->get();
+        $business_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'business_process')->orderby('id')->get();
+        $scope_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'scope')->orderby('id')->get();
+        $entity_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'entity')->orderby('id')->get();
+        $valuechain_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'value_chain')->orderby('id')->get();
+        $action_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'actions')->orderby('id')->get();
+        $principle5_value = BrsrSectionP5QuestionValue::where('brsr_mast_id', $id)->get();
+       
+        return view('user.brsr.sectionP5edit', compact('brsr_mast','current_fy','previous_fy','user',
+        'fys','employees_ques','wages_ques','salary_ques','grosswages_ques','focal_ques',
+        'internal_ques','compliants_ques','ppr_ques','case_ques',
+        'case_ques1','assessment_ques','risk_ques',
+        'business_ques','scope_ques','entity_ques','valuechain_ques','action_ques','principle5_value'));
+
+    }
+
     public function sectionP7create($fy_id) {
  
         $fy_id = decrypt($fy_id);
@@ -1196,13 +1440,13 @@ $previous_capex = (isset($Results['X5']) && is_numeric($Results['X5']))
         }
 
  
-         $previous_msme = isset($Results['X3']) ? number_format($Results['X3'] * 100, 2) . '%' : '0%';
-         $previous_others = isset($Results['X4']) ? number_format($Results['X4'] * 100, 2) . '%' : '0%';
+         $previous_msme = isset($Results['X3']) ? number_format((float)$Results['X3'] * 100, 2) . '%' : '0%';
+         $previous_others = isset($Results['X4']) ? number_format((float)$Results['X4'] * 100, 2) . '%' : '0%';
 
-         $previous_rural = isset($Results1['A6']) ? number_format($Results1['A6'] * 100, 2) . '%' : '0%';
-         $previous_semiurban = isset($Results1['B6']) ? number_format($Results1['B6'] * 100, 2) . '%' : '0%';
-         $previous_urban = isset($Results1['C6']) ? number_format($Results1['C6'] * 100, 2) . '%' : '0%';
-         $previous_metro = isset($Results1['D6']) ? number_format($Results1['D6'] * 100, 2) . '%' : '0%';
+         $previous_rural = isset($Results1['A6']) ? number_format((float)$Results1['A6'] * 100, 2) . '%' : '0%';
+         $previous_semiurban = isset($Results1['B6']) ? number_format((float)$Results1['B6'] * 100, 2) . '%' : '0%';
+         $previous_urban = isset($Results1['C6']) ? number_format((float)$Results1['C6'] * 100, 2) . '%' : '0%';
+         $previous_metro = isset($Results1['D6']) ? number_format((float)$Results1['D6'] * 100, 2) . '%' : '0%';
       
         return view('user.brsr.sectionP8create', compact('social_mast','user','fys','fy_id','community_ques','current_fy',
         'previous_fy','previous_year','material_ques','location_ques','group_ques1','group_ques2',
@@ -2143,6 +2387,374 @@ $previous_capex = (isset($Results['X5']) && is_numeric($Results['X5']))
     
         alert()->success('Record Inserted', 'Success!')->persistent('Close');
         return redirect()->route('user.brsr.sectionP2edit', encrypt($brsr_mast->id));
+    }
+
+    public function sectionp5store(Request $request)
+    {
+       
+       
+        $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+
+            $previous_id = (int) $request->fy_id - 1;
+
+            foreach ($request->emp as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->emp_tot_current_fy = $val['emp_tot_current_fy'] ?? '0'; 
+                $p5_data->emp_no_current_fy = $val['emp_no_current_fy'] ?? '0';
+                $p5_data->emp_percent_current_fy = $val['emp_percent_current_fy'] ?? '0';
+                $p5_data->emp_previous_fy_id = $previous_id;
+                $p5_data->emp_tot_previous_fy = $val['emp_tot_previous_fy'] ?? '0'; 
+                $p5_data->emp_no_previous_fy = $val['emp_no_previous_fy'] ?? '0';
+                $p5_data->emp_percent_previous_fy = $val['emp_percent_previous_fy'] ?? '0';
+                $p5_data->save();
+            }
+
+            foreach ($request->emp1 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->wage_tot_current_fy = $val['wage_tot_current_fy'] ?? '0'; 
+                $p5_data->wage_equal_no_current_fy = $val['wage_equal_no_current_fy'] ?? '0';
+                $p5_data->wage_equal_percent_current_fy = $val['wage_equal_percent_current_fy'] ?? '0';
+                $p5_data->wage_more_no_current_fy = $val['wage_more_no_current_fy'] ?? '0';
+                $p5_data->wage_more_percent_current_fy = $val['wage_more_percent_current_fy'] ?? '0';
+                $p5_data->wage_previous_fy_id = $previous_id;
+                $p5_data->wage_tot_previous_fy = $val['wage_tot_previous_fy'] ?? '0'; 
+                $p5_data->wage_equal_no_previous_fy = $val['wage_equal_no_previous_fy'] ?? '0';
+                $p5_data->wage_equal_percent_previous_fy = $val['wage_equal_percent_previous_fy'] ?? '0';
+                $p5_data->wage_more_no_previous_fy = $val['wage_more_no_previous_fy'] ?? '0';
+                $p5_data->wage_more_percent_previous_fy = $val['wage_more_percent_previous_fy'] ?? '0';
+                $p5_data->save();
+            }
+           
+            foreach ($request->segment3 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->male_sal_number = $val['male_sal_number'] ?? 'NaN'; 
+                $p5_data->male_wages = $val['male_wages'] ?? 'NaN';
+                $p5_data->female_sal_number = $val['female_sal_number'] ?? 'NaN'; 
+                $p5_data->female_wages = $val['female_wages'] ?? 'NaN'; 
+                $p5_data->save();
+             }
+
+             foreach ($request->segment4 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->gross_wages_current_fy = $val['gross_wages_current_fy'] ?? 'NaN'; 
+                $p5_data->gross_wages_previous_fy = $val['gross_wages_previous_fy'] ?? 'NaN';
+                $p5_data->save();
+            }
+
+            foreach ($request->segment5 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->focal_point = $val['focal_point'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment6 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->internal_mech = $val['internal_mech'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment7 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->compliants_filed_current_fy = $val['compliants_filed_current_fy'] ?? 'NaN'; 
+                $p5_data->compliants_pending_current_fy = $val['compliants_pending_current_fy'] ?? 'NaN'; 
+                $p5_data->compliants_remarks_current_fy = $val['compliants_remarks_current_fy'] ?? 'NaN'; 
+                $p5_data->compliants_prev_fy_id =  $previous_id;
+                $p5_data->compliants_filed_previous_fy = $val['compliants_filed_previous_fy'] ?? 'NaN'; 
+                $p5_data->compliants_pending_previous_fy = $val['compliants_pending_previous_fy'] ?? 'NaN'; 
+                $p5_data->compliants_remarks_previous_fy = $val['compliants_remarks_previous_fy'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment8 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->ppr_current_fy = $val['ppr_current_fy'] ?? 'NaN'; 
+                $p5_data->ppr_previous_fy_id =  $previous_id;
+                $p5_data->ppr_previous_fy = $val['ppr_previous_fy'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment9 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->cases = $val['cases'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment10 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->contracts = $val['contracts'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment11 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->assessment_percent = $val['assessment_percent'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment12 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->corrective_actions = $val['corrective_actions'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment13 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->business_process = $val['business_process'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment14 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->scope_details = $val['scope_details'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment15 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->premise = $val['premise'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment16 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->value_chain_percent = $val['value_chain_percent'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment17 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->risk_concerns = $val['risk_concerns'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+        });
+    
+        alert()->success('Record Inserted', 'Success!')->persistent('Close');
+        return redirect()->route('user.brsr.sectionP5edit', encrypt($brsr_mast->id));
+    }
+
+    public function sectionp5update(Request $request)
+    {
+       
+        $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+
+         foreach ($request->emp as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->emp_tot_current_fy = $val['emp_tot_current_fy'] ?? '0'; 
+                $p5_data->emp_no_current_fy = $val['emp_no_current_fy'] ?? '0';
+                $p5_data->emp_percent_current_fy = $val['emp_percent_current_fy'] ?? '0';
+                $p5_data->emp_tot_previous_fy = $val['emp_tot_previous_fy'] ?? '0'; 
+                $p5_data->emp_no_previous_fy = $val['emp_no_previous_fy'] ?? '0';
+                $p5_data->emp_percent_previous_fy = $val['emp_percent_previous_fy'] ?? '0';
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->emp1 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->wage_tot_current_fy = $val['wage_tot_current_fy'] ?? '0'; 
+                $p5_data->wage_equal_no_current_fy = $val['wage_equal_no_current_fy'] ?? '0';
+                $p5_data->wage_equal_percent_current_fy = $val['wage_equal_percent_current_fy'] ?? '0';
+                $p5_data->wage_more_no_current_fy = $val['wage_more_no_current_fy'] ?? '0';
+                $p5_data->wage_more_percent_current_fy = $val['wage_more_percent_current_fy'] ?? '0';
+                $p5_data->wage_tot_previous_fy = $val['wage_tot_previous_fy'] ?? '0'; 
+                $p5_data->wage_equal_no_previous_fy = $val['wage_equal_no_previous_fy'] ?? '0';
+                $p5_data->wage_equal_percent_previous_fy = $val['wage_equal_percent_previous_fy'] ?? '0';
+                $p5_data->wage_more_no_previous_fy = $val['wage_more_no_previous_fy'] ?? '0';
+                $p5_data->wage_more_percent_previous_fy = $val['wage_more_percent_previous_fy'] ?? '0';
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+        
+            foreach ($request->segment3 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->male_sal_number = $val['male_sal_number'] ?? 'NaN'; 
+                $p5_data->male_wages = $val['male_wages'] ?? 'NaN';
+                $p5_data->female_sal_number = $val['female_sal_number'] ?? 'NaN'; 
+                $p5_data->female_wages = $val['female_wages'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now(); 
+                $p5_data->save();
+             }
+
+             foreach ($request->segment4 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->gross_wages_current_fy = $val['gross_wages_current_fy'] ?? 'NaN'; 
+                $p5_data->gross_wages_previous_fy = $val['gross_wages_previous_fy'] ?? 'NaN';
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment5 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->focal_point = $val['focal_point'] ?? 'NaN';
+                $p5_data->updated_at = Carbon::now(); 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment6 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->internal_mech = $val['internal_mech'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment7 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->compliants_filed_current_fy = $val['compliants_filed_current_fy'] ?? 'NaN'; 
+                $p5_data->compliants_pending_current_fy = $val['compliants_pending_current_fy'] ?? 'NaN'; 
+                $p5_data->compliants_remarks_current_fy = $val['compliants_remarks_current_fy'] ?? 'NaN'; 
+                $p5_data->compliants_filed_previous_fy = $val['compliants_filed_previous_fy'] ?? 'NaN'; 
+                $p5_data->compliants_pending_previous_fy = $val['compliants_pending_previous_fy'] ?? 'NaN'; 
+                $p5_data->compliants_remarks_previous_fy = $val['compliants_remarks_previous_fy'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment8 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->ppr_current_fy = $val['ppr_current_fy'] ?? 'NaN'; 
+                $p5_data->ppr_previous_fy = $val['ppr_previous_fy'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment9 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->cases = $val['cases'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment10 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->contracts = $val['contracts'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment11 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->assessment_percent = $val['assessment_percent'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment12 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->corrective_actions = $val['corrective_actions'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment13 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->business_process = $val['business_process'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment14 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->scope_details = $val['scope_details'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment15 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->premise = $val['premise'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment16 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->value_chain_percent = $val['value_chain_percent'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment17 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->risk_concerns = $val['risk_concerns'] ?? 'NaN';
+                $p5_data->updated_at = Carbon::now(); 
+                $p5_data->save();
+            }
+        });
+    
+        alert()->success('Data Updated Successfully', 'Success!')->persistent('Close');
+        return redirect()->back();   
     }
 
     public function sectionp7store(Request $request)
