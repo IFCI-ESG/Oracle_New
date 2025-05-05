@@ -47,8 +47,8 @@
                     </div>
 
                     <!-- title-->
-                   <h4 class="mt-0">Welcome to ESG-PRAKRIT Portal</h4> 
-                    <p class="text-muted mb-4">Enter your Username and password to access account.</p>
+                   <h4 class="mt-0">Welcome to ESG PRAKRIT Portal</h4> 
+                    <p class="text-muted mb-4">Enter your Username and Password to access account.</p>
                     @if (session('error'))
                         <div class="alert alert-danger">{{ session('error') }}</div>
                         <br>
