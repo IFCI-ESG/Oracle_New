@@ -63,7 +63,13 @@
                             @foreach ($corp_detail as $key => $user)
                                 <tr>
                                     <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.8rem;">{{ $key + 1 }}</td>
-                                    <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.8rem;"><a href="{{route('admin.user.home',['id' => encrypt($user->id)])}}">{{$user->name}} </a></td>
+                                    <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.8rem;">
+                                        @if($user->password_changed == '0')
+                                            <a href="{{route('admin.user.update.password.flag',['id' => encrypt($user->id)])}}">{{$user->name}}</a>
+                                        @else
+                                            <a href="{{route('admin.user.home',['id' => encrypt($user->id)])}}">{{$user->name}}</a>
+                                        @endif
+                                    </td>
                                     <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.8rem;">{{$user->comp_type}}</td>
                                     <td class="text-center align-middle border shadow-none textcolor" style="font-size:0.8rem;">{{$user->sector}}
 
