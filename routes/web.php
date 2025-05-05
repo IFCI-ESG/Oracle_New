@@ -1,4 +1,3 @@
-
 <?php
     use App\Http\Controllers\Auth\AuthenticatedSessionController;
     use App\Http\Controllers\RoutingController;
@@ -489,4 +488,6 @@ Route::post('/send-otp', [App\Http\Controllers\PassChangeController::class, 'sen
 Route::post('/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLink'])->name('password.email');
 
 Route::post('/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLink'])->name('password.email');
+
+Route::get('/admin/user/update-password-flag/{id}', [App\Http\Controllers\Admin\UserController::class, 'updatePasswordFlagAndRedirect'])->name('admin.user.update.password.flag');
 
