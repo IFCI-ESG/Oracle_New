@@ -391,12 +391,33 @@
                     </a>
                 </li> --}}
                 <li class="menu-item">
-                    <a class="menu-link" href="#">
+                    <a class="menu-link" href="{{ route('admin.corp_carbon.index') }}">
                         <span class="menu-icon">
                             <i class="fas fa-industry"></i>
                         </span>
                         <span class="menu-text">Carbon Footprint</span>
                     </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="{{ route('admin.corp_plant.index') }}">
+                        <span class="menu-icon">
+                            <i class="fas fa-industry"></i>
+                        </span>
+                        <span class="menu-text">Plant Location</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link"
+                        href="{{ route('admin.corp_social.index') }}">
+                        <span class="menu-icon"><i data-feather="rss"></i></span>
+                        <span class="menu-text"> Social </span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link"
+                        href="{{ route('admin.corp_governance.index') }}">
+                        <span class="menu-icon"><i data-feather="droplet"></i></span>
+                        <span class="menu-text"> Governance </span></a>
                 </li>
                 <li class="menu-item">
                     <a class="menu-link" href="#">

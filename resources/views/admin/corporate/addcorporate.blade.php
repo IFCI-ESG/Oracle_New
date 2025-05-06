@@ -155,7 +155,27 @@
                                         </select>
                                       </td>
                                     </tr>
-
+                                    <tr>
+                                        <th class="text-center" style="font-size: 0.9rem">10.</th>
+                                        <th>Company Type <span class="text-danger">*</span></th>
+                                        <td style="width: 50%;">
+                                            <select name="comp_type" id="type" style="width:80%"
+                                                class="form-control form-control-sm" required>
+                                                <option value="" disabled selected>Please Select Company Type
+                                                </option>
+                                                @foreach ($type as $ty)
+                                                <option value="{{ $ty->id }}" 
+                                                 @if(old('comp_type') == $ty->id) selected @endif>
+                                                  {{ $ty->name }}
+                                                 </option>
+                                                    
+                                                @endforeach
+                                                @error('type')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </select>
+                                        </td>
+                                    </tr>
                                     {{-- <tr>
                                         <th class="text-center" style="font-size: 0.9rem"> 9. </th>
                                         <th style="font-size: 0.9rem">
@@ -171,7 +191,7 @@
                                         </td>
                                     </tr> --}}
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 10. </th>
+                                        <th class="text-center" style="font-size: 0.9rem"> 11. </th>
                                         <th style="font-size: 0.9rem">
                                             License Key <span style="color: red;">*</span>
                                         </th>
@@ -182,7 +202,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 11. </th>
+                                        <th class="text-center" style="font-size: 0.9rem"> 12. </th>
                                         <th style="font-size: 0.9rem">
                                             Valid From <span style="color: red;">*</span>
                                         </th>
@@ -193,7 +213,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 12. </th>
+                                        <th class="text-center" style="font-size: 0.9rem"> 13. </th>
                                         <th style="font-size: 0.9rem">
                                             Valid To <span style="color: red;">*</span>
                                         </th>
@@ -204,7 +224,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 13. </th>
+                                        <th class="text-center" style="font-size: 0.9rem"> 14. </th>
                                         <th style="font-size: 0.9rem"> Contact Person <span style="color: red;">*</span>
                                         </th>
                                         <td>
@@ -218,7 +238,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 14. </th>
+                                        <th class="text-center" style="font-size: 0.9rem"> 15. </th>
                                         <th style="font-size: 0.9rem"> Designation <span style="color: red;">*</span>
                                         </th>
                                         <td>
@@ -232,7 +252,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 15. </th>
+                                        <th class="text-center" style="font-size: 0.9rem"> 16. </th>
                                         <th style="font-size: 0.9rem"> Mobile No. <span style="color: red;">*</span>
                                         </th>
                                         <td>
@@ -250,7 +270,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 16. </th>
+                                        <th class="text-center" style="font-size: 0.9rem"> 17. </th>
                                         <th style="font-size: 0.9rem"> Alternate Mobile No. </th>
                                         <td>
                                             <div style="display: flex; align-items: center;">
@@ -268,7 +288,7 @@
                                     </tr>
 
                                     <tr>
-                                        <th class="text-center" style="font-size: 0.9rem"> 17. </th>
+                                        <th class="text-center" style="font-size: 0.9rem"> 18. </th>
                                         <th style="font-size: 0.9rem"> Services <span style="color: red;">*</span>
                                         </th>
                                         <td colspan="2">

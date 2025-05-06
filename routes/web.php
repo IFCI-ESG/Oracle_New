@@ -256,6 +256,37 @@ Route::name('admin.')->prefix('admin')->middleware(['auth:admin','role:SuperAdmi
     // Dashboard Export and Refresh routes
     Route::post('/export-dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'exportDashboard'])->name('dashboard.export');
     Route::post('/refresh-dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'refreshDashboard'])->name('dashboard.refresh');
+
+    Route::resource('corp_carbon', \App\Http\Controllers\Admin\CorporateCarbonFootprintController::class)->except(['create','update']);
+    Route::get('/corp_carbon/create/{fy_id}', [\App\Http\Controllers\Admin\CorporateCarbonFootprintController::class,'create'])->name('corp_carbon.create');
+    Route::get('/corp_carbon/edit/{module_mast_id}', [\App\Http\Controllers\Admin\CorporateCarbonFootprintController::class,'edit'])->name('corp_carbon.edit');
+    Route::post('/corp_carbon/update', [\App\Http\Controllers\Admin\CorporateCarbonFootprintController::class,'update'])->name('corp_carbon.update');
+    Route::get('/corp_carbon/store', [\App\Http\Controllers\Admin\CorporateCarbonFootprintController::class,'store'])->name('corp_carbon');
+    
+    Route::get('/corp_get_ques_data/{sect_id}/{seg_id}', [\App\Http\Controllers\Admin\CorporateCarbonFootprintController::class,'getQuesData'])->name('getQuesData');
+    Route::get('/corp_get_ques_data_view/{seg_id}/{fy_id}', [\App\Http\Controllers\Admin\CorporateCarbonFootprintController::class,'getQuesData_view'])->name('getQuesData_view');
+
+    Route::post('corp_activity/store', [\App\Http\Controllers\Admin\CorporateCarbonFootprintController::class,'activity_store'])->name('corp_activity.store');
+    Route::post('corp_carbon/quality_store', [\App\Http\Controllers\Admin\CorporateCarbonFootprintController::class,'quality_store'])->name('corp_carbon.quality_store');
+
+    Route::resource('corp_plant',\App\Http\Controllers\Admin\CorporatePlantLocationController::class);
+    Route::get('/corp_plant/edit/{user_id}', [\App\Http\Controllers\Admin\CorporatePlantLocationController::class,'edit'])->name('corp_plant.edit');
+    Route::get('corp_plant/row_delete/{row_id}/{section}', [\App\Http\Controllers\Admin\CorporatePlantLocationController::class,'destroy'])->name('plant.delete');
+
+    Route::resource('corp_social', \App\Http\Controllers\Admin\CorporateSocialController::class)->except(['create','update']);
+    Route::get('/corp_social/create/{fy_id}', [\App\Http\Controllers\Admin\CorporateSocialController::class,'create'])->name('corp_social.create');
+    Route::get('/corp_social/edit/{social_mast_id}', [\App\Http\Controllers\Admin\CorporateSocialController::class,'edit'])->name('corp_social.edit');
+    Route::post('/corp_social/update', [\App\Http\Controllers\Admin\CorporateSocialController::class,'update'])->name('corp_social.update');
+    Route::post('/corp_social/store', [\App\Http\Controllers\Admin\CorporateSocialController::class,'store'])->name('corp_social');
+    Route::get('/corp_social/download/file/{id}', [\App\Http\Controllers\Admin\CorporateSocialController::class,'create'])->name('corp_social.download.file');
+ 
+    Route::resource('corp_governance', \App\Http\Controllers\Admin\CorporateGovernanceController::class)->except(['create','update']);
+    Route::get('/corp_governance/create/{fy_id}', [\App\Http\Controllers\Admin\CorporateGovernanceController::class,'create'])->name('corp_governance.create');
+    Route::get('/corp_governance/edit/{gov_mast_id}', [\App\Http\Controllers\Admin\CorporateGovernanceController::class,'edit'])->name('corp_governance.edit');
+    Route::post('/corp_governance/update', [\App\Http\Controllers\Admin\CorporateGovernanceController::class,'update'])->name('corp_governance.update');
+    Route::post('/corp_governance/store', [\App\Http\Controllers\Admin\CorporateGovernanceController::class,'store'])->name('corp_governance');
+
+
 });
 
 // Company

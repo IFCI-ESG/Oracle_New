@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -35,7 +35,7 @@ class CorporateSocialController extends Controller
         $social_mast = SocialMast::where('com_id', $user->id)->orderby('id')->get();
         // dd($social_mast);
 
-        return view('user.social.index', compact('quesMast','user','fys','social_mast','social_value'));
+        return view('admin.social.index', compact('quesMast','user','fys','social_mast','social_value'));
 
     }
 
@@ -67,7 +67,7 @@ class CorporateSocialController extends Controller
 
         $fys = DB::table('fy_masters')->where('id',$fy_id)->first();
 
-        return view('user.social.create', compact('quesMast','user','fys','fy_id','sdgMast','social_mast'));
+        return view('admin.social.create', compact('quesMast','user','fys','fy_id','sdgMast','social_mast'));
 
     }
 
@@ -197,8 +197,8 @@ class CorporateSocialController extends Controller
 
             });
             alert()->success('Record Inserted', 'Success!')->persistent('Close');
-            return redirect()->route('user.social.edit',encrypt($social_mast->id));
-            // return redirect()->route('user.addquestionnaire');
+            return redirect()->route('admin.social.edit',encrypt($social_mast->id));
+            // return redirect()->route('admin.addquestionnaire');
         // } catch (\Exception $e) {
         //     alert()->warning('Something Went Wrong', 'Warning!')->persistent('Close');
         //     return redirect()->back();
@@ -233,7 +233,7 @@ class CorporateSocialController extends Controller
         $sdgMast = DB::table('sdgmaster')->where('status', 1)->get();
 
         // dd($quesMast,$social_value);
-        return view('user.social.edit', compact('quesMast','social_value','fys','sdgMast'));
+        return view('admin.social.edit', compact('quesMast','social_value','fys','sdgMast'));
 
     }
 

@@ -172,6 +172,25 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <th class="text-center" style="font-size: 0.9rem">10.</th>
+                                        <th>Company Type <span class="text-danger">*</span></th>
+                                        <td style="width: 50%;">
+                                            <select name="comp_type" id="type" style="width:80%"
+                                                class="form-control form-control-sm" required>
+                                                <option value="" disabled selected>Please Select Company Type
+                                                </option>
+                                                @foreach ($type as $ty)
+                                                <option value="{{ $ty->id }}" @if(old('comp_type') == $ty->id) selected @endif>{{ $ty->name }}
+                                                 </option>
+                                                    
+                                                @endforeach
+                                                @error('type')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <th class="text-center" style="font-size: 0.9rem"> 10. </th>
                                         <th style="font-size: 0.9rem">
                                             License Key <span style="color: red;">*</span>
@@ -329,9 +348,9 @@
                     class='fin_prevent_multiple_submit' files=true enctype='multipart/form-data' accept-charset="utf-8">
                     @csrf
                     @if ($corp_details->status != 'S')
-                    <button type="submit" id="finalsubmit" class="btn btn-primary btn-sm form-control form-control-sm">
-                        <em class="fas fa-save"></em> Submit
-                    </button>
+                        <button type="submit" id="finalsubmit" class="btn btn-primary btn-sm form-control form-control-sm">
+                            <em class="fas fa-save"></em> Submit
+                        </button>
                     @endif
                     <input type="hidden" name="user_id" value="{{ $corp_details->id }}">
                 </form>

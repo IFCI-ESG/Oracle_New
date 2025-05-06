@@ -222,8 +222,9 @@ class CorporateController extends Controller
         // dd('c');
         $services = DB::table('servicemaster')->get();
         $sectors = DB::table('sector_master')->orderby('id')->get();
+        $type = DB::table('comp_type_master')->orderby('id')->get();
 
-        return view('admin.corporate.addcorporate', compact('services','sectors'));
+        return view('admin.corporate.addcorporate', compact('services','sectors','type'));
 
     }
 
@@ -329,6 +330,7 @@ class CorporateController extends Controller
         'reg_off_state' => 'required|string',
         'reg_off_city' => 'required|string',
         'sector_type' => 'required',
+        'comp_type' => 'required',
         'designation' => 'required|string|regex:/^[a-zA-Z\s]+$/',
         'license_key' => 'required|string',
         'valid_from' => 'required|date',
@@ -371,6 +373,7 @@ class CorporateController extends Controller
     $newuser->reg_off_city = $request->reg_off_city;
     $newuser->borrower_type = 'CR';
     $newuser->sector_id = $request->sector_type;
+    $newuser->comp_type_id = $request->comp_type;
     $newuser->designation = $request->designation;
     $newuser->license_key = $request->license_key;
     $newuser->valid_from = $request->valid_from;
@@ -466,6 +469,7 @@ class CorporateController extends Controller
                 'reg_off_state' => 'required|string',
                 'reg_off_city' => 'required|string',
                 'sector_type' => 'required',
+                'comp_type' => 'required',
                 'designation' => 'required|string|regex:/^[a-zA-Z\s]+$/',
                 'license_key' => 'required|string',
                 'valid_from' => 'required|date',
@@ -493,6 +497,7 @@ class CorporateController extends Controller
                 $user->reg_off_state = $request->reg_off_state;
                 $user->reg_off_city = $request->reg_off_city;
                 $user->sector_id = $request->sector_type;
+                $user->comp_type_id = $request->comp_type;
                 $user->designation = $request->designation;
                 $user->license_key = $request->license_key;
                 $user->valid_from = $request->valid_from;
