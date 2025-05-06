@@ -65,6 +65,8 @@ class UserController extends Controller
             ]
         ]);
 
+
+
         $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
             // dd($embed_url);
         $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/0023b227-5300-414f-8999-8363c0d17c8b/GenerateToken', [
@@ -101,7 +103,7 @@ class UserController extends Controller
         ]);
 
         $access_token = json_decode($response->getBody()->getContents())->access_token;
-        $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/0023b227-5300-414f-8999-8363c0d17c8b', [
+        $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/03cfeaa5-b238-4918-9395-a69fc34c349e', [
 
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -114,7 +116,7 @@ class UserController extends Controller
         ]);
 
         $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
-        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/0023b227-5300-414f-8999-8363c0d17c8b/GenerateToken', [
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/03cfeaa5-b238-4918-9395-a69fc34c349e/GenerateToken', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $access_token
@@ -149,7 +151,7 @@ class UserController extends Controller
         ]);
   
         $access_token = json_decode($response->getBody()->getContents())->access_token;
-        $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/5fe68c5a-2984-4a50-9e04-b8db890001fb', [
+        $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/85843f09-2759-4d8b-9673-07aea5dfcc01', [
 
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -162,7 +164,7 @@ class UserController extends Controller
         ]);
 
         $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
-        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/5fe68c5a-2984-4a50-9e04-b8db890001fb/GenerateToken', [
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/85843f09-2759-4d8b-9673-07aea5dfcc01/GenerateToken', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $access_token
@@ -253,9 +255,9 @@ class UserController extends Controller
 
         $access_token = json_decode($response->getBody()->getContents())->access_token;
 
-        // https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/43427861-781e-44b0-9a20-f41cbd3f5afe/b88b0a105e08ab465888?experience=power-bi&clientSideAuth=0
 
-        $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/43427861-781e-44b0-9a20-f41cbd3f5afe', [
+
+        $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/7b997f7e-6c92-460f-8130-966b172164a4', [
 
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -269,7 +271,7 @@ class UserController extends Controller
 
         $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
             // dd($embed_url);
-        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/43427861-781e-44b0-9a20-f41cbd3f5afe/GenerateToken', [
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/7b997f7e-6c92-460f-8130-966b172164a4/GenerateToken', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $access_token
@@ -361,7 +363,7 @@ class UserController extends Controller
 
         // https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/510a1842-089f-4649-80f5-129140a9481b/9b0ee07cb4e45a3056e6?experience=power-bi&clientSideAuth=0
 
-       $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/510a1842-089f-4649-80f5-129140a9481b', [
+       $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/8a3c480a-5263-4fde-bc94-9c59a594efb3', [
 
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -375,7 +377,7 @@ class UserController extends Controller
 
         $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
             // dd($embed_url);
-        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/510a1842-089f-4649-80f5-129140a9481b/GenerateToken', [
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/8a3c480a-5263-4fde-bc94-9c59a594efb3/GenerateToken', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $access_token
@@ -1142,7 +1144,7 @@ class UserController extends Controller
         $access_token = json_decode($response->getBody()->getContents())->access_token;
         // dd($access_token);
 
-       $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/e29ff5bd-1a7d-43f8-bd0\4-19d45db0f93f', [
+       $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/e29ff5bd-1a7d-43f8-bd04-19d45db0f93f', [
 
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -1154,9 +1156,10 @@ class UserController extends Controller
             ]
         ]);
 
+
         $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
             // dd($embed_url);
-        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/e29ff5bd-1a7d-43f8-bd0\4-19d45db0f93f/GenerateToken', [
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/e29ff5bd-1a7d-43f8-bd04-19d45db0f93f/GenerateToken', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $access_token
@@ -1200,9 +1203,9 @@ class UserController extends Controller
        // https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/cd77e76a-99e6-4d68-ba5c-45e160bac5a1/cbad1e4fbe9798916933?experience=power-bi&clientSideAuth=0
 
 
-       $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/bb2cc86e-04c8-4b91-b2a3-7075a87e87e6', [
+       $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/61122303-d072-4856-9a24-6f07a5283e50', [
 
-            'headers' => [
+        'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $access_token
             ],
@@ -1215,7 +1218,7 @@ class UserController extends Controller
 //https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/bb2cc86e-04c8-4b91-b2a3-7075a87e87e6/cbad1e4fbe9798916933?experience=power-bi&clientSideAuth=0
         $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
             // dd($embed_url);
-        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/bb2cc86e-04c8-4b91-b2a3-7075a87e87e6/GenerateToken', [
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/61122303-d072-4856-9a24-6f07a5283e50/GenerateToken', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $access_token

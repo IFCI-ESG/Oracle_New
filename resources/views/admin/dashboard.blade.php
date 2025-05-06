@@ -76,9 +76,11 @@
             {
                 $schema: "https://powerbi.com/product/schema#basic",
                 target: {
-                    table : "bank_financial_details",
+                    table : "attr_emission",
                     column: "bank_id"
+
                 },
+                
                 operator: "Is",
                 values: [{{$user}}]
             }

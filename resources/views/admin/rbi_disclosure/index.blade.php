@@ -69,9 +69,11 @@
                                                     </td>
                                                 @elseif($record && $record->status == 'S')
                                                     <td class="text-center">
-                                                        view
-                                                        {{-- <a class="btn btn-warning btn-sm"
-                                                            href="{{ route('admin.rbi_disclosure.view', ['com_id' => encrypt($user->id),'fy_id'=> encrypt($fy->id)] ) }}"> View</a> --}}
+                                                        <a class="btn btn-warning btn-sm"
+                                                            href="{{ route('admin.rbi_disclosure.pillar', encrypt($fy->id)) }}"> View</a> 
+
+                                                        <a class="btn btn-info btn-sm"
+                                                            href="{{ route('admin.rbi_disclosure.generatepdf', encrypt($fy->id)) }}"> Download</a> 
                                                     </td>
                                                 @else
                                                     <td class="text-center">
