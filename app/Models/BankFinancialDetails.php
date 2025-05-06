@@ -8,7 +8,6 @@ class BankFinancialDetails extends Model
 {
     protected $table = 'bank_financial_details';
     protected $fillable = [
-        'id',
         'fy_id',
         'com_id',
         'bank_id',
@@ -25,4 +24,20 @@ class BankFinancialDetails extends Model
         'created_at',
         'updated_at'
     ];
+
+    // Disable auto-incrementing as we'll use Oracle sequence
+    public $incrementing = false;
+    
+    protected $primaryKey = 'id';
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            // Get next sequence value from Oracle
+            $sequence = \DB::selectOne("SELECT BANK_FINANCIAL_DETAILS_SEQ.NEXTVAL AS ID FROM DUAL");
+            $model->id = $sequence->id;
+        });
+    }
 }

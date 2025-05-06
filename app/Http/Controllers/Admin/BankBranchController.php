@@ -375,15 +375,23 @@ class BankBranchController extends Controller
 
         // try {
 
-        $emailExists = AdminUser::where('email', $request->email)->orwhere('mobile', $request->mobile)->exists();
-
-        if ($emailExists) {
-            // dd($emailExists,$mobileExists);
-            // alert()->error('Email, Mobile should be unique! These are already Registered', 'Attention!')->persistent('Close');
-            // return redirect()->back();
-
-            return redirect()->back()->withErrors(['message' => 'Email, Mobile should be unique! These are already Registered'])->withInput();
+        $emailExists = AdminUser::where('email', $request->email)->exists();
+        $mobileExists = AdminUser::where('mobile', $request->mobile)->exists();
+        
+        if ($emailExists || $mobileExists) {
+            $errors = [];
+        
+            if ($emailExists) {
+                $errors['email'] = 'Email is already exist !';
+            }
+        
+            if ($mobileExists) {
+                $errors['mobile'] = 'Mobile number is already exist !';
+            }
+        
+            return redirect()->back()->withErrors($errors)->withInput();
         }
+        
     // try{
 
         // Save data to the database

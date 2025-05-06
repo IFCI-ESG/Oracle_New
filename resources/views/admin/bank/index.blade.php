@@ -55,6 +55,10 @@
                                                 Mobile</th>
                                             <th style="padding: 8px 5px; text-align: center; vertical-align: middle;">
                                                 Status</th>
+                                                <th style="padding: 8px 5px; text-align: center; vertical-align: middle;">
+                                                Created At</th>
+                                                <th style="padding: 8px 5px; text-align: center; vertical-align: middle;">
+                                                Updated At</th>
                                             <th style="padding: 8px 5px; text-align: center; vertical-align: middle;">
                                                 Action</th>
                                         </tr>
@@ -89,6 +93,10 @@
 @endif
 
                                                     </td>
+                                                    <td class="text-center" style="font-size:0.8rem ;">
+                                                    {{ $bank->created_at ? $bank->created_at : '--' }}</td>
+                                                    <td class="text-center" style="font-size:0.8rem ;">
+                                                    {{ $bank->updated_at ? $bank->updated_at : '--' }}</td>
                                                     <td class="text-center">
                                                         <div class="dropdown">
                                                             <button class="btn btn-light dropdown-toggle" type="button"
@@ -140,6 +148,8 @@
                                                 <td class="text-center"></td>
                                                 <td class="text-center"></td>
                                                 <td class="text-center"></td>
+                                                <td class="text-center"></td>
+                                                <td class="text-center"></td>
                                             </tr>
                                         @endif
                                     </tbody>
@@ -180,21 +190,59 @@
         height: 34px;
         font-size: 14px;
     }
+    table.dataTable {
+        width: 100% !important;
+        margin: 0 !important;
+        border-collapse: collapse !important;
+    }
     table.dataTable thead th {
         background-color: #343a40;
         color: white;
-        padding: 10px 8px;
+        padding: 10px 8px !important;
         font-size: 14px;
-        text-align: center;
-        vertical-align: middle;
+        text-align: center !important;
+        vertical-align: middle !important;
+        border-bottom: 2px solid #dee2e6 !important;
     }
     table.dataTable tbody td {
-        padding: 8px;
+        padding: 8px !important;
         font-size: 14px;
-        vertical-align: middle;
+        vertical-align: middle !important;
+        text-align: center !important;
+        border: 1px solid #dee2e6 !important;
     }
     table.dataTable tbody tr:nth-child(odd) {
         background-color: #f8f9fa;
+    }
+    table.dataTable tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+    .dataTables_wrapper .row {
+        margin: 0 !important;
+        width: 100% !important;
+    }
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 1rem;
+    }
+    .dropdown-menu {
+        min-width: 120px !important;
+    }
+    .dropdown .btn {
+        padding: 0.25rem 0.5rem;
+    }
+    /* Hide pagination when no results */
+    .dataTables_empty + .dataTables_paginate {
+        display: none !important;
+    }
+    /* Style for no data message */
+    .dataTables_empty {
+        padding: 20px !important;
+        font-size: 14px !important;
+        color: #6c757d !important;
+        background-color: #f8f9fa !important;
+        text-align: center !important;
     }
 </style>
 
@@ -209,9 +257,18 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 
 <script>
     $(document).ready(function() {
+        // Add custom date sorting function
+        $.fn.dataTable.ext.type.order['date-format-pre'] = function(d) {
+            // Return 0 for empty or invalid dates
+            if (!d || d === '--') return 0;
+            // Parse the date using moment.js
+            return moment(d).unix();
+        };
+
         // Create hidden DataTable buttons
         var table = $('#example').DataTable({
             dom: 'Brt<"bottom"ip>', // Buttons (hidden), table, info, pagination
@@ -219,17 +276,26 @@
                 {
                     extend: 'copy',
                     text: 'Copy',
-                    className: 'btn-secondary d-none'
+                    className: 'btn-secondary d-none',
+                    exportOptions: {
+                        columns: [0,1,2,3,4,5,6,7,8]
+                    }
                 },
                 {
                     extend: 'csv',
                     text: 'CSV',
-                    className: 'btn-secondary d-none'
+                    className: 'btn-secondary d-none',
+                    exportOptions: {
+                        columns: [0,1,2,3,4,5,6,7,8]
+                    }
                 },
                 {
                     extend: 'print',
                     text: 'Print',
-                    className: 'btn-secondary d-none'
+                    className: 'btn-secondary d-none',
+                    exportOptions: {
+                        columns: [0,1,2,3,4,5,6,7,8]
+                    }
                 }
             ],
             responsive: true,
@@ -238,8 +304,39 @@
             ordering: true,
             info: true,
             columnDefs: [
-                { targets: 7, orderable: false }
-            ]
+                { 
+                    targets: 7,
+                    type: 'date-format'
+                },
+                { 
+                    targets: 8,
+                    type: 'date-format'
+                },
+                { 
+                    targets: 9,
+                    orderable: false
+                }
+            ],
+            order: [[7, 'desc']], // Sort by Created At column in descending order
+            pageLength: 25, // Show 25 entries per page
+            language: {
+                emptyTable: "No records available",
+                zeroRecords: "No matching records found",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                infoEmpty: "Showing 0 entries",
+                infoFiltered: "(filtered from _MAX_ total entries)"
+            },
+            drawCallback: function() {
+                // Scroll to top of table container
+                $('.table-responsive').animate({
+                    scrollTop: 0
+                }, 'fast');
+                
+                // Scroll the window to the top of the table card if needed
+                $('html, body').animate({
+                    scrollTop: $('.card.border-primary').offset().top - 20
+                }, 'fast');
+            }
         });
         
         // Connect custom search box
@@ -249,15 +346,26 @@
         
         // Connect custom buttons to DataTables buttons
         $('#copy-btn').on('click', function() {
-            table.button(0).trigger(); // Trigger first button (copy)
+            table.button(0).trigger();
         });
         
         $('#csv-btn').on('click', function() {
-            table.button(1).trigger(); // Trigger second button (csv)
+            table.button(1).trigger();
         });
         
         $('#print-btn').on('click', function() {
-            table.button(2).trigger(); // Trigger third button (print)
+            table.button(2).trigger();
+        });
+
+        // Hide pagination when no results
+        table.on('draw', function() {
+            if (table.page.info().recordsDisplay === 0) {
+                $('.dataTables_paginate').hide();
+                $('.dataTables_info').hide();
+            } else {
+                $('.dataTables_paginate').show();
+                $('.dataTables_info').show();
+            }
         });
     });
 </script>

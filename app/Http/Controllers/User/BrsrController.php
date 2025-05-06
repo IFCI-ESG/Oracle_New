@@ -24,7 +24,17 @@ use App\Models\BrsrSectionCP1CaseQuestionValue;
 use App\Models\BrsrSectionP2QuestionMaster;
 use App\Models\BrsrSectionP2QuestionValue;
 use App\Models\BrsrSectionP2OthersQuestionValue;
+use App\Models\BrsrSectionP4QuestionMaster;
+use App\Models\BrsrSectionP4QuestionValue;
+use App\Models\BrsrSectionP4AdditionalQuestionValue;
+use App\Models\BrsrSectionP5QuestionMaster;
+use App\Models\BrsrSectionP5QuestionValue;
 use App\Models\BrsrSectionP7QuestionValue;
+use App\Models\BrsrSectionP8QuestionMaster;
+use App\Models\BrsrSectionP8QuestionValue;
+use App\Models\BrsrSectionP8AdditionalQuestionValue;
+use App\Models\BrsrSectionP9QuestionMaster;
+use App\Models\BrsrSectionP9QuestionValue;
 use Illuminate\Support\Facades\Http;
 use Auth;
 use DB;
@@ -47,9 +57,14 @@ class BrsrController extends Controller
         $brsr_sectionb = BrsrSectionBPolicyQuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp1 =  BrsrSectionCP1QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp2 =  BrsrSectionP2QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
+        $brsr_sectionp4 =  BrsrSectionP4QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
+        $brsr_sectionp5 =  BrsrSectionP5QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp7 =  BrsrSectionP7QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
-        $fys = DB::table('fy_masters')->orderBy('id', 'desc')->limit(1)->get();
-        return view('user.brsr.index', compact('brsr_sectionp1','brsr_sectionb','fys','brsr_value','brsr_sectionp2','brsr_sectionp7'));
+        $brsr_sectionp8 =  BrsrSectionP8QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
+        $brsr_sectionp9 =  BrsrSectionP9QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
+        $fys = DB::table('fy_masters')->where('status', 1)->orderBy('id', 'desc')->limit(1)->get();
+        
+        return view('user.brsr.index', compact('brsr_sectionp1','brsr_sectionb','fys','brsr_value','brsr_sectionp2','brsr_sectionp4','brsr_sectionp5','brsr_sectionp7','brsr_sectionp8','brsr_sectionp9'));
     }
 
     public function create($fy_id) {
@@ -85,7 +100,7 @@ class BrsrController extends Controller
       
         $previous_year = substr($fys->fy, 0, 4);
         $prior_previous_year = substr($previous_fy, 0, 4);
-       
+        
         $postData = [
                 'cin' => Auth::user()->cin_llpin,
                 'year' => $previous_year,
@@ -1060,6 +1075,246 @@ $previous_capex = (isset($Results['X5']) && is_numeric($Results['X5']))
 
     }
 
+    public function sectionP5create($fy_id) {
+ 
+        $fy_id = decrypt($fy_id);
+        
+        $user = Auth::user();
+
+        $social_mast = BrsrMast::where('com_id', $user->id)->where('fy_id',$fy_id)->first();
+        DB::transaction(function () use ($fy_id,$user,$social_mast)
+        {
+            if(!$social_mast)
+            {
+                $social = new BrsrMast;
+                    $social->com_id = $user->id;
+                    $social->status = 'D';
+                    $social->fy_id = $fy_id;
+                $social->save();
+            }
+        });
+      
+        $employees_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'emp_worker')->orderby('id')->get();
+        $wages_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'emp_wages')->orderby('id')->get();
+        $salary_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'emp_salary')->orderby('id')->get();
+        $grosswages_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'gross_wage')->orderby('id')->get();
+        $focal_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'focal_point')->orderby('id')->get();
+        $internal_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'internal')->orderby('id')->get();
+        $compliants_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'compliants')->orderby('id')->get();
+        $ppr_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'ppr')->orderby('id')->get();
+        $case_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'case')->orderby('id')->get();
+        $case_ques1 = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'case1')->orderby('id')->get();
+        $assessment_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'emp_assessment')->orderby('id')->get();
+        $risk_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'risk')->orderby('id')->get();
+        $business_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'business_process')->orderby('id')->get();
+        $scope_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'scope')->orderby('id')->get();
+        $entity_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'entity')->orderby('id')->get();
+        $valuechain_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'value_chain')->orderby('id')->get();
+        $action_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'actions')->orderby('id')->get();
+       
+        $fys = DB::table('fy_masters')->where('id',$fy_id)->first();
+        $current_fy = $fys->fy;
+        $startYear = (int)substr($current_fy, 0, 4);
+        $previous_fy = ($startYear - 1) . '-' . substr($startYear, 2, 2);
+        $previous_year = substr($fys->fy, 0, 4);
+       
+
+        // API Integration for P5
+         
+         $token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4OTEyODk1LCJpYXQiOjE3MzczNzY4OTUsImp0aSI6ImFiNjgxMmQxOWFlNTRjMDFhYWQyN2NjODY5ODI2NmUyIiwidXNlcl9pZCI6NH0.fbeXrf5QUjjY4sAUtjE4RjElsaeUWdm6HQ1Fl56Zv6w';
+         $cin = Auth::user()->cin_llpin;
+         $apiUrl = 'http://13.200.249.135:7000/api/get-all-data-by-cin/';
+         $brsrMap1 = [
+             'X10' => 'E1','X13' => 'E1','X16' => 'E1','X28' => 'E1','X31' => 'E1','X34' => 'E1',
+             'X11' => 'E1','X14' => 'E1','X17' => 'E1','X29' => 'E1','X32' => 'E1','X35' => 'E1',
+             'X12' => 'E1','X15' => 'E1','X18' => 'E1','X30' => 'E1','X33' => 'E1','X36' => 'E1',
+         ];
+
+         $brsrMap2 = [
+            'X21' => 'E2','X22' => 'E2','X23' => 'E2','X61' => 'E2','X62' => 'E2','X63' => 'E2','X101' => 'E2','X102' => 'E2','X103' => 'E2','X141' => 'E2','X142' => 'E2','X143' => 'E2',
+            'X25' => 'E2','X29' => 'E2','X33' => 'E2','X65' => 'E2','X69' => 'E2','X73' => 'E2','X105' => 'E2','X109' => 'E2','X113' => 'E2','X145' => 'E2','X149' => 'E2','X153' => 'E2',
+            'X26' => 'E2','X30' => 'E2','X34' => 'E2','X66' => 'E2','X70' => 'E2','X74' => 'E2','X106' => 'E2','X110' => 'E2','X114' => 'E2','X146' => 'E2','X150' => 'E2','X154' => 'E2',
+            'X27' => 'E2','X31' => 'E2','X35' => 'E2','X67' => 'E2','X71' => 'E2','X75' => 'E2','X107' => 'E2','X111' => 'E2','X115' => 'E2','X147' => 'E2','X151' => 'E2','X155' => 'E2',
+            'X28' => 'E2','X32' => 'E2','X36' => 'E2','X68' => 'E2','X72' => 'E2','X76' => 'E2','X108' => 'E2','X112' => 'E2','X116' => 'E2','X148' => 'E2','X152' => 'E2','X156' => 'E2',
+         ];
+
+         $brsrMap3 = [
+            'X13' => 'E6','X15' => 'E6','X17' => 'E6','X19' => 'E6','X21' => 'E6','X23' => 'E6',
+            'X14' => 'E6','X16' => 'E6','X18' => 'E6','X20' => 'E6','X22' => 'E6','X24' => 'E6',
+            'X31' => 'E6','X32' => 'E6','X33' => 'E6','X34' => 'E6','X35' => 'E6','X36' => 'E6',
+            'B6' => 'E3', 'X2' => 'E7','X6' => 'E7','X8' => 'E7', 
+        ];
+
+         $Results1 = [];
+         $Results2 = [];
+         $Results3 = [];
+         
+        foreach ($brsrMap1 as $id => $question) {
+            $postData = [
+                'cin' => $cin,
+                'year' => $previous_year,
+                'Section' => 'P5',
+                'Question' => $question,
+                'BRSR_ID' => $id,
+            ];
+        
+            $response = Http::withToken($token)->post($apiUrl, $postData);
+            $values = '0';
+        
+            if ($response->successful()) {
+                $data = data_get($response->json(), 'data.L1');
+                if (is_array($data)) {
+                    $values = implode(', ', $data);
+                } elseif (!empty($data)) {
+                    $values = $data;
+                }
+            }
+        
+            $Results1[$id] = $values;
+        }
+
+        foreach ($brsrMap2 as $id => $question) {
+            $postData = [
+                'cin' => $cin,
+                'year' => $previous_year,
+                'Section' => 'P5',
+                'Question' => $question,
+                'BRSR_ID' => $id,
+            ];
+        
+            $response = Http::withToken($token)->post($apiUrl, $postData);
+            $values = '0';
+        
+            if ($response->successful()) {
+                $data = data_get($response->json(), 'data.L1');
+                if (is_array($data)) {
+                    $values = implode(', ', $data);
+                } elseif (!empty($data)) {
+                    $values = $data;
+                }
+            }
+        
+            $Results2[$id] = $values;
+        }
+
+        foreach ($brsrMap3 as $id => $question) {
+            $postData = [
+                'cin' => $cin,
+                'year' => $previous_year,
+                'Section' => 'P5',
+                'Question' => $question,
+                'BRSR_ID' => $id,
+            ];
+        
+            $response = Http::withToken($token)->post($apiUrl, $postData);
+            $values = 'NA';
+        
+            if ($response->successful()) {
+                $data = data_get($response->json(), 'data.L1');
+                if (is_array($data)) {
+                    $values = implode(', ', $data);
+                } elseif (!empty($data)) {
+                    $values = $data;
+                }
+            }
+        
+            $Results3[$id] = $values;
+        }
+
+        $previous_permanent_employees = $Results1['X10'] ;$previous_other_than_permanent = $Results1['X13'];$previous_total_employees = $Results1['X16'];$previous_permanent_workers = $Results1['X28'];
+        $previous_other_than_workers = $Results1['X31'];$previous_total_workers = $Results1['X34'];
+
+        $previous_permanent_employees1 = $Results1['X11'];$previous_other_than_permanent1 = $Results1['X14'];$previous_total_employees1 = $Results1['X17'];$previous_permanent_workers1 = $Results1['X29'];
+        $previous_other_than_workers1 = $Results1['X32'];$previous_total_workers1 = $Results1['X35'];
+
+        $previous_permanent_employees2 = $Results1['X12'] == 1 ? '100%' : $Results1['X12'] . '%';$previous_other_than_permanent2 = $Results1['X15'] == 1 ? '100%' : $Results1['X15'] . '%';
+        $previous_total_employees2 = $Results1['X18'] == 1 ? '100%' : $Results1['X18'] . '%';$previous_permanent_workers2 = $Results1['X30'] == 1 ? '100%' : $Results1['X30'] . '%';
+        $previous_other_than_workers2 = $Results1['X33'] == 1 ? '100%' : $Results1['X33'] . '%';$previous_total_workers2 = $Results1['X36'] == 1 ? '100%' : $Results1['X36'] . '%';
+
+        $previous_emp_wage_tot1 = $Results2['X21'];$previous_emp_wage_tot2 = $Results2['X22'];$previous_emp_wage_tot3 = $Results2['X23'];$previous_emp_wage_tot4 = $Results2['X61'];
+        $previous_emp_wage_tot5 = $Results2['X62'];$previous_emp_wage_tot6 = $Results2['X63'];$previous_emp_wage_tot7 = $Results2['X101'];$previous_emp_wage_tot8 = $Results2['X102'];
+        $previous_emp_wage_tot9 = $Results2['X103'];$previous_emp_wage_tot10 = $Results2['X141']; $previous_emp_wage_tot11 = $Results2['X142'];$previous_emp_wage_tot12 = $Results2['X143'];
+        
+        $previous_emp_wage_eq1 = $Results2['X25'];$previous_emp_wage_eq2 = $Results2['X29'];$previous_emp_wage_eq3 = $Results2['X33'];$previous_emp_wage_eq4 = $Results2['X65'];
+        $previous_emp_wage_eq5 = $Results2['X69'];$previous_emp_wage_eq6 = $Results2['X73'];$previous_emp_wage_eq7 = $Results2['X105'];$previous_emp_wage_eq8 = $Results2['X109'];
+        $previous_emp_wage_eq9 = $Results2['X113'];$previous_emp_wage_eq10 = $Results2['X145']; $previous_emp_wage_eq11 = $Results2['X149'];$previous_emp_wage_eq12 = $Results2['X153'];
+         
+        $previous_emp_wage_eqp1 = $Results2['X26'] == 1 ? '100%' : $Results2['X26'] . '%';$previous_emp_wage_eqp2 = $Results2['X30'] == 1 ? '100%' : $Results2['X30'] . '%';$previous_emp_wage_eqp3 = $Results2['X34']== 1 ? '100%' : $Results2['X34'] . '%';$previous_emp_wage_eqp4 = $Results2['X66'] == 1 ? '100%' : $Results2['X66'] . '%';
+        $previous_emp_wage_eqp5 = $Results2['X70'] == 1 ? '100%' : $Results2['X70'] . '%';$previous_emp_wage_eqp6 = $Results2['X74'] == 1 ? '100%' : $Results2['X74'] . '%';$previous_emp_wage_eqp7 = $Results2['X106']== 1 ? '100%' : $Results2['X106'] . '%';$previous_emp_wage_eqp8 = $Results2['X110'] == 1 ? '100%' : $Results2['X110'] . '%';
+        $previous_emp_wage_eqp9 = $Results2['X114']== 1 ? '100%' : $Results2['X114'] . '%';$previous_emp_wage_eqp10 = $Results2['X146']== 1 ? '100%' : $Results2['X146'] . '%'; $previous_emp_wage_eqp11 = $Results2['X150'] == 1 ? '100%' : $Results2['X150'] . '%';$previous_emp_wage_eqp12 = $Results2['X154']== 1 ? '100%' : $Results2['X154'] . '%';
+
+        $previous_emp_wage_min1 = $Results2['X27'];$previous_emp_wage_min2 = $Results2['X31'];$previous_emp_wage_min3 = $Results2['X35'];$previous_emp_wage_min4 = $Results2['X67'];
+        $previous_emp_wage_min5 = $Results2['X71'];$previous_emp_wage_min6 = $Results2['X75'];$previous_emp_wage_min7 = $Results2['X107'];$previous_emp_wage_min8 = $Results2['X111'];
+        $previous_emp_wage_min9 = $Results2['X115'];$previous_emp_wage_min10 = $Results2['X147']; $previous_emp_wage_min11 = $Results2['X151'];$previous_emp_wage_min12 = $Results2['X155'];
+         
+        $previous_emp_wage_minp1 = $Results2['X28']== 1 ? '100%' : $Results2['X28'] . '%';$previous_emp_wage_minp2 = $Results2['X32']== 1 ? '100%' : $Results2['X32'] . '%';$previous_emp_wage_minp3 = $Results2['X36']== 1 ? '100%' : $Results2['X36'] . '%';$previous_emp_wage_minp4 = $Results2['X68']== 1 ? '100%' : $Results2['X68'] . '%';
+        $previous_emp_wage_minp5 = $Results2['X72']== 1 ? '100%' : $Results2['X72'] . '%';$previous_emp_wage_minp6 = $Results2['X76']== 1 ? '100%' : $Results2['X76'] . '%';$previous_emp_wage_minp7 = $Results2['X108']== 1 ? '100%' : $Results2['X108'] . '%';$previous_emp_wage_minp8 = $Results2['X112']== 1 ? '100%' : $Results2['X112'] . '%';
+        $previous_emp_wage_minp9 = $Results2['X116']== 1 ? '100%' : $Results2['X116'] . '%';$previous_emp_wage_minp10 = $Results2['X148']== 1 ? '100%' : $Results2['X148'] . '%'; $previous_emp_wage_minp11 = $Results2['X152']== 1 ? '100%' : $Results2['X152'] . '%';$previous_emp_wage_minp12 = $Results2['X156']== 1 ? '100%' : $Results2['X156'] . '%';
+        
+        $previous_filed1 = $Results3['X13'];$previous_filed2 = $Results3['X15'];$previous_filed3 = $Results3['X17'];$previous_filed4 = $Results3['X19'];
+        $previous_filed5 = $Results3['X21'];$previous_filed6 = $Results3['X23'];
+
+        $previous_pending1 = $Results3['X14'];$previous_pending2 = $Results3['X16'];$previous_pending3 = $Results3['X18'];$previous_pending4 = $Results3['X20'];
+        $previous_pending5 = $Results3['X22'];$previous_pending6 = $Results3['X24'];
+        
+        $previous_remarks1 = $Results3['X31'];$previous_remarks2 = $Results3['X32'];$previous_remarks3 = $Results3['X33'];$previous_remarks4 = $Results3['X34'];
+        $previous_remarks5 = $Results3['X35'];$previous_remarks6 = $Results3['X36']; $previous_gross_wage = isset($Results3['B6']) ? number_format((float)$Results3['B6'] * 100, 2) . '%' : '0%';
+        
+        $previous_total_compliants = $Results3['X2'];$previous_posh = isset($Results3['X6']) ? number_format((float)$Results3['X6'] * 100, 2) . '%' : '0%';$previous_posh_upheld = $Results3['X8'];
+        
+        return view('user.brsr.sectionP5create', compact('social_mast','current_fy','previous_fy','user','fys','fy_id','employees_ques','wages_ques','salary_ques','grosswages_ques','focal_ques','internal_ques','compliants_ques','ppr_ques','case_ques',
+         'case_ques1','assessment_ques','risk_ques','business_ques','scope_ques','entity_ques','valuechain_ques','action_ques','previous_permanent_employees','previous_other_than_permanent','previous_total_employees','previous_permanent_workers','previous_other_than_workers','previous_total_workers',
+         'previous_permanent_employees1','previous_other_than_permanent1','previous_total_employees1','previous_permanent_workers1','previous_other_than_workers1','previous_total_workers1','previous_permanent_employees2','previous_other_than_permanent2','previous_total_employees2','previous_permanent_workers2','previous_other_than_workers2','previous_total_workers2',
+         'previous_emp_wage_tot1','previous_emp_wage_tot2','previous_emp_wage_tot3','previous_emp_wage_tot4','previous_emp_wage_tot5','previous_emp_wage_tot6','previous_emp_wage_tot7','previous_emp_wage_tot8','previous_emp_wage_tot9','previous_emp_wage_tot10','previous_emp_wage_tot11','previous_emp_wage_tot12',
+         'previous_emp_wage_eq1','previous_emp_wage_eq2','previous_emp_wage_eq3','previous_emp_wage_eq4','previous_emp_wage_eq5','previous_emp_wage_eq6','previous_emp_wage_eq7','previous_emp_wage_eq8','previous_emp_wage_eq9','previous_emp_wage_eq10','previous_emp_wage_eq11','previous_emp_wage_eq12',
+         'previous_emp_wage_eqp1','previous_emp_wage_eqp2','previous_emp_wage_eqp3','previous_emp_wage_eqp4','previous_emp_wage_eqp5','previous_emp_wage_eqp6','previous_emp_wage_eqp7','previous_emp_wage_eqp8','previous_emp_wage_eqp9','previous_emp_wage_eqp10','previous_emp_wage_eqp11','previous_emp_wage_eqp12',
+         'previous_emp_wage_min1','previous_emp_wage_min2','previous_emp_wage_min3','previous_emp_wage_min4','previous_emp_wage_min5','previous_emp_wage_min6','previous_emp_wage_min7','previous_emp_wage_min8','previous_emp_wage_min9','previous_emp_wage_min10','previous_emp_wage_min11','previous_emp_wage_min12',
+         'previous_emp_wage_minp1','previous_emp_wage_minp2','previous_emp_wage_minp3','previous_emp_wage_minp4','previous_emp_wage_minp5','previous_emp_wage_minp6','previous_emp_wage_minp7','previous_emp_wage_minp8','previous_emp_wage_minp9','previous_emp_wage_minp10','previous_emp_wage_minp11','previous_emp_wage_minp12',
+         'previous_filed1','previous_filed2','previous_filed3','previous_filed4','previous_filed5','previous_filed6', 'previous_pending1','previous_pending2','previous_pending3','previous_pending4','previous_pending5','previous_pending6','previous_remarks1','previous_remarks2','previous_remarks3','previous_remarks4',
+         'previous_remarks5','previous_remarks6','previous_gross_wage','previous_total_compliants','previous_posh','previous_posh_upheld'));
+
+    }
+
+    public function sectionP5edit($id) {
+ 
+        $id = decrypt($id);
+        
+        $user = Auth::user();
+
+        $brsr_mast = BrsrMast::where('com_id', $user->id)->where('id', $id)->first();
+        $fys = DB::table('fy_masters')->where('id',$brsr_mast->fy_id)->first();
+        $current_fy = $fys->fy;
+        $startYear = (int)substr($current_fy, 0, 4);
+        $previous_fy = ($startYear - 1) . '-' . substr($startYear, 2, 2);
+        $previous_year = substr($fys->fy, 0, 4);
+      
+        $employees_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'emp_worker')->orderby('id')->get();
+        $wages_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'emp_wages')->orderby('id')->get();
+        $salary_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'emp_salary')->orderby('id')->get();
+        $grosswages_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'gross_wage')->orderby('id')->get();
+        $focal_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'focal_point')->orderby('id')->get();
+        $internal_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'internal')->orderby('id')->get();
+        $compliants_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'compliants')->orderby('id')->get();
+        $ppr_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'ppr')->orderby('id')->get();
+        $case_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'case')->orderby('id')->get();
+        $case_ques1 = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'case1')->orderby('id')->get();
+        $assessment_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'emp_assessment')->orderby('id')->get();
+        $risk_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'risk')->orderby('id')->get();
+        $business_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'business_process')->orderby('id')->get();
+        $scope_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'scope')->orderby('id')->get();
+        $entity_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'entity')->orderby('id')->get();
+        $valuechain_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'value_chain')->orderby('id')->get();
+        $action_ques = BrsrSectionP5QuestionMaster::where('status', 1)->where('question_section', 'actions')->orderby('id')->get();
+        $principle5_value = BrsrSectionP5QuestionValue::where('brsr_mast_id', $id)->get();
+       
+        return view('user.brsr.sectionP5edit', compact('brsr_mast','current_fy','previous_fy','user',
+        'fys','employees_ques','wages_ques','salary_ques','grosswages_ques','focal_ques',
+        'internal_ques','compliants_ques','ppr_ques','case_ques',
+        'case_ques1','assessment_ques','risk_ques',
+        'business_ques','scope_ques','entity_ques','valuechain_ques','action_ques','principle5_value'));
+
+    }
+
     public function sectionP7create($fy_id) {
  
         $fy_id = decrypt($fy_id);
@@ -1083,6 +1338,394 @@ $previous_capex = (isset($Results['X5']) && is_numeric($Results['X5']))
       
         return view('user.brsr.sectionP7create', compact('social_mast','user','fys','fy_id'));
 
+    }
+
+    public function sectionP8create($fy_id) {
+ 
+        $fy_id = decrypt($fy_id);
+        
+        $user = Auth::user();
+
+        $social_mast = BrsrMast::where('com_id', $user->id)->where('fy_id',$fy_id)->first();
+        DB::transaction(function () use ($fy_id,$user,$social_mast)
+        {
+            if(!$social_mast)
+            {
+                $social = new BrsrMast;
+                    $social->com_id = $user->id;
+                    $social->status = 'D';
+                    $social->fy_id = $fy_id;
+                $social->save();
+            }
+        });
+      
+        $community_ques = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'community')->orderby('id')->get();
+        $material_ques = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'input_material')->orderby('id')->get();
+        $location_ques = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'location')->orderby('id')->get();
+        $group_ques1 = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'vulnerable_groups')->orderby('id')->get();
+        $group_ques2 = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'vulnerable_groups1')->orderby('id')->get();
+        $group_ques3 = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'vulnerable_groups2')->orderby('id')->get();
+        $fys = DB::table('fy_masters')->where('id',$fy_id)->first();
+        $current_fy = $fys->fy;
+        $startYear = (int)substr($current_fy, 0, 4);
+        $previous_fy = ($startYear - 1) . '-' . substr($startYear, 2, 2);
+        $previous_year = substr($fys->fy, 0, 4);
+
+         // API Integration for P8
+         
+         $token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4OTEyODk1LCJpYXQiOjE3MzczNzY4OTUsImp0aSI6ImFiNjgxMmQxOWFlNTRjMDFhYWQyN2NjODY5ODI2NmUyIiwidXNlcl9pZCI6NH0.fbeXrf5QUjjY4sAUtjE4RjElsaeUWdm6HQ1Fl56Zv6w';
+         $cin = Auth::user()->cin_llpin;
+         $apiUrl = 'http://13.200.249.135:7000/api/get-all-data-by-cin/';
+         $brsrMap = [
+             'X3' => 'E4',
+             'X4' => 'E4',
+         ];
+
+         $brsrMap1 = [
+            'A6' => 'E5',
+            'B6' => 'E5',
+            'C6' => 'E5',
+            'D6' => 'E5',
+        ];
+         
+         $Results = [];
+         $Results1 = [];
+         
+         foreach ($brsrMap as $id => $question) {
+             $postData = [
+                 'cin' => $cin,
+                 'year' => $previous_year,
+                 'Section' => 'P8',
+                 'Question' => $question,
+                 'BRSR_ID' => $id,
+             ];
+         
+             $response = Http::withToken($token)->post($apiUrl, $postData);
+             $values = 'NA';
+         
+             if ($response->successful()) {
+                 $data = data_get($response->json(), 'data.L1');
+                 if (is_array($data)) {
+                     $values = implode(', ', $data);
+                 } elseif (!empty($data)) {
+                     $values = $data;
+                 }
+             }
+         
+             $Results[$id] = $values;
+         }
+
+         foreach ($brsrMap1 as $id => $question) {
+            $postData = [
+                'cin' => $cin,
+                'year' => $previous_year,
+                'Section' => 'P8',
+                'Question' => $question,
+                'BRSR_ID' => $id,
+            ];
+        
+            $response = Http::withToken($token)->post($apiUrl, $postData);
+            $values = 'NA';
+        
+            if ($response->successful()) {
+                $data = data_get($response->json(), 'data.L1');
+                if (is_array($data)) {
+                    $values = implode(', ', $data);
+                } elseif (!empty($data)) {
+                    $values = $data;
+                }
+            }
+        
+            $Results1[$id] = $values;
+        }
+
+ 
+         $previous_msme = isset($Results['X3']) ? number_format((float)$Results['X3'] * 100, 2) . '%' : '0%';
+         $previous_others = isset($Results['X4']) ? number_format((float)$Results['X4'] * 100, 2) . '%' : '0%';
+
+         $previous_rural = isset($Results1['A6']) ? number_format((float)$Results1['A6'] * 100, 2) . '%' : '0%';
+         $previous_semiurban = isset($Results1['B6']) ? number_format((float)$Results1['B6'] * 100, 2) . '%' : '0%';
+         $previous_urban = isset($Results1['C6']) ? number_format((float)$Results1['C6'] * 100, 2) . '%' : '0%';
+         $previous_metro = isset($Results1['D6']) ? number_format((float)$Results1['D6'] * 100, 2) . '%' : '0%';
+      
+        return view('user.brsr.sectionP8create', compact('social_mast','user','fys','fy_id','community_ques','current_fy',
+        'previous_fy','previous_year','material_ques','location_ques','group_ques1','group_ques2',
+        'group_ques3','previous_msme','previous_others',
+        'previous_rural','previous_semiurban','previous_urban','previous_metro'));
+
+    }
+
+    public function sectionP4create($fy_id) {
+ 
+        $fy_id = decrypt($fy_id);
+        
+        $user = Auth::user();
+
+        $social_mast = BrsrMast::where('com_id', $user->id)->where('fy_id',$fy_id)->first();
+        DB::transaction(function () use ($fy_id,$user,$social_mast)
+        {
+            if(!$social_mast)
+            {
+                $social = new BrsrMast;
+                    $social->com_id = $user->id;
+                    $social->status = 'D';
+                    $social->fy_id = $fy_id;
+                $social->save();
+            }
+        });
+      
+        $principle4_ques1 = BrsrSectionP4QuestionMaster::where('status', 1)->where('question_section', 'process')->orderby('id')->get();
+        $principle4_ques2 = BrsrSectionP4QuestionMaster::where('status', 1)->where('question_section', 'consultation')->orderby('id')->get();
+        $principle4_ques3 = BrsrSectionP4QuestionMaster::where('status', 1)->where('question_section', 'consultation1')->orderby('id')->get();
+        $principle4_ques4 = BrsrSectionP4QuestionMaster::where('status', 1)->where('question_section', 'consultation2')->orderby('id')->get();
+       
+        $fys = DB::table('fy_masters')->where('id',$fy_id)->first();
+        return view('user.brsr.sectionP4create', compact('social_mast','user','fys','fy_id','principle4_ques1','principle4_ques2','principle4_ques3','principle4_ques4'));
+
+    }
+
+    public function sectionP4edit($id) {
+ 
+        $id = decrypt($id);
+        
+        $user = Auth::user();
+
+        $brsr_mast = BrsrMast::where('com_id', $user->id)->where('id', $id)->first();
+        $fys = DB::table('fy_masters')->where('id',$brsr_mast->fy_id)->first();
+    
+        $principle4_ques1 = BrsrSectionP4QuestionMaster::where('status', 1)->where('question_section', 'process')->orderby('id')->get();
+        $principle4_ques2 = BrsrSectionP4QuestionMaster::where('status', 1)->where('question_section', 'consultation')->orderby('id')->get();
+        $principle4_ques3 = BrsrSectionP4QuestionMaster::where('status', 1)->where('question_section', 'consultation1')->orderby('id')->get();
+        $principle4_ques4 = BrsrSectionP4QuestionMaster::where('status', 1)->where('question_section', 'consultation2')->orderby('id')->get();
+        $principle4_value = BrsrSectionP4QuestionValue::where('brsr_mast_id', $id)->get();
+        $sectionp4_value = BrsrSectionP4AdditionalQuestionValue::where('brsr_mast_id', $id)->get();
+        
+        return view('user.brsr.sectionP4edit', compact('brsr_mast','user','fys','principle4_ques1',
+        'principle4_ques2','principle4_ques3','principle4_ques4','principle4_value','sectionp4_value'));
+
+    }
+
+    public function sectionP9create($fy_id) {
+ 
+        $fy_id = decrypt($fy_id);
+        
+        $user = Auth::user();
+
+        $social_mast = BrsrMast::where('com_id', $user->id)->where('fy_id',$fy_id)->first();
+        DB::transaction(function () use ($fy_id,$user,$social_mast)
+        {
+            if(!$social_mast)
+            {
+                $social = new BrsrMast;
+                    $social->com_id = $user->id;
+                    $social->status = 'D';
+                    $social->fy_id = $fy_id;
+                $social->save();
+            }
+        });
+      
+        $principle9_ques1 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'complaints')->orderby('id')->get();
+        $principle9_ques2 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'total_turnover')->orderby('id')->get();
+        $principle9_ques3 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'cons_compliants')->orderby('id')->get();
+        $principle9_ques4 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'instance')->orderby('id')->get();
+        $principle9_ques5 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'web-link')->orderby('id')->get();
+        $principle9_ques6 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'actions')->orderby('id')->get();
+        $principle9_ques7 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'no_breach')->orderby('id')->get();
+        $principle9_ques8 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'breach_percent')->orderby('id')->get();
+        $principle9_ques9 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'breach_impact')->orderby('id')->get();
+        $principle9_ques10 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'channels')->orderby('id')->get();
+        $principle9_ques11 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'steps')->orderby('id')->get();
+        $principle9_ques12 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'service')->orderby('id')->get();
+        $principle9_ques13 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'product_info')->orderby('id')->get();
+        $fys = DB::table('fy_masters')->where('id',$fy_id)->first();
+        $current_fy = $fys->fy;
+        $startYear = (int)substr($current_fy, 0, 4);
+        $previous_fy = ($startYear - 1) . '-' . substr($startYear, 2, 2);
+        $previous_year = substr($fys->fy, 0, 4);
+
+         // API Integration for P9
+         
+         $token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY4OTEyODk1LCJpYXQiOjE3MzczNzY4OTUsImp0aSI6ImFiNjgxMmQxOWFlNTRjMDFhYWQyN2NjODY5ODI2NmUyIiwidXNlcl9pZCI6NH0.fbeXrf5QUjjY4sAUtjE4RjElsaeUWdm6HQ1Fl56Zv6w';
+         $cin = Auth::user()->cin_llpin;
+         $apiUrl = 'http://13.200.249.135:7000/api/get-all-data-by-cin/';
+         $brsrMap = [
+             'X22' => 'E3','X25' => 'E3','X28' => 'E3','X31' => 'E3','X34' => 'E3','X37' => 'E3','X40' => 'E3',
+             'X23' => 'E3',
+             'X26' => 'E3',
+             'X29' => 'E3',
+             'X32' => 'E3',
+             'X35' => 'E3',
+             'X38' => 'E3',
+             'X41' => 'E3',
+
+             'X24' => 'E3',
+             'X27' => 'E3',
+             'X30' => 'E3',
+             'X33' => 'E3',
+             'X36' => 'E3',
+             'X39' => 'E3',
+             'X42' => 'E3',
+         ];
+
+         $Results = [];
+         
+         foreach ($brsrMap as $id => $question) {
+            $postData = [
+                'cin' => $cin,
+                'year' => $previous_year,
+                'Section' => 'P9',
+                'Question' => $question,
+                'BRSR_ID' => $id,
+            ];
+        
+            $response = Http::withToken($token)->post($apiUrl, $postData);
+            $values = 'NA';
+        
+            if ($response->successful()) {
+                $data = data_get($response->json(), 'data.L1');
+                if (is_array($data)) {
+                    $values = implode(', ', $data);
+                } elseif (!empty($data)) {
+                    $values = $data;
+                }
+            }
+        
+            $Results[$id] = $values;
+        }
+
+        $previous_data_privacy = $Results['X22'];
+        $previous_data_ad = $Results['X25'];
+        $previous_data_cyber = $Results['X28'];
+        $previous_data_delivery = $Results['X31'];
+        $previous_data_trade = $Results['X34'];
+        $previous_data_unfair = $Results['X37'];
+        $previous_data_other = $Results['X40'];
+
+        $previous_pending_data_privacy = $Results['X23'];
+        $previous_pending_data_ad = $Results['X26'];
+        $previous_pending_data_cyber = $Results['X29'];
+        $previous_pending_data_delivery = $Results['X32'];
+        $previous_pending_data_trade = $Results['X35'];
+        $previous_pending_data_unfair = $Results['X38'];
+        $previous_pending_data_other = $Results['X41'];
+
+        $previous_remarks_data_privacy = $Results['X24'];
+        $previous_remarks_data_ad = $Results['X27'];
+        $previous_remarks_data_cyber = $Results['X30'];
+        $previous_remarks_data_delivery = $Results['X33'];
+        $previous_remarks_data_trade = $Results['X36'];
+        $previous_remarks_data_unfair = $Results['X39'];
+        $previous_remarks_data_other = $Results['X42'];
+     
+        return view('user.brsr.sectionP9create', compact('social_mast','user','fys','fy_id','principle9_ques1','current_fy',
+        'previous_fy','previous_year','principle9_ques2','principle9_ques3','principle9_ques4','principle9_ques5',
+        'principle9_ques6','principle9_ques7','principle9_ques8','principle9_ques9',
+        'principle9_ques10','principle9_ques11','principle9_ques12',
+        'principle9_ques13','previous_data_privacy','previous_data_ad',
+        'previous_data_cyber','previous_data_delivery','previous_data_trade','previous_data_unfair','previous_data_other',
+        'previous_pending_data_privacy','previous_pending_data_ad',
+        'previous_pending_data_cyber','previous_pending_data_delivery','previous_pending_data_trade','previous_pending_data_unfair','previous_pending_data_other',
+        'previous_remarks_data_privacy','previous_remarks_data_ad',
+        'previous_remarks_data_cyber','previous_remarks_data_delivery','previous_remarks_data_trade','previous_remarks_data_unfair','previous_remarks_data_other'));
+
+    }
+
+    public function sectionP9edit($id) {
+ 
+        $id = decrypt($id);
+        
+        $user = Auth::user();
+        
+        $brsr_mast = BrsrMast::where('com_id', $user->id)->where('id', $id)->first();
+        $fys = DB::table('fy_masters')->where('id',$brsr_mast->fy_id)->first();
+        $current_fy = $fys->fy;
+        $startYear = (int)substr($current_fy, 0, 4);
+        $previous_fy = ($startYear - 1) . '-' . substr($startYear, 2, 2);
+        $previous_year = substr($fys->fy, 0, 4);
+        
+        $principle9_ques1 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'complaints')->orderby('id')->get();
+        $principle9_ques2 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'total_turnover')->orderby('id')->get();
+        $principle9_ques3 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'cons_compliants')->orderby('id')->get();
+        $principle9_ques4 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'instance')->orderby('id')->get();
+        $principle9_ques5 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'web-link')->orderby('id')->get();
+        $principle9_ques6 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'actions')->orderby('id')->get();
+        $principle9_ques7 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'no_breach')->orderby('id')->get();
+        $principle9_ques8 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'breach_percent')->orderby('id')->get();
+        $principle9_ques9 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'breach_impact')->orderby('id')->get();
+        $principle9_ques10 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'channels')->orderby('id')->get();
+        $principle9_ques11 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'steps')->orderby('id')->get();
+        $principle9_ques12 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'service')->orderby('id')->get();
+        $principle9_ques13 = BrsrSectionP9QuestionMaster::where('status', 1)->where('question_section', 'product_info')->orderby('id')->get();
+        $principle9_value = BrsrSectionP9QuestionValue::where('brsr_mast_id', $id)->get();
+    
+        return view('user.brsr.sectionP9edit', compact('brsr_mast','user','fys','principle9_ques1','current_fy',
+        'previous_fy','previous_year','principle9_ques2','principle9_ques3','principle9_ques4','principle9_ques5',
+        'principle9_ques6','principle9_ques7','principle9_ques8','principle9_ques9','principle9_ques10',
+        'principle9_ques11','principle9_ques12','principle9_ques13','principle9_value'));
+
+    }
+
+    public function sectionP8edit($id) {
+ 
+        $id = decrypt($id);
+        
+        $user = Auth::user();
+
+        $brsr_mast = BrsrMast::where('com_id', $user->id)->where('id', $id)->first();
+        $fys = DB::table('fy_masters')->where('id',$brsr_mast->fy_id)->first();
+        $current_fy = $fys->fy;
+        $startYear = (int)substr($current_fy, 0, 4);
+        $previous_fy = ($startYear - 1) . '-' . substr($startYear, 2, 2);
+      
+        $community_ques = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'community')->orderby('id')->get();
+        $material_ques = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'input_material')->orderby('id')->get();
+        $location_ques = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'location')->orderby('id')->get();
+        $group_ques1 = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'vulnerable_groups')->orderby('id')->get();
+        $group_ques2 = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'vulnerable_groups1')->orderby('id')->get();
+        $group_ques3 = BrsrSectionP8QuestionMaster::where('status', 1)->where('question_section', 'vulnerable_groups2')->orderby('id')->get();
+
+        $sectionp8_value = BrsrSectionP8QuestionValue::where('brsr_mast_id', $id)->get();
+
+        $sectionp8_value1 = DB::table('brsr_sectionc_p8_additional_question_value')
+        ->where('brsr_mast_id', $id)
+        ->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals1'")
+        ->get();
+
+        $sectionp8_value2 = DB::table('brsr_sectionc_p8_additional_question_value')
+        ->where('brsr_mast_id', $id)
+        ->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals2'")
+        ->get();
+
+        $sectionp8_value3 = DB::table('brsr_sectionc_p8_additional_question_value')
+        ->where('brsr_mast_id', $id)
+        ->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals3'")
+        ->get();
+       
+        $sectionp8_value4 = DB::table('brsr_sectionc_p8_additional_question_value')
+        ->where('brsr_mast_id', $id)
+        ->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals4'")
+        ->get();
+
+        $sectionp8_value5 = DB::table('brsr_sectionc_p8_additional_question_value')
+        ->where('brsr_mast_id', $id)
+        ->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals5'")
+        ->get();
+
+        $sectionp8_value6 = DB::table('brsr_sectionc_p8_additional_question_value')
+        ->where('brsr_mast_id', $id)
+        ->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals6'")
+        ->get();
+      
+        $sectionp8_value7 = DB::table('brsr_sectionc_p8_additional_question_value')
+        ->where('brsr_mast_id', $id)
+        ->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals7'")
+        ->get();
+      
+        return view('user.brsr.sectionP8edit', compact('brsr_mast','user','fys','community_ques','current_fy',
+        'previous_fy','material_ques','location_ques','group_ques1','group_ques2','group_ques3','sectionp8_value',
+        'sectionp8_value1','sectionp8_value2',
+        'sectionp8_value3','sectionp8_value4','sectionp8_value5','sectionp8_value6','sectionp8_value7'));
+     
     }
 
     public function sectionP7edit($id) {
@@ -1746,9 +2389,376 @@ $previous_capex = (isset($Results['X5']) && is_numeric($Results['X5']))
         return redirect()->route('user.brsr.sectionP2edit', encrypt($brsr_mast->id));
     }
 
-    public function sectionp7store(Request $request)
+    public function sectionp5store(Request $request)
     {
        
+       
+        $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+
+            $previous_id = (int) $request->fy_id - 1;
+
+            foreach ($request->emp as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->emp_tot_current_fy = $val['emp_tot_current_fy'] ?? '0'; 
+                $p5_data->emp_no_current_fy = $val['emp_no_current_fy'] ?? '0';
+                $p5_data->emp_percent_current_fy = $val['emp_percent_current_fy'] ?? '0';
+                $p5_data->emp_previous_fy_id = $previous_id;
+                $p5_data->emp_tot_previous_fy = $val['emp_tot_previous_fy'] ?? '0'; 
+                $p5_data->emp_no_previous_fy = $val['emp_no_previous_fy'] ?? '0';
+                $p5_data->emp_percent_previous_fy = $val['emp_percent_previous_fy'] ?? '0';
+                $p5_data->save();
+            }
+
+            foreach ($request->emp1 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->wage_tot_current_fy = $val['wage_tot_current_fy'] ?? '0'; 
+                $p5_data->wage_equal_no_current_fy = $val['wage_equal_no_current_fy'] ?? '0';
+                $p5_data->wage_equal_percent_current_fy = $val['wage_equal_percent_current_fy'] ?? '0';
+                $p5_data->wage_more_no_current_fy = $val['wage_more_no_current_fy'] ?? '0';
+                $p5_data->wage_more_percent_current_fy = $val['wage_more_percent_current_fy'] ?? '0';
+                $p5_data->wage_previous_fy_id = $previous_id;
+                $p5_data->wage_tot_previous_fy = $val['wage_tot_previous_fy'] ?? '0'; 
+                $p5_data->wage_equal_no_previous_fy = $val['wage_equal_no_previous_fy'] ?? '0';
+                $p5_data->wage_equal_percent_previous_fy = $val['wage_equal_percent_previous_fy'] ?? '0';
+                $p5_data->wage_more_no_previous_fy = $val['wage_more_no_previous_fy'] ?? '0';
+                $p5_data->wage_more_percent_previous_fy = $val['wage_more_percent_previous_fy'] ?? '0';
+                $p5_data->save();
+            }
+           
+            foreach ($request->segment3 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->male_sal_number = $val['male_sal_number'] ?? 'NaN'; 
+                $p5_data->male_wages = $val['male_wages'] ?? 'NaN';
+                $p5_data->female_sal_number = $val['female_sal_number'] ?? 'NaN'; 
+                $p5_data->female_wages = $val['female_wages'] ?? 'NaN'; 
+                $p5_data->save();
+             }
+
+             foreach ($request->segment4 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->gross_wages_current_fy = $val['gross_wages_current_fy'] ?? 'NaN'; 
+                $p5_data->gross_wages_previous_fy = $val['gross_wages_previous_fy'] ?? 'NaN';
+                $p5_data->save();
+            }
+
+            foreach ($request->segment5 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->focal_point = $val['focal_point'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment6 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->internal_mech = $val['internal_mech'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment7 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->compliants_filed_current_fy = $val['compliants_filed_current_fy'] ?? 'NaN'; 
+                $p5_data->compliants_pending_current_fy = $val['compliants_pending_current_fy'] ?? 'NaN'; 
+                $p5_data->compliants_remarks_current_fy = $val['compliants_remarks_current_fy'] ?? 'NaN'; 
+                $p5_data->compliants_prev_fy_id =  $previous_id;
+                $p5_data->compliants_filed_previous_fy = $val['compliants_filed_previous_fy'] ?? 'NaN'; 
+                $p5_data->compliants_pending_previous_fy = $val['compliants_pending_previous_fy'] ?? 'NaN'; 
+                $p5_data->compliants_remarks_previous_fy = $val['compliants_remarks_previous_fy'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment8 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->ppr_current_fy = $val['ppr_current_fy'] ?? 'NaN'; 
+                $p5_data->ppr_previous_fy_id =  $previous_id;
+                $p5_data->ppr_previous_fy = $val['ppr_previous_fy'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment9 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->cases = $val['cases'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment10 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->contracts = $val['contracts'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment11 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->assessment_percent = $val['assessment_percent'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment12 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->corrective_actions = $val['corrective_actions'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment13 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->business_process = $val['business_process'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment14 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->scope_details = $val['scope_details'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment15 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->premise = $val['premise'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment16 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->value_chain_percent = $val['value_chain_percent'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment17 as $val) {
+                $p5_data = new BrsrSectionP5QuestionValue;
+                $p5_data->com_id = $request->com_id;
+                $p5_data->brsr_mast_id = $brsr_mast->id;
+                $p5_data->fy_id = $request->fy_id;
+                $p5_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p5_data->risk_concerns = $val['risk_concerns'] ?? 'NaN'; 
+                $p5_data->save();
+            }
+        });
+    
+        alert()->success('Record Inserted', 'Success!')->persistent('Close');
+        return redirect()->route('user.brsr.sectionP5edit', encrypt($brsr_mast->id));
+    }
+
+    public function sectionp5update(Request $request)
+    {
+       
+        $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+
+         foreach ($request->emp as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->emp_tot_current_fy = $val['emp_tot_current_fy'] ?? '0'; 
+                $p5_data->emp_no_current_fy = $val['emp_no_current_fy'] ?? '0';
+                $p5_data->emp_percent_current_fy = $val['emp_percent_current_fy'] ?? '0';
+                $p5_data->emp_tot_previous_fy = $val['emp_tot_previous_fy'] ?? '0'; 
+                $p5_data->emp_no_previous_fy = $val['emp_no_previous_fy'] ?? '0';
+                $p5_data->emp_percent_previous_fy = $val['emp_percent_previous_fy'] ?? '0';
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->emp1 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->wage_tot_current_fy = $val['wage_tot_current_fy'] ?? '0'; 
+                $p5_data->wage_equal_no_current_fy = $val['wage_equal_no_current_fy'] ?? '0';
+                $p5_data->wage_equal_percent_current_fy = $val['wage_equal_percent_current_fy'] ?? '0';
+                $p5_data->wage_more_no_current_fy = $val['wage_more_no_current_fy'] ?? '0';
+                $p5_data->wage_more_percent_current_fy = $val['wage_more_percent_current_fy'] ?? '0';
+                $p5_data->wage_tot_previous_fy = $val['wage_tot_previous_fy'] ?? '0'; 
+                $p5_data->wage_equal_no_previous_fy = $val['wage_equal_no_previous_fy'] ?? '0';
+                $p5_data->wage_equal_percent_previous_fy = $val['wage_equal_percent_previous_fy'] ?? '0';
+                $p5_data->wage_more_no_previous_fy = $val['wage_more_no_previous_fy'] ?? '0';
+                $p5_data->wage_more_percent_previous_fy = $val['wage_more_percent_previous_fy'] ?? '0';
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+        
+            foreach ($request->segment3 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->male_sal_number = $val['male_sal_number'] ?? 'NaN'; 
+                $p5_data->male_wages = $val['male_wages'] ?? 'NaN';
+                $p5_data->female_sal_number = $val['female_sal_number'] ?? 'NaN'; 
+                $p5_data->female_wages = $val['female_wages'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now(); 
+                $p5_data->save();
+             }
+
+             foreach ($request->segment4 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->gross_wages_current_fy = $val['gross_wages_current_fy'] ?? 'NaN'; 
+                $p5_data->gross_wages_previous_fy = $val['gross_wages_previous_fy'] ?? 'NaN';
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment5 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->focal_point = $val['focal_point'] ?? 'NaN';
+                $p5_data->updated_at = Carbon::now(); 
+                $p5_data->save();
+            }
+
+            foreach ($request->segment6 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->internal_mech = $val['internal_mech'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment7 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->compliants_filed_current_fy = $val['compliants_filed_current_fy'] ?? 'NaN'; 
+                $p5_data->compliants_pending_current_fy = $val['compliants_pending_current_fy'] ?? 'NaN'; 
+                $p5_data->compliants_remarks_current_fy = $val['compliants_remarks_current_fy'] ?? 'NaN'; 
+                $p5_data->compliants_filed_previous_fy = $val['compliants_filed_previous_fy'] ?? 'NaN'; 
+                $p5_data->compliants_pending_previous_fy = $val['compliants_pending_previous_fy'] ?? 'NaN'; 
+                $p5_data->compliants_remarks_previous_fy = $val['compliants_remarks_previous_fy'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment8 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->ppr_current_fy = $val['ppr_current_fy'] ?? 'NaN'; 
+                $p5_data->ppr_previous_fy = $val['ppr_previous_fy'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment9 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->cases = $val['cases'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment10 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->contracts = $val['contracts'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment11 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->assessment_percent = $val['assessment_percent'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment12 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->corrective_actions = $val['corrective_actions'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment13 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->business_process = $val['business_process'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment14 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->scope_details = $val['scope_details'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment15 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->premise = $val['premise'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment16 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->value_chain_percent = $val['value_chain_percent'] ?? 'NaN'; 
+                $p5_data->updated_at = Carbon::now();
+                $p5_data->save();
+            }
+
+            foreach ($request->segment17 as $val) {
+                $p5_data = BrsrSectionP5QuestionValue::find($val['row_id']);
+                $p5_data->risk_concerns = $val['risk_concerns'] ?? 'NaN';
+                $p5_data->updated_at = Carbon::now(); 
+                $p5_data->save();
+            }
+        });
+    
+        alert()->success('Data Updated Successfully', 'Success!')->persistent('Close');
+        return redirect()->back();   
+    }
+
+    public function sectionp7store(Request $request)
+    {
        
         $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
         
@@ -1815,6 +2825,714 @@ $previous_capex = (isset($Results['X5']) && is_numeric($Results['X5']))
         return redirect()->route('user.brsr.sectionP7edit', encrypt($brsr_mast->id));
     }
 
+    public function sectionp8store(Request $request)
+    {
+ 
+        $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+           $previous_id = (int) $request->fy_id - 1;
+
+            if (isset($request->additionals1)) {
+                foreach ($request->additionals1 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP8AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->project_name = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->sia_no = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->notify_date = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->external_agency = isset($data['text_d']) ? $data['text_d'] : 'NaN';
+                    $prod_serv_data->public_domain = isset($data['text_e']) ? $data['text_e'] : 'NaN';
+                    $prod_serv_data->web_link = isset($data['text_f']) ? $data['text_f'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals1';
+                    $prod_serv_data->save();
+                }
+              }
+
+              if (isset($request->additionals2)) {
+                foreach ($request->additionals2 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP8AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->rr_name = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->state_name = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->district_name = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->affected_family = isset($data['text_d']) ? $data['text_d'] : 'NaN';
+                    $prod_serv_data->paf_percent = isset($data['text_e']) ? $data['text_e'] : 'NaN';
+                    $prod_serv_data->paf_amount = isset($data['text_f']) ? $data['text_f'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals2';
+                    $prod_serv_data->save();
+                }
+              }
+
+              foreach ($request->segment1 as $val) {
+                $p8_data = new BrsrSectionP8QuestionValue;
+                $p8_data->com_id = $request->com_id;
+                $p8_data->brsr_mast_id = $brsr_mast->id;
+                $p8_data->fy_id = $request->fy_id;
+                $p8_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p8_data->community = $val['community'] ?? 'NaN'; 
+                $p8_data->save();
+             }
+
+             foreach ($request->segment2 as $val) {
+                $p8_data = new BrsrSectionP8QuestionValue;
+                $p8_data->com_id = $request->com_id;
+                $p8_data->brsr_mast_id = $brsr_mast->id;
+                $p8_data->fy_id = $request->fy_id;
+                $p8_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p8_data->input_material_current_fy = $val['input_material_current_fy'] ?? 'NaN'; 
+                $p8_data->input_material_previous_fy_id = $previous_id;
+                $p8_data->input_material_previous_fy = $val['input_material_previous_fy'] ?? 'NaN'; 
+                $p8_data->save();
+             }
+
+             foreach ($request->segment3 as $val) {
+                $p8_data = new BrsrSectionP8QuestionValue;
+                $p8_data->com_id = $request->com_id;
+                $p8_data->brsr_mast_id = $brsr_mast->id;
+                $p8_data->fy_id = $request->fy_id;
+                $p8_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p8_data->location_current_fy = $val['location_current_fy'] ?? 'NaN'; 
+                $p8_data->location_previous_fy_id = $previous_id;
+                $p8_data->location_previous_fy = $val['location_previous_fy'] ?? 'NaN'; 
+                $p8_data->save();
+             }
+
+
+            if (isset($request->additionals3)) {
+                foreach ($request->additionals3 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP8AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->social_details = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->action_taken = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals3';
+                    $prod_serv_data->save();
+                }
+              }
+
+              if (isset($request->additionals4)) {
+                foreach ($request->additionals4 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP8AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->csr_state = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->asp_district = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->amount_spent = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals4';
+                    $prod_serv_data->save();
+                }
+              }
+
+              foreach ($request->segment4 as $val) {
+                $p8_data = new BrsrSectionP8QuestionValue;
+                $p8_data->com_id = $request->com_id;
+                $p8_data->brsr_mast_id = $brsr_mast->id;
+                $p8_data->fy_id = $request->fy_id;
+                $p8_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p8_data->preferential_policy = $val['preferential_policy'] ?? 'NaN'; 
+                $p8_data->save();
+             }
+
+             foreach ($request->segment5 as $val) {
+                $p8_data = new BrsrSectionP8QuestionValue;
+                $p8_data->com_id = $request->com_id;
+                $p8_data->brsr_mast_id = $brsr_mast->id;
+                $p8_data->fy_id = $request->fy_id;
+                $p8_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p8_data->vulnerable_groups = $val['vulnerable_groups'] ?? 'NaN'; 
+                $p8_data->save();
+             }
+
+             foreach ($request->segment6 as $val) {
+                $p8_data = new BrsrSectionP8QuestionValue;
+                $p8_data->com_id = $request->com_id;
+                $p8_data->brsr_mast_id = $brsr_mast->id;
+                $p8_data->fy_id = $request->fy_id;
+                $p8_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p8_data->total_procurement = $val['total_procurement'] ?? 'NaN'; 
+                $p8_data->save();
+             }
+
+             if (isset($request->additionals5)) {
+                foreach ($request->additionals5 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP8AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->traditional  = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->acquired = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->benefit_shared = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->basis_benefit = isset($data['text_d']) ? $data['text_d'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals5';
+                    $prod_serv_data->save();
+                }
+              }
+
+              
+
+              if (isset($request->additionals6)) {
+                foreach ($request->additionals6 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP8AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->authority_name = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->brief_case = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->corrective_action = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals6';
+                    $prod_serv_data->save();
+                }
+              }
+
+              if (isset($request->additionals7)) {
+                foreach ($request->additionals7 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP8AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->csr_project = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->csr_persons = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->groups_percent = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals7';
+                    $prod_serv_data->save();
+                }
+              }
+
+        });
+    
+        alert()->success('Record Inserted', 'Success!')->persistent('Close');
+        return redirect()->route('user.brsr.sectionP8edit', encrypt($brsr_mast->id));
+    }
+
+    public function sectionp4store(Request $request)
+    {
+    
+        
+        $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+          
+          foreach ($request->segment1 as $val) {
+                $p4_data = new BrsrSectionP4QuestionValue;
+                $p4_data->com_id = $request->com_id;
+                $p4_data->brsr_mast_id = $brsr_mast->id;
+                $p4_data->fy_id = $request->fy_id;
+                $p4_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p4_data->process_key = $val['process_key'] ?? 'NaN'; 
+                $p4_data->save();
+             }
+
+             if (isset($request->additionals)) {
+                foreach ($request->additionals as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP4AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->stakeholder_group = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->identified_yes_no = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->channel = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->frequency = isset($data['text_d']) ? $data['text_d'] : 'NaN';
+                    $prod_serv_data->purpose = isset($data['text_e']) ? $data['text_e'] : 'NaN';
+                   $prod_serv_data->save();
+                }
+              }
+
+             foreach ($request->segment2 as $val) {
+                $p4_data = new BrsrSectionP4QuestionValue;
+                $p4_data->com_id = $request->com_id;
+                $p4_data->brsr_mast_id = $brsr_mast->id;
+                $p4_data->fy_id = $request->fy_id;
+                $p4_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p4_data->consultation = $val['consultation'] ?? 'NaN'; 
+                $p4_data->save();
+             }
+
+             foreach ($request->segment3 as $val) {
+                $p4_data = new BrsrSectionP4QuestionValue;
+                $p4_data->com_id = $request->com_id;
+                $p4_data->brsr_mast_id = $brsr_mast->id;
+                $p4_data->fy_id = $request->fy_id;
+                $p4_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p4_data->stakeholder_consultation = $val['stakeholder_consultation'] ?? 'NaN'; 
+                $p4_data->save();
+             }
+
+             foreach ($request->segment4 as $val) {
+                $p4_data = new BrsrSectionP4QuestionValue;
+                $p4_data->com_id = $request->com_id;
+                $p4_data->brsr_mast_id = $brsr_mast->id;
+                $p4_data->fy_id = $request->fy_id;
+                $p4_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p4_data->stakeholder_groups = $val['stakeholder_groups'] ?? 'NaN'; 
+                $p4_data->save();
+             }
+         });
+    
+        alert()->success('Record Inserted', 'Success!')->persistent('Close');
+        return redirect()->route('user.brsr.sectionP4edit', encrypt($brsr_mast->id));
+    }
+
+    public function sectionp4update(Request $request)
+    {
+    
+       $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+          
+          foreach ($request->segment1 as $val) {
+                $p4_data = BrsrSectionP4QuestionValue::find($val['row_id']);
+                $p4_data->process_key = $val['process_key'] ?? 'NaN'; 
+                $p4_data->updated_at = Carbon::now(); 
+                $p4_data->save();
+             }
+
+             if (isset($request->additionals)) {
+                foreach ($request->additionals as $key => $data) {
+                    $prod_serv_data = BrsrSectionP4AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->stakeholder_group = isset($data['stakeholder_group']) ? $data['stakeholder_group'] : 'NaN';
+                    $prod_serv_data->identified_yes_no = isset($data['identified_yes_no']) ? $data['identified_yes_no'] : 'NaN';
+                    $prod_serv_data->channel = isset($data['channel']) ? $data['channel'] : 'NaN';
+                    $prod_serv_data->frequency = isset($data['frequency']) ? $data['frequency'] : 'NaN';
+                    $prod_serv_data->purpose = isset($data['purpose']) ? $data['purpose'] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now();
+                   $prod_serv_data->save();
+                }
+              }
+
+             foreach ($request->segment2 as $val) {
+                $p4_data =  BrsrSectionP4QuestionValue::find($val['row_id']);
+                $p4_data->consultation = $val['consultation'] ?? 'NaN'; 
+                $p4_data->updated_at = Carbon::now();
+                $p4_data->save();
+             }
+
+             foreach ($request->segment3 as $val) {
+                $p4_data =  BrsrSectionP4QuestionValue::find($val['row_id']);
+                $p4_data->stakeholder_consultation = $val['stakeholder_consultation'] ?? 'NaN'; 
+                $p4_data->updated_at = Carbon::now();
+                $p4_data->save();
+             }
+
+             foreach ($request->segment4 as $val) {
+                $p4_data = BrsrSectionP4QuestionValue::find($val['row_id']);
+                $p4_data->stakeholder_groups = $val['stakeholder_groups'] ?? 'NaN'; 
+                $p4_data->updated_at = Carbon::now();
+                $p4_data->save();
+             }
+         });
+    
+         alert()->success('Data Updated Successfully', 'Success!')->persistent('Close');
+         return redirect()->back();   
+    }
+
+
+    public function sectionp9store(Request $request)
+    {
+    
+        $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+           $previous_id = (int) $request->fy_id - 1;
+          
+           foreach ($request->segment1 as $val) {
+                $p9_data = new BrsrSectionP9QuestionValue;
+                $p9_data->com_id = $request->com_id;
+                $p9_data->brsr_mast_id = $brsr_mast->id;
+                $p9_data->fy_id = $request->fy_id;
+                $p9_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p9_data->consumer_compliant = $val['consumer_compliant'] ?? 'NaN'; 
+                $p9_data->save();
+             }
+
+             foreach ($request->segment2 as $val) {
+                $p9_data = new BrsrSectionP9QuestionValue;
+                $p9_data->com_id = $request->com_id;
+                $p9_data->brsr_mast_id = $brsr_mast->id;
+                $p9_data->fy_id = $request->fy_id;
+                $p9_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p9_data->turnover_percent = $val['turnover_percent'] ?? 'NaN'; 
+                $p9_data->save();
+             }
+
+             foreach ($request->segment3 as $val) {
+                $p9_data = new BrsrSectionP9QuestionValue;
+                $p9_data->com_id = $request->com_id;
+                $p9_data->brsr_mast_id = $brsr_mast->id;
+                $p9_data->fy_id = $request->fy_id;
+                $p9_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p9_data->received_compliants_current_fy = $val['received_compliants_current_fy'] ?? 'NaN'; 
+                $p9_data->pending_compliants_current_fy = $val['pending_compliants_current_fy'] ?? 'NaN'; 
+                $p9_data->remarks_current_fy = $val['remarks_current_fy'] ?? 'NaN'; 
+                $p9_data->compliants_previous_fy_id = $previous_id;
+                $p9_data->received_compliants_previous_fy = $val['received_compliants_previous_fy'] ?? 'NaN'; 
+                $p9_data->pending_compliants_previous_fy = $val['pending_compliants_previous_fy'] ?? 'NaN'; 
+                $p9_data->remarks_previous_fy = $val['remarks_previous_fy'] ?? 'NaN'; 
+                $p9_data->save();
+             }
+
+             foreach ($request->segment4 as $val) {
+                $p9_data = new BrsrSectionP9QuestionValue;
+                $p9_data->com_id = $request->com_id;
+                $p9_data->brsr_mast_id = $brsr_mast->id;
+                $p9_data->fy_id = $request->fy_id;
+                $p9_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p9_data->instant_number = $val['instant_number'] ?? 'NaN';
+                $p9_data->recall_reason = $val['recall_reason'] ?? 'NaN';  
+                $p9_data->save();
+             }
+
+             foreach ($request->segment5 as $val) {
+                $p9_data = new BrsrSectionP9QuestionValue;
+                $p9_data->com_id = $request->com_id;
+                $p9_data->brsr_mast_id = $brsr_mast->id;
+                $p9_data->fy_id = $request->fy_id;
+                $p9_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p9_data->web_link = $val['web_link'] ?? 'NaN';
+                $p9_data->save();
+             }
+
+             foreach ($request->segment6 as $val) {
+                $p9_data = new BrsrSectionP9QuestionValue;
+                $p9_data->com_id = $request->com_id;
+                $p9_data->brsr_mast_id = $brsr_mast->id;
+                $p9_data->fy_id = $request->fy_id;
+                $p9_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p9_data->corrective_actions = $val['corrective_actions'] ?? 'NaN';
+                $p9_data->save();
+             }
+
+             foreach ($request->segment7 as $val) {
+                $p9_data = new BrsrSectionP9QuestionValue;
+                $p9_data->com_id = $request->com_id;
+                $p9_data->brsr_mast_id = $brsr_mast->id;
+                $p9_data->fy_id = $request->fy_id;
+                $p9_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p9_data->no_instances = $val['no_instances'] ?? 'NaN';
+                $p9_data->save();
+             }
+
+             foreach ($request->segment8 as $val) {
+                $p9_data = new BrsrSectionP9QuestionValue;
+                $p9_data->com_id = $request->com_id;
+                $p9_data->brsr_mast_id = $brsr_mast->id;
+                $p9_data->fy_id = $request->fy_id;
+                $p9_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p9_data->breach_percent = $val['breach_percent'] ?? 'NaN';
+                $p9_data->save();
+             }
+
+             foreach ($request->segment9 as $val) {
+                $p9_data = new BrsrSectionP9QuestionValue;
+                $p9_data->com_id = $request->com_id;
+                $p9_data->brsr_mast_id = $brsr_mast->id;
+                $p9_data->fy_id = $request->fy_id;
+                $p9_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p9_data->impact = $val['impact'] ?? 'NaN';
+                $p9_data->save();
+             }
+
+             foreach ($request->segment10 as $val) {
+                $p9_data = new BrsrSectionP9QuestionValue;
+                $p9_data->com_id = $request->com_id;
+                $p9_data->brsr_mast_id = $brsr_mast->id;
+                $p9_data->fy_id = $request->fy_id;
+                $p9_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p9_data->channels = $val['channels'] ?? 'NaN';
+                $p9_data->save();
+             }
+
+             foreach ($request->segment11 as $val) {
+                $p9_data = new BrsrSectionP9QuestionValue;
+                $p9_data->com_id = $request->com_id;
+                $p9_data->brsr_mast_id = $brsr_mast->id;
+                $p9_data->fy_id = $request->fy_id;
+                $p9_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p9_data->steps = $val['steps'] ?? 'NaN';
+                $p9_data->save();
+             }
+
+             foreach ($request->segment12 as $val) {
+                $p9_data = new BrsrSectionP9QuestionValue;
+                $p9_data->com_id = $request->com_id;
+                $p9_data->brsr_mast_id = $brsr_mast->id;
+                $p9_data->fy_id = $request->fy_id;
+                $p9_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p9_data->risk = $val['risk'] ?? 'NaN';
+                $p9_data->save();
+             }
+
+             foreach ($request->segment13 as $val) {
+                $p9_data = new BrsrSectionP9QuestionValue;
+                $p9_data->com_id = $request->com_id;
+                $p9_data->brsr_mast_id = $brsr_mast->id;
+                $p9_data->fy_id = $request->fy_id;
+                $p9_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p9_data->product_info = $val['product_info'] ?? 'NaN';
+                $p9_data->save();
+             }
+            
+         });
+    
+        alert()->success('Record Inserted', 'Success!')->persistent('Close');
+        return redirect()->route('user.brsr.sectionP9edit', encrypt($brsr_mast->id));
+    }
+
+    public function sectionp9update(Request $request)
+    {
+    
+        $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+           
+           foreach ($request->segment1 as $val) {
+                $p9_data = BrsrSectionP9QuestionValue::find($val['row_id']);
+                $p9_data->consumer_compliant = $val['consumer_compliant'] ?? 'NaN'; 
+                $p9_data->updated_at = Carbon::now(); 
+                $p9_data->save();
+             }
+
+             foreach ($request->segment2 as $val) {
+                $p9_data = BrsrSectionP9QuestionValue::find($val['row_id']);
+                $p9_data->turnover_percent = $val['turnover_percent'] ?? 'NaN';
+                $p9_data->updated_at = Carbon::now(); 
+                $p9_data->save();
+             }
+
+             foreach ($request->segment3 as $val) {
+                $p9_data = BrsrSectionP9QuestionValue::find($val['row_id']);
+                $p9_data->received_compliants_current_fy = $val['received_compliants_current_fy'] ?? 'NaN'; 
+                $p9_data->pending_compliants_current_fy = $val['pending_compliants_current_fy'] ?? 'NaN'; 
+                $p9_data->remarks_current_fy = $val['remarks_current_fy'] ?? 'NaN'; 
+                $p9_data->received_compliants_previous_fy = $val['received_compliants_previous_fy'] ?? 'NaN'; 
+                $p9_data->pending_compliants_previous_fy = $val['pending_compliants_previous_fy'] ?? 'NaN'; 
+                $p9_data->remarks_previous_fy = $val['remarks_previous_fy'] ?? 'NaN'; 
+                $p9_data->updated_at = Carbon::now();
+                $p9_data->save();
+             }
+
+             foreach ($request->segment4 as $val) {
+                $p9_data = BrsrSectionP9QuestionValue::find($val['row_id']);
+                $p9_data->instant_number = $val['instant_number'] ?? 'NaN';
+                $p9_data->recall_reason = $val['recall_reason'] ?? 'NaN';  
+                $p9_data->updated_at = Carbon::now();
+                $p9_data->save();
+             }
+
+             foreach ($request->segment5 as $val) {
+                $p9_data =  BrsrSectionP9QuestionValue::find($val['row_id']);
+                $p9_data->web_link = $val['web_link'] ?? 'NaN';
+                $p9_data->updated_at = Carbon::now();
+                $p9_data->save();
+             }
+
+             foreach ($request->segment6 as $val) {
+                $p9_data = BrsrSectionP9QuestionValue::find($val['row_id']);
+                $p9_data->corrective_actions = $val['corrective_actions'] ?? 'NaN';
+                $p9_data->updated_at = Carbon::now();
+                $p9_data->save();
+             }
+
+             foreach ($request->segment7 as $val) {
+                $p9_data =  BrsrSectionP9QuestionValue::find($val['row_id']);
+                $p9_data->no_instances = $val['no_instances'] ?? 'NaN';
+                $p9_data->updated_at = Carbon::now();
+                $p9_data->save();
+             }
+
+             foreach ($request->segment8 as $val) {
+                $p9_data =  BrsrSectionP9QuestionValue::find($val['row_id']);
+                $p9_data->breach_percent = $val['breach_percent'] ?? 'NaN';
+                $p9_data->updated_at = Carbon::now();
+                $p9_data->save();
+             }
+
+             foreach ($request->segment9 as $val) {
+                $p9_data = BrsrSectionP9QuestionValue::find($val['row_id']);
+                $p9_data->impact = $val['impact'] ?? 'NaN';
+                $p9_data->updated_at = Carbon::now();
+                $p9_data->save();
+             }
+
+             foreach ($request->segment10 as $val) {
+                $p9_data = BrsrSectionP9QuestionValue::find($val['row_id']);
+                $p9_data->channels = $val['channels'] ?? 'NaN';
+                $p9_data->updated_at = Carbon::now();
+                $p9_data->save();
+             }
+
+             foreach ($request->segment11 as $val) {
+                $p9_data = BrsrSectionP9QuestionValue::find($val['row_id']);
+                $p9_data->steps = $val['steps'] ?? 'NaN';
+                $p9_data->updated_at = Carbon::now();
+                $p9_data->save();
+             }
+
+             foreach ($request->segment12 as $val) {
+                $p9_data =  BrsrSectionP9QuestionValue::find($val['row_id']);
+                $p9_data->risk = $val['risk'] ?? 'NaN';
+                $p9_data->updated_at = Carbon::now();
+                $p9_data->save();
+             }
+
+             foreach ($request->segment13 as $val) {
+                $p9_data = BrsrSectionP9QuestionValue::find($val['row_id']);
+                $p9_data->product_info = $val['product_info'] ?? 'NaN';
+                $p9_data->updated_at = Carbon::now();
+                $p9_data->save();
+             }
+            
+         });
+    
+        alert()->success('Data Updated Successfully', 'Success!')->persistent('Close');
+        return redirect()->back();   
+    }
+
+    public function sectionp8update(Request $request)
+    {
+ 
+        $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+         
+         if (isset($request->additionals1)) {
+                foreach ($request->additionals1 as $key => $data) {
+                    $prod_serv_data = BrsrSectionP8AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->project_name = isset($data['project_name']) ? $data['project_name'] : 'NaN';
+                    $prod_serv_data->sia_no = isset($data['sia_no']) ? $data['sia_no'] : 'NaN';
+                    $prod_serv_data->notify_date = isset($data['notify_date']) ? $data['notify_date'] : 'NaN';
+                    $prod_serv_data->external_agency = isset($data['external_agency']) ? $data['external_agency'] : 'NaN';
+                    $prod_serv_data->public_domain = isset($data['public_domain']) ? $data['public_domain'] : 'NaN';
+                    $prod_serv_data->web_link = isset($data['web_link']) ? $data['web_link'] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now(); 
+                    $prod_serv_data->save();
+                }
+              }
+
+              if (isset($request->additionals2)) {
+                foreach ($request->additionals2 as $key => $data) {
+                    $prod_serv_data =  BrsrSectionP8AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->rr_name = isset($data['rr_name']) ? $data['rr_name'] : 'NaN';
+                    $prod_serv_data->state_name = isset($data['state_name']) ? $data['state_name'] : 'NaN';
+                    $prod_serv_data->district_name = isset($data['district_name']) ? $data['district_name'] : 'NaN';
+                    $prod_serv_data->affected_family = isset($data['affected_family']) ? $data['affected_family'] : 'NaN';
+                    $prod_serv_data->paf_percent = isset($data['paf_percent']) ? $data['paf_percent'] : 'NaN';
+                    $prod_serv_data->paf_amount = isset($data['paf_amount']) ? $data['paf_amount'] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now(); 
+                    $prod_serv_data->save();
+                }
+              }
+
+              foreach ($request->segment1 as $val) {
+                $p8_data = BrsrSectionP8QuestionValue::find($val['row_id']);
+                $p8_data->community = $val['community'] ?? 'NaN'; 
+                $p8_data->updated_at = Carbon::now(); 
+                $p8_data->save();
+             }
+
+             foreach ($request->segment2 as $val) {
+                $p8_data =  BrsrSectionP8QuestionValue::find($val['row_id']);
+                $p8_data->input_material_current_fy = $val['input_material_current_fy'] ?? 'NaN'; 
+                $p8_data->input_material_previous_fy = $val['input_material_previous_fy'] ?? 'NaN'; 
+                $p8_data->updated_at = Carbon::now(); 
+                $p8_data->save();
+             }
+
+             foreach ($request->segment3 as $val) {
+                $p8_data = BrsrSectionP8QuestionValue::find($val['row_id']);
+                $p8_data->location_current_fy = $val['location_current_fy'] ?? 'NaN'; 
+                $p8_data->location_previous_fy = $val['location_previous_fy'] ?? 'NaN'; 
+                $p8_data->updated_at = Carbon::now(); 
+                $p8_data->save();
+             }
+
+
+            if (isset($request->additionals3)) {
+                foreach ($request->additionals3 as $key => $data) {
+                    $prod_serv_data = BrsrSectionP8AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->social_details = isset($data['social_details']) ? $data['social_details'] : 'NaN';
+                    $prod_serv_data->action_taken = isset($data['action_taken']) ? $data['action_taken'] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now(); 
+                    $prod_serv_data->save();
+                }
+              }
+
+              if (isset($request->additionals4)) {
+                foreach ($request->additionals4 as $key => $data) {
+                    $prod_serv_data = BrsrSectionP8AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->csr_state = isset($data['csr_state']) ? $data['csr_state'] : 'NaN';
+                    $prod_serv_data->asp_district = isset($data['asp_district']) ? $data['asp_district'] : 'NaN';
+                    $prod_serv_data->amount_spent = isset($data['amount_spent ']) ? $data['amount_spent '] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now(); 
+                    $prod_serv_data->save();
+                }
+              }
+
+              foreach ($request->segment4 as $val) {
+                $p8_data = BrsrSectionP8QuestionValue::find($val['row_id']);
+                $p8_data->preferential_policy = $val['preferential_policy'] ?? 'NaN'; 
+                $p8_data->updated_at = Carbon::now(); 
+                $p8_data->save();
+             }
+
+             foreach ($request->segment5 as $val) {
+                $p8_data =  BrsrSectionP8QuestionValue::find($val['row_id']);
+                $p8_data->vulnerable_groups = $val['vulnerable_groups'] ?? 'NaN'; 
+                $p8_data->updated_at = Carbon::now(); 
+                $p8_data->save();
+             }
+
+             foreach ($request->segment6 as $val) {
+                $p8_data = BrsrSectionP8QuestionValue::find($val['row_id']);
+                $p8_data->total_procurement = $val['total_procurement'] ?? 'NaN'; 
+                $p8_data->updated_at = Carbon::now(); 
+                $p8_data->save();
+             }
+
+             if (isset($request->additionals5)) {
+                foreach ($request->additionals5 as $key => $data) {
+                    $prod_serv_data = BrsrSectionP8AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->traditional  = isset($data['traditional']) ? $data['traditional'] : 'NaN';
+                    $prod_serv_data->acquired = isset($data['acquired']) ? $data['acquired'] : 'NaN';
+                    $prod_serv_data->benefit_shared = isset($data['benefit_shared']) ? $data['benefit_shared'] : 'NaN';
+                    $prod_serv_data->basis_benefit = isset($data['basis_benefit']) ? $data['basis_benefit'] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now(); 
+                    $prod_serv_data->save();
+                }
+              }
+
+             if (isset($request->additionals6)) {
+                foreach ($request->additionals6 as $key => $data) {
+                    $prod_serv_data = BrsrSectionP8AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->authority_name = isset($data['authority_name']) ? $data['authority_name'] : 'NaN';
+                    $prod_serv_data->brief_case = isset($data['brief_case']) ? $data['brief_case'] : 'NaN';
+                    $prod_serv_data->corrective_action = isset($data['corrective_action']) ? $data['corrective_action'] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now(); 
+                    $prod_serv_data->save();
+                }
+              }
+
+              if (isset($request->additionals7)) {
+                foreach ($request->additionals7 as $key => $data) {
+                    $prod_serv_data =  BrsrSectionP8AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->csr_project = isset($data['csr_project']) ? $data['csr_project'] : 'NaN';
+                    $prod_serv_data->csr_persons = isset($data['csr_persons']) ? $data['csr_persons'] : 'NaN';
+                    $prod_serv_data->groups_percent = isset($data['groups_percent']) ? $data['groups_percent'] : 'NaN';
+                    $prod_serv_data->updated_at = Carbon::now(); 
+                    $prod_serv_data->save();
+                }
+              }
+
+        });
+    
+        alert()->success('Data Updated Successfully', 'Success!')->persistent('Close');
+        return redirect()->back();   
+    }
 
     public function sectionp7update(Request $request)
     {

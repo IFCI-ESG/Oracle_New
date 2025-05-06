@@ -7,9 +7,7 @@
 @section('content')
     <!-- Start Content-->
     <div class="container-fluid">
-       @include('layouts.shared.page-title', ['title' => 'BRSR', 'subtitle' => 'BRSR'])
-     
-     @if ($errors->any())
+        @if ($errors->any())
         @foreach ($errors->all() as $error)
         <div class="alert alert-danger alert-dismissible bg-danger text-white border-0 fade show" role="alert">
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -31,8 +29,6 @@
            {{ session('error') }}
         </div>
     @endif
-
-    <div class="container  py-6 px-2 col-lg-12">
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <form action="{{ route('user.brsr.store') }}" id="social_store" role="form" method="post"
@@ -58,7 +54,7 @@
                             <div class="tab-content" id="custom-tabs-three-tabContent">
                                 <div class="tab-pane fade show active" id="social" role="tabpanel" aria-labelledby="social-tab">
 
-                                    <div class="card card-success card-outline">
+                                <div class="card card-success card-outline">
                                         <div class="card-header">
                                             <b><u>Details of the listed entity</u></b>
                                         </div>
@@ -110,6 +106,10 @@
                                                                 <td>
                                                                         <input type="text" style="text-align: left;width:500px;"name="emp[{{ $a }}][response]" class="form-control form-control-sm" value="{{ $user->email }}" readonly>
                                                                     </td>
+                                                                    @elseif ($emp->id == 7)
+                                                                <td>
+                                                                        <input type="text" style="text-align: left;width:500px;"name="emp[{{ $a }}][response]" class="form-control form-control-sm" value="{{ $user->mobile }}" readonly>
+                                                                    </td>
 
                                                                 @elseif ($emp->id == 12)
                                                                 <td>
@@ -138,6 +138,8 @@
                                         </div>
                                     </div>
 
+
+                                    
                     <!-- Products/Services  -->
                   <div class="card card-success card-outline mt-4">
                    <div class="card-header">
@@ -387,6 +389,7 @@
 </div>
 <!-- Employees End -->
 
+ 
 <!-- Participation/Inclusion/Representation of women - Start -->
 <div class="card card-success card-outline">
     <div class="card-header">
@@ -571,7 +574,7 @@
 <!-- Turnover rate for permanent employees and workers Start End -->
 
  <!-- Holding, Subsidiary and Associate Companies (including joint ventures) - start -->
-    <div class="card card-success card-outline mt-4">
+ <div class="card card-success card-outline mt-4">
           <div class="card-header">
                      <b><u>Holding, Subsidiary and Associate Companies (including joint ventures)</u></b><br/><br/>
                      <b> 23. (a) Names of holding / subsidiary / associate companies / joint ventures </b>
@@ -638,7 +641,7 @@
         <!-- CSR Applicable - End -->
 
 
-  <!-- Compliace Start -->
+        <!-- Compliace Start -->
    <div class="card card-success card-outline">
     <div class="card-header">
       <b><u>Transparency and Disclosures Compliances</u></b><br /><br />
@@ -685,26 +688,26 @@
                        </td>
 
                        <td class="text-center">
-                        <textarea style="text-align: left; width: 100px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                        <textarea style="text-align: left;  overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                           name="emp[{{ $a }}][grievance_redressal]" id="grievance_redressal_{{$a}}" oninput="autoResize(this)" required>{{ old('emp.' . $a . '.grievance_redressal') }}</textarea>
                         </td>
 
                         <td class="text-center">
-                            <textarea style="text-align: left; width: 100px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                            <textarea style="text-align: left;   overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                               name="emp[{{ $a }}][current_fy_no_of_compliants]" id="current_fy_no_of_compliants_{{$a}}" oninput="autoResize(this)" required>{{ old('emp.' . $a . '.current_fy_no_of_compliants') }}</textarea>
                         </td>
                         <td class="text-center">
-                            <textarea style="text-align: left; width: 100px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                            <textarea style="text-align: left;   overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                                  name="emp[{{ $a }}][current_no_of_pending_compliants]" id="current_no_of_pending_compliants_{{$a}}" oninput="autoResize(this)" required>{{ old('emp.' . $a . '.current_no_of_pending_compliants') }}</textarea>
                         </td>
                         <td class="text-center">
-                           <textarea style="text-align: left; width: 100px; overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
+                           <textarea style="text-align: left;  overflow:hidden; resize: none;" class="form-control form-control-sm emp_{{$a}} t_emp auto-grow" 
                                  name="emp[{{ $a }}][current_fy_remarks]" id="current_fy_remarks_{{$a}}" oninput="autoResize(this)" required>{{ old('emp.' . $a . '.current_fy_remarks') }}</textarea>
                         </td>
 
                         <td class="text-center">
     <textarea 
-        style="text-align: left; width: 100px; overflow: hidden; resize: none;" 
+        style="text-align: left;   overflow: hidden; resize: none;" 
         class="form-control form-control-sm emp_{{$a}} m_emp auto-grow" 
         name="emp[{{ $a }}][previous_fy_no_of_compliants]" 
         id="previous_fy_no_of_compliants_{{$a}}" 
@@ -724,7 +727,7 @@
                   
                   <td class="text-center">
                     <textarea 
-                   style="text-align: left; width: 100px; overflow: hidden; resize: none;"  
+                   style="text-align: left;  overflow: hidden; resize: none;"  
         class="form-control form-control-sm emp_{{$a}} m_emp auto-grow" 
         name="emp[{{ $a }}][previous_no_of_pending_compliants]" 
         id="previous_no_of_pending_compliants_{{$a}}" 
@@ -740,7 +743,7 @@
 
 <td class="text-center">
     <textarea 
-        style="text-align: left; width: 100px; overflow: hidden; resize: none;"  
+        style="text-align: left;  overflow: hidden; resize: none;"  
         class="form-control form-control-sm emp_{{$a}} m_emp auto-grow" 
         name="emp[{{ $a }}][previous_fy_remarks]" 
         id="previous_fy_remarks_{{$a}}" 
@@ -770,6 +773,7 @@
     </div>
 </div>
 <!-- Compliace End -->
+
 
  <!-- Overview of the entity’s material responsible business conduct issues - start -->
  <div class="card card-success card-outline mt-4">
@@ -810,10 +814,7 @@
       </div>
        <!-- Overview of the entity’s material responsible business conduct issues Table end -->
 
-
-
- 
-                            </div>
+            </div>
                              </div>
                             </div>
                         </div>
@@ -835,13 +836,12 @@
                         </div>
                         <!-- /.card -->
                     </div>
-</div>
                 </form>
             </div>
         </div>
-    </div>
-@endsection
-@push('scripts')
+     
+
+        @push('scripts')
     {!! JsValidator::formRequest('App\Http\Requests\User\SocialRequest', '#social_store') !!}
     @include('partials.js.prevent_multiple_submit')
     
@@ -1132,3 +1132,4 @@
 </script>
 
 @endpush
+@endsection

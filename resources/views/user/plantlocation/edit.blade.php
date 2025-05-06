@@ -427,47 +427,135 @@
 
 
         function deleteRow(row_id) {
-            swal({
-                    title: "Do You Want to Delete this Record",
-                    icon: "warning",
-                    buttons: {
-                        cancel: true,
-                        confirm: {
-                            text: "Yes",
-                            value: "Y",
+            Swal.fire({
+                title: "Do You Want to Delete this Record",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                dangerMode: true,
+                closeOnClickOutside: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                    },
-                    dangerMode: true,
-                    closeOnClickOutside: false,
-                })
-                .then((result) => {
-                    if (result == 'Y') {
-                        $.ajax({
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            type: "GET",
-                            url: '../row_delete/' + row_id + '/plant',
-                            success: function(data) {
-                                console.log(data);
-                                if (data == true) {
-                                    swal(
-                                        'Deleted!',
-                                        'Your record has been deleted.',
-                                        'success')
+                        type: "GET",
+                        url: '../row_delete/' + row_id + '/plant',
+                        success: function(data) {
+                            if (data == true) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your record has been deleted.',
+                                    'success'
+                                ).then(() => {
                                     window.location.reload();
-                                } else {
-                                    swal(
-                                        'Not Deleted!',
-                                        'Your record has not been Deleted.',
-                                        'warning')
-
-                                }
+                                });
+                            } else {
+                                Swal.fire(
+                                    'Not Deleted!',
+                                    'Your record has not been Deleted.',
+                                    'warning'
+                                );
                             }
-                        })
-                    }
-                });
+                        }
+                    });
+                }
+            });
         }
     </script>
 
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function deleteRow(row_id) {
+        Swal.fire({
+            title: "Do You Want to Delete this Record",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            dangerMode: true,
+            closeOnClickOutside: false,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    type: "GET",
+                    url: '../row_delete/' + row_id + '/plant',
+                    success: function(data) {
+                        if (data == true) {
+                            Swal.fire(
+                                'Deleted!',
+                                'Your record has been deleted.',
+                                'success'
+                            ).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Not Deleted!',
+                                'Your record has not been Deleted.',
+                                'warning'
+                            );
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        // Disable update button initially
+        $('#submit').prop('disabled', true);
+        
+        // Store initial form values
+        var initialFormData = $('#addForm').serialize();
+        
+        // Function to check if form has changed
+        function checkFormChanged() {
+            var currentFormData = $('#addForm').serialize();
+            if (currentFormData !== initialFormData) {
+                $('#submit').prop('disabled', false);
+            } else {
+                $('#submit').prop('disabled', true);
+            }
+        }
+        
+        // Monitor all form input changes
+        $('#addForm input, #addForm textarea, #addForm select').on('change keyup', function() {
+            checkFormChanged();
+        });
+        
+        // Special handling for plant checkbox
+        $("#plant_check").on('change', function() {
+            checkFormChanged();
+            var plant = $('#plant_check').is(':checked');
+            if (plant) {
+                $('.plant_loc').closest('tr').show();
+            } else {
+                $('.plant_loc').closest('tr').hide();
+            }
+        });
+        
+        // Handle dynamic rows
+        $('#addmore').click(function() {
+            // Your existing addmore code here
+            // ... existing code ...
+            
+            // After adding new row, bind change events to new inputs
+            $('.plant_loc input, .plant_loc textarea, .plant_loc select').off('change keyup').on('change keyup', function() {
+                checkFormChanged();
+            });
+            
+            // New row means form has changed
+            $('#submit').prop('disabled', false);
+        });
+    });
+</script>
+@endpush

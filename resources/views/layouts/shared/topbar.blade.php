@@ -52,7 +52,7 @@
                 <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-light" data-bs-toggle="dropdown"
                     href="#" role="button" aria-haspopup="false" aria-expanded="false">
                     @if (auth()->user()->image)
-                        <img src="{{ asset('storage/' . auth()->user()->image) }}" alt="user-image"
+                        <img src="{{ asset(auth()->user()->image) }}" alt="user-image"
                             class="rounded-circle">
                     @else
                         <img src="/images/user-profile.jpg" alt="user-image" class="rounded-circle">
@@ -99,19 +99,22 @@
 <div class="modal fade" id="accountModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="accountModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header d-flex justify-content-center align-items-center"
-                style="background-color: #296243; color: white; width: 100%;">
-                <h5 class="modal-title" id="accountModalLabel" style="font-weight: bold; color: white;">
-                    @if(auth()->user()->password_changed == 0)
-                        Change Password Required
-                    @else
-                        My Account
-                    @endif
-                </h5>
-                @if(auth()->user()->password_changed == 1)
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                @endif
-            </div>
+        <div class="modal-header d-flex justify-content-between align-items-center" style="background-color: #296243; color: white; width: 100%;">
+    <div class="w-100 text-center">
+        <h5 class="modal-title" id="accountModalLabel" style="font-weight: bold; color: white;">
+            @if(auth()->user()->password_changed == 0)
+                Change Password Required
+            @else
+                Reset Your Password
+            @endif
+        </h5>
+    </div>
+    
+    @if(auth()->user()->password_changed == 1)
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    @endif
+</div>
+
 
             <div class="modal-body">
                 <form method="POST" action="{{ Auth::guard('admin')->check() ? route('admin.new_admin.bank.updateAccount') : route('user.updateAccount') }}" 
@@ -147,12 +150,14 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="image" class="form-label font-weight-bold" style="color: #333;">Upload Profile Image</label>
-                            <br>
-                            <input type="file" name="image" id="image" accept="image/*">
-                            <br>
-                            <small style="color: green; font-size: 0.9em;">Only JPG, PNG, and JPEG are allowed (Max: 2MB)</small>
-                        </div>
+    <label for="image" class="form-label font-weight-bold" style="color: #333;">Upload Profile Image</label>
+    <br>
+    <input type="file" name="image" id="image" accept="image/*" onchange="validateImage()">
+    <br>
+    <small style="color: green; font-size: 0.9em;">Only JPG, PNG, and JPEG are allowed (Max: 2MB)</small>
+    <br>
+    <span id="error-message" style="color: red; display: none; font-size: 0.9em;">Please upload a valid image (JPG, PNG, JPEG only).</span>
+</div>
 
                         <div class="mb-4">
                             <input type="checkbox" id="reset_password" name="reset_password" onclick="togglePasswordFields()">
@@ -171,9 +176,9 @@
                     <!-- Password fields - shown either in password section or directly -->
                     <div class="@if(auth()->user()->password_changed == 1) password-fields @endif">
                         <div class="mb-4">
-                            <label for="new_password" class="form-label font-weight-bold" style="color: #333;">New Password</label>
+                            <label for="new_password" class="form-label font-weight-bold" style="color: #333;">New Password<span style="color: red;">*</span></label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="new_password" name="new_password" required
+                                <input type="password" class="form-control" id="new_password" name="new_password"
                                     style="border-radius: 8px; border: 1px solid #ddd;" onkeyup="validatePasswords()">
                                 <span class="input-group-text" style="cursor: pointer;" onclick="togglePasswordVisibility('new_password', this)">
                                     <i class="fas fa-eye"></i>
@@ -182,9 +187,9 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="confirm_password" class="form-label font-weight-bold" style="color: #333;">Confirm Password</label>
+                            <label for="confirm_password" class="form-label font-weight-bold" style="color: #333;">Confirm Password<span style="color: red;">*</span></label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password"
                                     style="border-radius: 8px; border: 1px solid #ddd;" onkeyup="validatePasswords()">
                                 <span class="input-group-text" style="cursor: pointer;" onclick="togglePasswordVisibility('confirm_password', this)">
                                     <i class="fas fa-eye"></i>
@@ -203,7 +208,7 @@
 
                         <div id="otp_field" class="mb-4" style="display: none;">
                             <label for="otp" class="form-label font-weight-bold" style="color: #333;">Enter OTP</label>
-                            <input type="text" class="form-control" id="otp" name="otp" required
+                            <input type="text" class="form-control" id="otp" name="otp"
                                 style="border-radius: 8px; border: 1px solid #ddd;"
                                 maxlength="6" 
                                 pattern="[0-9]{6}"
@@ -361,6 +366,37 @@ document.addEventListener('DOMContentLoaded', function() {
     // Ensure button is disabled on page load
     document.getElementById('sendOtpBtn').disabled = true;
 });
+function validateImage() {
+    const fileInput = document.getElementById('image');
+    const errorMessage = document.getElementById('error-message');
+    const file = fileInput.files[0];
+
+    // Clear the error message on each change
+    errorMessage.style.display = 'none';
+
+    // Validate file type (only image files allowed)
+    if (file) {
+        const fileType = file.type;
+        const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+        
+        // Check if the file type is not valid
+        if (!validTypes.includes(fileType)) {
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = 'Please upload a valid image (JPG, PNG, JPEG only).';
+            fileInput.value = ''; // Clear the file input
+            return;
+        }
+
+        // Validate file size (max 2MB)
+        const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+        if (file.size > maxSize) {
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = 'File size exceeds 2MB. Please upload a smaller image.';
+            fileInput.value = ''; // Clear the file input
+            return;
+        }
+    }
+}
 
 function togglePasswordFields() {
     var passwordSection = document.getElementById('password_section');
@@ -399,11 +435,18 @@ function validateOTP() {
 }
 
 function confirmUpdate() {
+    var resetPasswordChecked = document.getElementById('reset_password').checked;
     var newPassword = document.getElementById('new_password').value;
     var confirmPassword = document.getElementById('confirm_password').value;
     var otp = document.getElementById('otp').value;
     var generatedOtp = document.getElementById('generated_otp').value;
 
+    // If reset password is not checked, only validate email and image
+    if (!resetPasswordChecked) {
+        return true;
+    }
+
+    // If reset password is checked, validate password fields
     if (!newPassword || !confirmPassword) {
         alert("Please fill both password fields!");
         return false;

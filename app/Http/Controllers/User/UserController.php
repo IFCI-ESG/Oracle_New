@@ -187,7 +187,7 @@ class UserController extends Controller
               $user->password_changed = 1;
               $user->save();
               Auth::Logout($user);
-              return redirect('/login')->with('success', 'Password updated. Please log in.');
+              return redirect('admin/login')->with('success', 'Password updated. Please log in.');
           }
 
 
@@ -633,25 +633,42 @@ class UserController extends Controller
             if(!$request->undertaking)
             {
                 alert()->warning('Please Check Undertaking', 'Warning')->persistent('Close');
-                // Alert::warning('Warning!', 'Please Check Undertaking')->persistent(true);
-
                 return redirect()->back();
             }
-// dd($request->undertaking,"d");
+            
+            \Log::info('Starting submission process');
+            \Log::info('Request data:', $request->all());
+            
             DB::transaction(function () use ($request, $user)
             {
                 $input_mast = InputSheetMast::where('id', $request->input_id)->first();
-                    $input_mast->status = 'S';
-                    $input_mast->is_checked = isset($request->undertaking) ? 1 : 0;
-                    $input_mast->submitted_at = Carbon::now();
+                
+                if (!$input_mast) {
+                    \Log::error('InputSheetMast not found for ID: ' . $request->input_id);
+                    throw new \Exception('Input sheet not found');
+                }
+                
+                \Log::info('Found InputSheetMast:', ['id' => $input_mast->id, 'current_status' => $input_mast->status]);
+                
+                $input_mast->status = 'S';
+                $input_mast->is_checked = isset($request->undertaking) ? 1 : 0;
+                $input_mast->submitted_at = Carbon::now();
                 $input_mast->save();
+                
+                \Log::info('InputSheetMast updated successfully');
             });
+            
+            \Log::info('Transaction completed, redirecting to fy route');
             alert()->Success('Input Sheet Submitted Successfully', 'Success')->persistent('Close');
-            return redirect()->route('user.fy',['bank_id' => encrypt($request->bank_id),'class_type'=> encrypt($request->class_type)]);
-
+            return redirect()->route('user.fy',[
+                'branch_id' => encrypt($request->bank_id),
+                'class_type'=> encrypt($request->class_type)
+            ]);
 
         }catch (\Exception $e)
         {
+            \Log::error('Input Sheet Submission Error: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
             alert()->Warning('Something Went Wrong', 'Warning!')->persistent('Close');
             return redirect()->back();
         }
@@ -668,7 +685,6 @@ class UserController extends Controller
         $user = User::where('id',$com_id)->first();
         // dd($user);
         $sector = DB::table('sector_master')->where('id',$user->sector_id)->first();
-
 
         $fys = DB::table('fy_masters')->where('id',$fy_id)->first();
 
