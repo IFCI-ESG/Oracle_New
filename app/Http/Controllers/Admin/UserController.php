@@ -255,7 +255,7 @@ class UserController extends Controller
 
         // https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/43427861-781e-44b0-9a20-f41cbd3f5afe/b88b0a105e08ab465888?experience=power-bi&clientSideAuth=0
 
-        $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/43427861-781e-44b0-9a20-f41cbd3f5afe', [
+        $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/7b997f7e-6c92-460f-8130-966b172164a4', [
 
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -269,7 +269,7 @@ class UserController extends Controller
 
         $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
             // dd($embed_url);
-        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/43427861-781e-44b0-9a20-f41cbd3f5afe/GenerateToken', [
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/7b997f7e-6c92-460f-8130-966b172164a4/GenerateToken', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $access_token
@@ -361,7 +361,7 @@ class UserController extends Controller
 
         // https://app.powerbi.com/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/510a1842-089f-4649-80f5-129140a9481b/9b0ee07cb4e45a3056e6?experience=power-bi&clientSideAuth=0
 
-       $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/510a1842-089f-4649-80f5-129140a9481b', [
+       $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/8a3c480a-5263-4fde-bc94-9c59a594efb3', [
 
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -375,7 +375,7 @@ class UserController extends Controller
 
         $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
             // dd($embed_url);
-        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/510a1842-089f-4649-80f5-129140a9481b/GenerateToken', [
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/8a3c480a-5263-4fde-bc94-9c59a594efb3/GenerateToken', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $access_token
@@ -484,7 +484,7 @@ class UserController extends Controller
             ->join('comp_type_master as ctm', 'ctm.id', 'u.comp_type_id')
             ->whereIn('bfd.bank_id', $bank_branch) // No borrower_type filter
             ->distinct() // Remove distinct on CLOB columns
-            ->get(['u.id', 'u.name','u.pan','u.status', 'u.email','u.created_by','u.unique_login_id','u.sector_id','u.sector_name', 'sm.name as sector', 'ctm.name as comp_type']); // Select only necessary columns
+            ->get(['u.id', 'u.name','u.pan','u.status', 'u.email','u.created_by','u.unique_login_id','u.sector_id','u.sector_name', 'sm.name as sector', 'ctm.name as comp_type', 'u.created_at', 'u.updated_at', 'u.password_changed']); // Select only necessary columns
     }
 
     // If the user is a SubAdmin
@@ -495,7 +495,7 @@ class UserController extends Controller
             ->join('comp_type_master as ctm', 'ctm.id', 'u.comp_type_id')
             ->where('bfd.bank_id', $user->id) // No borrower_type filter
             ->distinct() // Remove distinct on CLOB columns
-            ->get(['u.id', 'u.name','u.pan', 'u.email','u.status','u.created_by','u.unique_login_id','u.sector_id','u.sector_name', 'sm.name as sector', 'ctm.name as comp_type']); // Select only necessary columns
+            ->get(['u.id', 'u.name','u.pan', 'u.email','u.status','u.created_by','u.unique_login_id','u.sector_id','u.sector_name', 'sm.name as sector', 'ctm.name as comp_type', 'u.created_at', 'u.updated_at', 'u.password_changed']); // Select only necessary columns
     }
 
     // Fetch retail details (no borrower_type filter)
@@ -1142,7 +1142,7 @@ class UserController extends Controller
         $access_token = json_decode($response->getBody()->getContents())->access_token;
         // dd($access_token);
 
-       $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/e29ff5bd-1a7d-43f8-bd0\4-19d45db0f93f', [
+       $response = $client->request('GET', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/e29ff5bd-1a7d-43f8-bd04-19d45db0f93f', [
 
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -1156,7 +1156,7 @@ class UserController extends Controller
 
         $embed_url = json_decode($response->getBody()->getContents())->embedUrl;
             // dd($embed_url);
-        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/e29ff5bd-1a7d-43f8-bd0\4-19d45db0f93f/GenerateToken', [
+        $response = $client->request('POST', 'https://api.powerbi.com/v1.0/myorg/groups/c21ff94e-1642-40ad-90a0-bdff6451faf6/reports/e29ff5bd-1a7d-43f8-bd04-19d45db0f93f/GenerateToken', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Bearer ' . $access_token
@@ -1838,7 +1838,7 @@ class UserController extends Controller
 
     }
 
-    public function update(Request $request)
+   public function update(Request $request)
     {
         // dd($request);
         try{
@@ -1864,7 +1864,6 @@ class UserController extends Controller
                     $user->pan = $request->pan;
                     $user->contact_person = $request->auth_name;
                     $user->sector_id = $request->sector ;
-                     $newuser->sector_name = $request->has('sector_name') ? $request->sector_name : null;
                 $user->save();
 
 
@@ -1893,7 +1892,6 @@ class UserController extends Controller
         // return view('admin.user.edituser', compact('user'));
 
     }
-
     public function retail_update(Request $request)
     {
         // dd($request);
@@ -2051,54 +2049,65 @@ class UserController extends Controller
 
     public function existsubmit(Request $request)
     {
-        // dd($request);
-        try{
-
-            DB::transaction(function () use ($request)
-            {
+        try {
+            DB::transaction(function () use ($request) {
                 foreach ($request->fy as $value) {
-                    $fincial = new BankFinancialDetails;
-                        $fincial->fy_id = $value['fy_id'];
-                        $fincial->com_id = $request->user_id;
-                        $fincial->bank_id = Auth::user()->id;
-                        $fincial->zone = $request->zone ;
-                        $fincial->class_type_id = $request->asset_class ;
-                        $fincial->borrowings = $value['borrowings'];
-                        $fincial->bank_exposure = $value['bank_exposure'];
-                        $fincial->total_equity = $value['total_equity'];
-                        $fincial->net_revenue = $value['net_revenue'];
-                        $fincial->profit_after_tax = $value['profit_after_tax'];
-                        $fincial->rating = $value['rating'];
-                        $fincial->rating_date = $value['rating_date'];
-                        $fincial->rating_agency = $value['rating_agency'];
-                    $fincial->save();
+                    // Check if record already exists with these exact values
+                    $existingRecord = BankFinancialDetails::where([
+                        'fy_id' => $value['fy_id'],
+                        'com_id' => $request->user_id,
+                        'bank_id' => Auth::user()->id,
+                        'zone' => $request->zone,
+                        'class_type_id' => $request->asset_class
+                    ])->first();
+
+                    if ($existingRecord) {
+                        // Update existing record
+                        $existingRecord->update([
+                            'borrowings' => $value['borrowings'] ?? 0.00,
+                            'bank_exposure' => $value['bank_exposure'] ?? 0.00,
+                            'total_equity' => $value['total_equity'] ?? 0.00,
+                            'net_revenue' => $value['net_revenue'] ?? 0.00,
+                            'profit_after_tax' => $value['profit_after_tax'] ?? 0.00,
+                            'rating' => $value['rating'] ?? null,
+                            'rating_date' => $value['rating_date'] ?? null,
+                            'rating_agency' => $value['rating_agency'] ?? null,
+                            'updated_at' => now()
+                        ]);
+                    } else {
+                        // First get the next sequence value
+                        $sequence = DB::selectOne("SELECT BANK_FINANCIAL_DETAILS_SEQ.NEXTVAL AS ID FROM DUAL");
+                        
+                        // Create new record with explicit ID from sequence
+                        DB::table('bank_financial_details')->insert([
+                            'id' => $sequence->id,
+                            'fy_id' => $value['fy_id'],
+                            'com_id' => $request->user_id,
+                            'bank_id' => Auth::user()->id,
+                            'zone' => $request->zone,
+                            'class_type_id' => $request->asset_class,
+                            'borrowings' => $value['borrowings'] ?? 0.00,
+                            'bank_exposure' => $value['bank_exposure'] ?? 0.00,
+                            'total_equity' => $value['total_equity'] ?? 0.00,
+                            'net_revenue' => $value['net_revenue'] ?? 0.00,
+                            'profit_after_tax' => $value['profit_after_tax'] ?? 0.00,
+                            'rating' => $value['rating'] ?? null,
+                            'rating_date' => $value['rating_date'] ?? null,
+                            'rating_agency' => $value['rating_agency'] ?? null,
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ]);
+                    }
                 }
-
-                $user = AdminUser::find($request->user_id);
-
-                // $data = array('name'=>$user->name,'email'=>$user->email, 'bank_name'=>Auth::user()->name);
-
-                //             //  dd($data);
-
-                // Mail::send('emails.existuser_mail', $data, function($message) use($data) {
-                //    $message->to($data ['email'],$data ['name'])->subject
-                //        ('ESG - Prakrit ');
-                //         // $message->cc('pliwg@ifciltd.com');
-                //         // $message->bcc('shweta.rai@ifciltd.com');
-                //   });
             });
 
-            // alert()->success('Data Inserted Successfully', 'Success!')->persistent('Close');
-               session()->flash('success', 'Data Inserted Successfully');
+            session()->flash('success', 'Data Inserted Successfully');
             return redirect()->route('admin.user.existuser_edit',['id' => encrypt($request->user_id)]);
-            // return redirect()->back();
-        }catch (\Exception $e)
-        {
-            alert()->Warning('Something Went Wrong', 'Warning!')->persistent('Close');
+        } catch (\Exception $e) {
+            \Log::error('Bank Financial Details Error: ' . $e->getMessage());
+            session()->flash('error', 'Error inserting data. Please check if a record with these values already exists.');
             return redirect()->back();
         }
-
-
     }
 
     public function retail_existsubmit(Request $request)
@@ -2278,5 +2287,18 @@ class UserController extends Controller
         //     return redirect()->back();
         // }
 
+    }
+
+    public function updatePasswordFlagAndRedirect($id)
+    {
+        $id = decrypt($id);
+        $user = AdminUser::find($id);
+        
+        if ($user && $user->password_changed == '0') {
+            $user->password_changed = '1';
+            $user->save();
+        }
+        
+        return redirect()->route('admin.user.home', ['id' => encrypt($id)]);
     }
 }

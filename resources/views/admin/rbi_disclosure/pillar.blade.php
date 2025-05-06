@@ -59,7 +59,10 @@
                                                     {{ $p_mast->name }}
                                                 </td>
                                                 <td class="text-center">
-                                                    @if (isset($pillar_val) && isset($rbi_mast) && $pillar_val->where('rbi_mast_id',$rbi_mast->id)->where('pillar_id',$p_mast->id)->isNotEmpty())
+                                                    @if (isset($rbi_mast) && ($rbi_mast->status == 'S'))
+                                                    <a class="btn btn-warning btn-sm"
+                                                            href="{{ route('admin.rbi_disclosure.view', ['bank_id' => encrypt(Auth::user()->id), 'pillar_id' => encrypt($p_mast->id), 'fy_id' => encrypt($fys->id)]) }}"> View</a>
+                                                    @elseif (isset($pillar_val) && isset($rbi_mast) && $pillar_val->where('rbi_mast_id',$rbi_mast->id)->where('pillar_id',$p_mast->id)->isNotEmpty())
                                                         <a class="btn btn-success btn-sm"
                                                             href="{{ route('admin.rbi_disclosure.edit', ['bank_id' => encrypt(Auth::user()->id), 'pillar_id' => encrypt($p_mast->id), 'fy_id' => encrypt($fys->id)]) }}"> Edit</a>
                                                     @else
