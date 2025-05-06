@@ -233,6 +233,8 @@
     Route::post('rbi_disclosure/update', [\App\Http\Controllers\Admin\RbiDisclosureController::class,'update'])->name('rbi_disclosure.update');
     Route::get('rbi_disclosure/view/{bank_id}/{pillar_id}/{fy_id}', [\App\Http\Controllers\Admin\RbiDisclosureController::class,'view'])->name('rbi_disclosure.view');
 
+    Route::get('rbi_disclosure/final_submit/{fy_id}', [\App\Http\Controllers\Admin\RbiDisclosureController::class,'final_submit'])->name('rbi_disclosure.final_submit');
+
         Route::get('rbi_disclosure/generate-pdf/{fy_id}', [\App\Http\Controllers\Admin\RbiDisclosureController::class,'generatePdf'])->name('rbi_disclosure.generatepdf');
 
     });

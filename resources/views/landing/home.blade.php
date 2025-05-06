@@ -530,7 +530,7 @@ $finale_word=substr($word_of_the[$randomKey], 0, 100);
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h3 class="sec-heading2">Key features</h3>
+                    <h3 class="sec-heading2"></h3>
                 </div>
 
                 <div class="col-md-4">

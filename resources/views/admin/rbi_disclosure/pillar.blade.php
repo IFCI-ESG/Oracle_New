@@ -73,7 +73,15 @@
                                             </tr>
                                         @endforeach
                                     </tbody>
+
+                                                    
                                 </table>
+                                  @if (isset($rbi_mast) && ($rbi_mast->status == 'D'))
+                            <div class="text-center">
+                                   <a class="btn btn-info btn-sm mt-2"
+                                                            href="{{ route('admin.rbi_disclosure.final_submit', encrypt($fys->id)) }}"> Final Submit</a> 
+                                </div>
+                                 @endif
                             </div>
                         </div>
                     </div>

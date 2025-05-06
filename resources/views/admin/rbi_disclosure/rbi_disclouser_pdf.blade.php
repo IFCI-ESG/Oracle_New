@@ -80,7 +80,7 @@
    
          footer {
             position: fixed;
-        bottom: -20px; /* This gives 30px from bottom of page */
+        bottom: 20px; /* This gives 30px from bottom of page */
         left: 0;
         right: 0;
         text-align: center;
@@ -112,7 +112,7 @@
         <!-- brsr header end -->
 
         <!-- brsr teble start -->
-         <div class="brsr-sec-bg" style="background: #c8e6f1;padding-bottom: 50px;">
+         <div class="brsr-sec-bg" style="background: #c8e6f1;padding-bottom: 0px;">
             <div class="container">
                 <div class="brsr-teble-head" style="margin: 0 0 0;padding: 15px 30px 30px; background: #fff;border-radius: 10px;">
                     <div class="rbi-form" style="padding: 10px;margin-bottom: 0;border-bottom: 1px solid #ccc;">
@@ -126,7 +126,7 @@
                             
                             <div class="table-responsive table-bordered">
        						  @foreach($output as $piller => $pillervalue)
-                                <h4 style="text-align: left;color: #262626;font-size: 16px;font-weight: 600;margin: 25px 0 8px;">{{ $piller }}</h4>
+                                <h4 style="text-align: left;color: #262626;font-size: 22px;font-weight: 800;margin: 25px 0 8px;">{{ $piller }}</h4>
                                      @foreach($pillervalue as $subpiller => $subpiller_value)
                                 <table class="border table table-bordered">
                                     <tbody>
@@ -153,11 +153,7 @@
                     @endforeach
                     @endforeach
                                     <!-- teble footer -->
-        <div class="teble-info-sec footer-sec mt-4" style="overflow: hidden;padding: 10px 15px 0px;background: #fff;margin: 25px 0 0;border-top: 1px solid #ccc;">
-            <div class="info-right-sec" style="width: 50%;float: right;">
-                <h3 style="color: #02BC5F;/* font-size: 16px; *//* font-weight: 700; */text-align: right;margin: 0 0 0;padding: 10px;background: #fff;width: 40px;height: 40px;float: right;border-radius: 50px;text-align: center;"> <span style="position: relative;top: -4px;font-size: 17px;font-weight: 600;left: -3px;border: 2px solid #02BC5F;border-radius: 50px;padding: 1px 3px;">2122 <div class="page-number">Page </div></span> </h3>
-            </div>
-        </div>
+    
                   
                             </div> 
                         </div> 
@@ -165,5 +161,12 @@
             </div>
         </div>
              <!-- teble footer end -->
+
+
+
+ <footer>
+           <h3 style="color: #02BC5F;/* font-size: 16px; *//* font-weight: 700; */text-align: right;margin: 0 0 0;padding: 10px;text-align: center; position: relative; bottom: -20px;">  <div class="page-number">  </div> </h3>
+    </footer>
+
 </body>
 </html>

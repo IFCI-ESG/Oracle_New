@@ -201,32 +201,24 @@ class RbiDisclosureController extends Controller
 
 
 
-    public function submit(Request $request)
+    public function final_submit($fy_id)
     {
-        // dd($request);
+       $fy_id = decrypt($fy_id);
+
             $user=Auth::user();
         try{
-
-            if(!$request->undertaking)
+            DB::transaction(function () use ($fy_id, $user)
             {
-                alert()->warning('Please Check Undertaking', 'Warning')->persistent('Close');
-                return redirect()->back();
-            }
-// dd($request->undertaking,"d");
-            DB::transaction(function () use ($request, $user)
-            {
-                $input_mast = InputSheetMast::where('id', $request->input_id)->first();
+                $input_mast  = RbiDisclosureMast::where('bank_id', Auth::user()->id)->where('fy_id',$fy_id)->first();
                     $input_mast->status = 'S';
-                    $input_mast->is_checked = isset($request->undertaking) ? 1 : 0;
                     $input_mast->submitted_at = Carbon::now();
-                $input_mast->save();
+                    $input_mast->save();
             });
-            alert()->Success('Input Sheet Submitted Successfully', 'Success')->persistent('Close');
-            return redirect()->route('admin.fy');    
-
-
+            alert()->Success('Submitted Successfully', 'Success')->persistent('Close');
+            return redirect()->route('admin.rbi_disclosure');    
         }catch (\Exception $e)
         {
+            dd($e->getMessage());
             alert()->Warning('Something Went Wrong', 'Warning!')->persistent('Close');
             return redirect()->back();
         }
