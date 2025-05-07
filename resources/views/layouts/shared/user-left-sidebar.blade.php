@@ -55,7 +55,7 @@
         <!--- Sidemenu -->
 
         <ul id="side-menu" class="menu">
-            <li class="menu-title">Navigation</li>
+  
 
             <li class="menu-item">
               <a class="menu-link {{ Request::routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">

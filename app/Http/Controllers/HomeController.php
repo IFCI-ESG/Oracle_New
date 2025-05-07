@@ -298,10 +298,4 @@ class HomeController extends Controller
         return view('landing.explore');
     }
 
-
-        public function explore()
-    {
-        return view('landing.explore');
-    }
-
 }
