@@ -190,6 +190,8 @@
     let brsrValue6 = @json($brsr_sectionp9);
     let brsrValue7 = @json($brsr_sectionp4);
     let brsrValue8 = @json($brsr_sectionp5);
+    let brsrValue9 = @json($brsr_sectionp6);
+    let brsrValue10 = @json($brsr_sectionp3);
     let fyData = @json($fys);  
     
     function setFyId(id, fy, ids,mastId) {
@@ -250,10 +252,20 @@
             return item.fy_id == fyid;   
         });
 
-        updateSectionButtons(fyExists,fyExists1,fyExists3,fyExists4,fyExists5,fyExists6,fyExists7,fyExists8,fyExists9);
+        const fyExists10 = brsrValue9.some(item => {
+            console.log("Checking if item.fy_id:", item.fy_id, "matches fyId:", fyId);
+            return item.fy_id == fyid;   
+        });
+
+        const fyExists11 = brsrValue10.some(item => {
+            console.log("Checking if item.fy_id:", item.fy_id, "matches fyId:", fyId);
+            return item.fy_id == fyid;   
+        });
+
+        updateSectionButtons(fyExists,fyExists1,fyExists3,fyExists4,fyExists5,fyExists6,fyExists7,fyExists8,fyExists9,fyExists10,fyExists11);
     }
 
-    function updateSectionButtons(fyExists,fyExists1,fyExists3,fyExists4,fyExists5,fyExists6,fyExists7,fyExists8,fyExists9) {
+    function updateSectionButtons(fyExists,fyExists1,fyExists3,fyExists4,fyExists5,fyExists6,fyExists7,fyExists8,fyExists9,fyExists10,fyExists11) {
         
         const sectionAButton = document.getElementById('sectionA');
         if (fyExists) {
@@ -353,6 +365,28 @@
             sectionP5Button.classList.remove('btn-warning');
             sectionP5Button.classList.add('btn-primary');
         }
+
+        const sectionP6Button = document.getElementById('sectionP6');
+        if (fyExists10) {
+            sectionP6Button.innerHTML = '<i>Edit</i>';
+            sectionP6Button.classList.remove('btn-primary');
+            sectionP6Button.classList.add('btn-warning');
+        } else {
+            sectionP6Button.innerHTML = '<i>Create</i>';
+            sectionP6Button.classList.remove('btn-warning');
+            sectionP6Button.classList.add('btn-primary');
+        }
+
+        const sectionP3Button = document.getElementById('sectionP3');
+        if (fyExists11) {
+            sectionP3Button.innerHTML = '<i>Edit</i>';
+            sectionP3Button.classList.remove('btn-primary');
+            sectionP3Button.classList.add('btn-warning');
+        } else {
+            sectionP3Button.innerHTML = '<i>Create</i>';
+            sectionP3Button.classList.remove('btn-warning');
+            sectionP3Button.classList.add('btn-primary');
+        }
     }
     
     document.getElementById('sectionA').addEventListener('click', function() {
@@ -447,6 +481,26 @@
                 window.location.href = `/user/brsr/sectionP5edit/${mastid }`;
            } else {
                 window.location.href = `/user/brsr/sectionP5create/${fyId}`;
+            }
+         }
+    });
+
+    document.getElementById('sectionP6').addEventListener('click', function() {
+        if (fyId) {
+            if (brsrValue9.some(item => item.fy_id == fyid)) {
+                window.location.href = `/user/brsr/sectionP6edit/${mastid }`;
+           } else {
+                window.location.href = `/user/brsr/sectionP6create/${fyId}`;
+            }
+         }
+    });
+
+    document.getElementById('sectionP3').addEventListener('click', function() {
+        if (fyId) {
+            if (brsrValue10.some(item => item.fy_id == fyid)) {
+                window.location.href = `/user/brsr/sectionP3edit/${mastid}`;
+           } else {
+                window.location.href = `/user/brsr/sectionP3create/${fyId}`;
             }
          }
     });

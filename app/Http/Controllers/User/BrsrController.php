@@ -24,11 +24,16 @@ use App\Models\BrsrSectionCP1CaseQuestionValue;
 use App\Models\BrsrSectionP2QuestionMaster;
 use App\Models\BrsrSectionP2QuestionValue;
 use App\Models\BrsrSectionP2OthersQuestionValue;
+use App\Models\BrsrSectionP3QuestionMaster;
+use App\Models\BrsrSectionP3QuestionValue;
 use App\Models\BrsrSectionP4QuestionMaster;
 use App\Models\BrsrSectionP4QuestionValue;
 use App\Models\BrsrSectionP4AdditionalQuestionValue;
 use App\Models\BrsrSectionP5QuestionMaster;
 use App\Models\BrsrSectionP5QuestionValue;
+use App\Models\BrsrSectionP6QuestionMaster;
+use App\Models\BrsrSectionP6QuestionValue;
+use App\Models\BrsrSectionP6AdditionalQuestionValue;
 use App\Models\BrsrSectionP7QuestionValue;
 use App\Models\BrsrSectionP8QuestionMaster;
 use App\Models\BrsrSectionP8QuestionValue;
@@ -57,14 +62,17 @@ class BrsrController extends Controller
         $brsr_sectionb = BrsrSectionBPolicyQuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp1 =  BrsrSectionCP1QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp2 =  BrsrSectionP2QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
+        $brsr_sectionp3 =  BrsrSectionP3QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp4 =  BrsrSectionP4QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp5 =  BrsrSectionP5QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
+        $brsr_sectionp6 =  BrsrSectionP6QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp7 =  BrsrSectionP7QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp8 =  BrsrSectionP8QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $brsr_sectionp9 =  BrsrSectionP9QuestionValue::where('com_id', $user->id)->limit(1)->orderby('id')->get();
         $fys = DB::table('fy_masters')->where('status', 1)->orderBy('id', 'desc')->limit(1)->get();
         
-        return view('user.brsr.index', compact('brsr_sectionp1','brsr_sectionb','fys','brsr_value','brsr_sectionp2','brsr_sectionp4','brsr_sectionp5','brsr_sectionp7','brsr_sectionp8','brsr_sectionp9'));
+        return view('user.brsr.index', compact('brsr_sectionp1','brsr_sectionb','fys','brsr_value',
+        'brsr_sectionp2','brsr_sectionp3','brsr_sectionp4','brsr_sectionp5','brsr_sectionp6','brsr_sectionp7','brsr_sectionp8','brsr_sectionp9'));
     }
 
     public function create($fy_id) {
@@ -1075,6 +1083,114 @@ $previous_capex = (isset($Results['X5']) && is_numeric($Results['X5']))
 
     }
 
+    public function sectionP3create($fy_id) {
+ 
+        $fy_id = decrypt($fy_id);
+        
+        $user = Auth::user();
+
+        $social_mast = BrsrMast::where('com_id', $user->id)->where('fy_id',$fy_id)->first();
+        DB::transaction(function () use ($fy_id,$user,$social_mast)
+        {
+            if(!$social_mast)
+            {
+                $social = new BrsrMast;
+                    $social->com_id = $user->id;
+                    $social->status = 'D';
+                    $social->fy_id = $fy_id;
+                $social->save();
+            }
+        });
+       
+        $p3_ques1 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'emp')->orderby('id')->get();
+        $p3_ques2 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'worker')->orderby('id')->get();
+        $p3_ques3 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'emp-well-being')->orderby('id')->get();
+        $p3_ques4 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'retirement')->orderby('id')->get();
+        $p3_ques5 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'entity')->orderby('id')->get();
+        $p3_ques6 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'policy_link')->orderby('id')->get();
+        $p3_ques7 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'rentention_rate')->orderby('id')->get();
+        $p3_ques8 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'grievance')->orderby('id')->get();
+        $p3_ques9 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'emp_worker')->orderby('id')->get();
+        $p3_ques10 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'training')->orderby('id')->get();
+        $p3_ques11 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'performance')->orderby('id')->get();
+        $p3_ques12 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'health')->orderby('id')->get();
+        $p3_ques13 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'health1')->orderby('id')->get();
+        $p3_ques14 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'health2')->orderby('id')->get();
+        $p3_ques15 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'health3')->orderby('id')->get();
+        $p3_ques16 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'incidents')->orderby('id')->get();
+        $p3_ques17 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'safe_work')->orderby('id')->get();
+        $p3_ques18 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'complaints')->orderby('id')->get();
+        $p3_ques19 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'assessment')->orderby('id')->get();
+        $p3_ques20 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'corrective_action')->orderby('id')->get();
+        $p3_ques21 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'package')->orderby('id')->get();
+        $p3_ques22 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'package1')->orderby('id')->get();
+        $p3_ques23 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'consequence')->orderby('id')->get();
+        $p3_ques24 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'retirement1')->orderby('id')->get();
+        $p3_ques25 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'value_chain')->orderby('id')->get();
+        $p3_ques26 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'risks')->orderby('id')->get();
+       
+        $fys = DB::table('fy_masters')->where('id',$fy_id)->first();
+        $current_fy = $fys->fy;
+        $startYear = (int)substr($current_fy, 0, 4);
+        $previous_fy = ($startYear - 1) . '-' . substr($startYear, 2, 2);
+        $previous_year = substr($fys->fy, 0, 4);
+       
+        return view('user.brsr.sectionP3edit', compact('social_mast','current_fy','previous_fy','user','fys','fy_id',
+         'p3_ques1','p3_ques2','p3_ques3','p3_ques4','p3_ques5','p3_ques6',
+         'p3_ques7','p3_ques8','p3_ques9','p3_ques10','p3_ques11','p3_ques12','p3_ques13','p3_ques14',
+         'p3_ques15','p3_ques16','p3_ques17','p3_ques18','p3_ques19','p3_ques20','p3_ques21',
+         'p3_ques22','p3_ques23','p3_ques24','p3_ques25','p3_ques26'));
+    }
+
+    public function sectionP3edit($id) {
+ 
+        $id = decrypt($id);
+        
+        $user = Auth::user();
+
+        $brsr_mast = BrsrMast::where('com_id', $user->id)->where('id', $id)->first();
+        $fys = DB::table('fy_masters')->where('id',$brsr_mast->fy_id)->first();
+        $current_fy = $fys->fy;
+        $startYear = (int)substr($current_fy, 0, 4);
+        $previous_fy = ($startYear - 1) . '-' . substr($startYear, 2, 2);
+        $previous_year = substr($fys->fy, 0, 4);
+       
+        $p3_ques1 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'emp')->orderby('id')->get();
+        $p3_ques2 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'worker')->orderby('id')->get();
+        $p3_ques3 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'emp-well-being')->orderby('id')->get();
+        $p3_ques4 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'retirement')->orderby('id')->get();
+        $p3_ques5 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'entity')->orderby('id')->get();
+        $p3_ques6 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'policy_link')->orderby('id')->get();
+        $p3_ques7 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'rentention_rate')->orderby('id')->get();
+        $p3_ques8 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'grievance')->orderby('id')->get();
+        $p3_ques9 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'emp_worker')->orderby('id')->get();
+        $p3_ques10 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'training')->orderby('id')->get();
+        $p3_ques11 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'performance')->orderby('id')->get();
+        $p3_ques12 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'health')->orderby('id')->get();
+        $p3_ques13 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'health1')->orderby('id')->get();
+        $p3_ques14 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'health2')->orderby('id')->get();
+        $p3_ques15 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'health3')->orderby('id')->get();
+        $p3_ques16 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'incidents')->orderby('id')->get();
+        $p3_ques17 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'safe_work')->orderby('id')->get();
+        $p3_ques18 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'complaints')->orderby('id')->get();
+        $p3_ques19 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'assessment')->orderby('id')->get();
+        $p3_ques20 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'corrective_action')->orderby('id')->get();
+        $p3_ques21 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'package')->orderby('id')->get();
+        $p3_ques22 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'package1')->orderby('id')->get();
+        $p3_ques23 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'consequence')->orderby('id')->get();
+        $p3_ques24 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'retirement1')->orderby('id')->get();
+        $p3_ques25 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'value_chain')->orderby('id')->get();
+        $p3_ques26 = BrsrSectionP3QuestionMaster::where('status', 1)->where('question_section', 'risks')->orderby('id')->get();
+        $principle3_value = BrsrSectionP3QuestionValue::where('brsr_mast_id', $id)->get();
+       
+       return view('user.brsr.sectionP3edit', compact('brsr_mast','current_fy','previous_fy','user','fys',
+         'p3_ques1','p3_ques2','p3_ques3','p3_ques4','p3_ques5','p3_ques6',
+         'p3_ques7','p3_ques8','p3_ques9','p3_ques10','p3_ques11','p3_ques12','p3_ques13','p3_ques14',
+         'p3_ques15','p3_ques16','p3_ques17','p3_ques18','p3_ques19','p3_ques20','p3_ques21',
+         'p3_ques22','p3_ques23','p3_ques24','p3_ques25','p3_ques26','principle3_value'));
+
+    }
+
     public function sectionP5create($fy_id) {
  
         $fy_id = decrypt($fy_id);
@@ -1505,6 +1621,102 @@ $previous_capex = (isset($Results['X5']) && is_numeric($Results['X5']))
 
     }
 
+    public function sectionP6create($fy_id) {
+ 
+        $fy_id = decrypt($fy_id);
+        
+        $user = Auth::user();
+
+        $social_mast = BrsrMast::where('com_id', $user->id)->where('fy_id',$fy_id)->first();
+        DB::transaction(function () use ($fy_id,$user,$social_mast)
+        {
+            if(!$social_mast)
+            {
+                $social = new BrsrMast;
+                    $social->com_id = $user->id;
+                    $social->status = 'D';
+                    $social->fy_id = $fy_id;
+                $social->save();
+            }
+        });
+      
+        $ques1 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'tot_energy')->orderby('id')->get();
+        $ques2 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'entity_sites')->orderby('id')->get();
+        $ques3 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'disclosure')->orderby('id')->get();
+        $ques4 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'water_discharge')->orderby('id')->get();
+        $ques5 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'zero_liquid')->orderby('id')->get();
+        $ques6 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'ghg_emission')->orderby('id')->get();
+        $ques7 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'ghg_emission_scope')->orderby('id')->get();
+        $ques8 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'ghg_reduce')->orderby('id')->get();
+        $ques9 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'waste_manage_entity')->orderby('id')->get();
+        $ques10 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'toxic_usage')->orderby('id')->get();
+        $ques11 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'area_operations')->orderby('id')->get();
+        $ques12 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'water_withdrawal')->orderby('id')->get();
+        $ques13 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'scope3_emission')->orderby('id')->get();
+        $ques14 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'direct_indirect_impact')->orderby('id')->get();
+        $ques15 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'business_continuity')->orderby('id')->get();
+        $ques16 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'adverse_impact')->orderby('id')->get();
+        $ques17 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'env_impacts')->orderby('id')->get();
+       
+        $fys = DB::table('fy_masters')->where('id',$fy_id)->first();
+        $current_fy = $fys->fy;
+        $startYear = (int)substr($current_fy, 0, 4);
+        $previous_fy = ($startYear - 1) . '-' . substr($startYear, 2, 2);
+        $previous_year = substr($fys->fy, 0, 4);
+        
+        return view('user.brsr.sectionP6create', compact('social_mast','current_fy','previous_fy',
+        'user','fys','fy_id','ques1','ques2','ques3',
+        'ques4','ques5','ques6','ques7','ques8','ques9','ques10',
+        'ques11','ques12','ques13','ques14','ques15','ques16','ques17'));
+
+    }
+
+    public function sectionP6edit($id) {
+ 
+        $id = decrypt($id);
+        
+        $user = Auth::user();
+
+        $brsr_mast = BrsrMast::where('com_id', $user->id)->where('id', $id)->first();
+        $fys = DB::table('fy_masters')->where('id',$brsr_mast->fy_id)->first();
+        $current_fy = $fys->fy;
+        $startYear = (int)substr($current_fy, 0, 4);
+        $previous_fy = ($startYear - 1) . '-' . substr($startYear, 2, 2);
+        $previous_year = substr($fys->fy, 0, 4);
+      
+        $ques1 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'tot_energy')->orderby('id')->get();
+        $ques2 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'entity_sites')->orderby('id')->get();
+        $ques3 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'disclosure')->orderby('id')->get();
+        $ques4 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'water_discharge')->orderby('id')->get();
+        $ques5 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'zero_liquid')->orderby('id')->get();
+        $ques6 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'ghg_emission')->orderby('id')->get();
+        $ques7 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'ghg_emission_scope')->orderby('id')->get();
+        $ques8 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'ghg_reduce')->orderby('id')->get();
+        $ques9 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'waste_manage_entity')->orderby('id')->get();
+        $ques10 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'toxic_usage')->orderby('id')->get();
+        $ques11 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'area_operations')->orderby('id')->get();
+        $ques12 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'water_withdrawal')->orderby('id')->get();
+        $ques13 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'scope3_emission')->orderby('id')->get();
+        $ques14 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'direct_indirect_impact')->orderby('id')->get();
+        $ques15 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'business_continuity')->orderby('id')->get();
+        $ques16 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'adverse_impact')->orderby('id')->get();
+        $ques17 = BrsrSectionP6QuestionMaster::where('status', 1)->where('question_section', 'env_impacts')->orderby('id')->get();
+        $principle6_value = BrsrSectionP6QuestionValue::where('brsr_mast_id', $id)->get();
+        
+        $sectionp6_value1 = DB::table('brsr_sectionc_p6_additional_question_value')->where('brsr_mast_id', $id)->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals'")->get();
+        $sectionp6_value2 = DB::table('brsr_sectionc_p6_additional_question_value')->where('brsr_mast_id', $id)->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals1'")->get();
+        $sectionp6_value3 = DB::table('brsr_sectionc_p6_additional_question_value')->where('brsr_mast_id', $id)->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals2'")->get();
+        $sectionp6_value4 = DB::table('brsr_sectionc_p6_additional_question_value')->where('brsr_mast_id', $id)->whereRaw("DBMS_LOB.SUBSTR(flag, 1000, 1) = 'additionals3'")->get();
+        
+        return view('user.brsr.sectionP6edit', compact('brsr_mast','current_fy','previous_fy',
+        'user','fys','ques1','ques2','ques3',
+        'ques4','ques5','ques6','ques7','ques8','ques9','ques10',
+        'ques11','ques12','ques13','ques14','ques15','ques16','ques17',
+        'principle6_value','sectionp6_value1','sectionp6_value2','sectionp6_value3','sectionp6_value4'));
+
+    }
+
+
     public function sectionP9create($fy_id) {
  
         $fy_id = decrypt($fy_id);
@@ -1887,7 +2099,11 @@ $previous_capex = (isset($Results['X5']) && is_numeric($Results['X5']))
         $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
         
         DB::transaction(function () use ($request, $brsr_mast) {
-            $counter = 0; 
+
+            $counter = 0;
+            $previous_id = (int) $request->fy_id - 1;
+            $prior_previous_id = (int) $previous_id - 1;  
+         
             foreach ($request->emp as $val) {
                 if ($counter >= 15) {
                     break;  
@@ -1990,9 +2206,11 @@ $previous_capex = (isset($Results['X5']) && is_numeric($Results['X5']))
                     $turnover_data->current_turnover_male = $val['current_turnover_male']; 
                     $turnover_data->current_turnover_female = $val['current_turnover_female']; 
                     $turnover_data->current_turnover_total = $val['current_turnover_total']; 
+                    $turnover_data->previous_fy_id = $previous_id;
                     $turnover_data->previous_turnover_male = $val['previous_turnover_male'];
                     $turnover_data->previous_turnover_female = $val['previous_turnover_female'];
                     $turnover_data->previous_turnover_total = $val['previous_turnover_total'];
+                    $turnover_data->priorprev_fy_id = $prior_previous_id;
                     $turnover_data->priorprev_turnover_male = $val['priorprev_turnover_male'];
                     $turnover_data->priorprev_turnover_female = $val['priorprev_turnover_female'];
                     $turnover_data->priorprev_turnover_total = $val['priorprev_turnover_total'];
@@ -2040,6 +2258,7 @@ $previous_capex = (isset($Results['X5']) && is_numeric($Results['X5']))
                     $compliace_data->current_fy_no_of_compliants = $val['current_fy_no_of_compliants']; 
                     $compliace_data->current_no_of_pending_compliants = $val['current_no_of_pending_compliants']; 
                     $compliace_data->current_fy_remarks = $val['current_fy_remarks'];
+                    $compliace_data->previous_fy_id = $previous_id;
                     $compliace_data->previous_fy_no_of_compliants = $val['previous_fy_no_of_compliants'];
                     $compliace_data->previous_no_of_pending_compliants = $val['previous_no_of_pending_compliants'];
                     $compliace_data->previous_fy_remarks = $val['previous_fy_remarks'];
@@ -2389,6 +2608,624 @@ $previous_capex = (isset($Results['X5']) && is_numeric($Results['X5']))
         return redirect()->route('user.brsr.sectionP2edit', encrypt($brsr_mast->id));
     }
 
+    public function sectionp3store(Request $request)
+    {
+       
+        
+        $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+
+            $previous_id = (int) $request->fy_id - 1;
+
+            foreach ($request->emp1 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->emp_total = $val['emp_total'] ?? '0'; 
+                $p3_data->emp_health_no = $val['emp_health_no'] ?? '0';
+                $p3_data->emp_health_percent = $val['emp_health_percent'] ?? '0';
+                $p3_data->emp_accident_no = $val['emp_accident_no'] ?? '0'; 
+                $p3_data->emp_accident_percent = $val['emp_accident_percent'] ?? '0';
+                $p3_data->emp_maternity_no = $val['emp_maternity_no'] ?? '0';
+                $p3_data->emp_maternity_percent = $val['emp_maternity_percent'] ?? '0';
+                $p3_data->emp_paternity_no = $val['emp_paternity_no'] ?? '0';
+                $p3_data->emp_paternity_percent = $val['emp_paternity_percent'] ?? '0'; 
+                $p3_data->emp_daycare_no = $val['emp_daycare_no'] ?? '0';
+                $p3_data->emp_daycare_percent = $val['emp_daycare_percent'] ?? '0';
+                $p3_data->save();
+            }
+
+            foreach ($request->emp2 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->work_total = $val['work_total'] ?? '0'; 
+                $p3_data->work_health_no = $val['work_health_no'] ?? '0';
+                $p3_data->work_health_percent = $val['work_health_percent'] ?? '0';
+                $p3_data->emp_accident_no = $val['work_accident_no'] ?? '0'; 
+                $p3_data->work_accident_percent = $val['work_accident_percent'] ?? '0';
+                $p3_data->work_maternity_no = $val['work_maternity_no'] ?? '0';
+                $p3_data->work_maternity_percent = $val['work_maternity_percent'] ?? '0';
+                $p3_data->work_paternity_no = $val['work_paternity_no'] ?? '0';
+                $p3_data->work_paternity_percent = $val['work_paternity_percent'] ?? '0'; 
+                $p3_data->work_daycare_no = $val['work_daycare_no'] ?? '0';
+                $p3_data->work_daycare_percent = $val['work_daycare_percent'] ?? '0';
+                $p3_data->save();
+            }
+
+            foreach ($request->emp3 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->measures_current_fy = $val['measures_current_fy'] ?? 'NaN'; 
+                $p3_data->measures_previous_fy = $val['measures_previous_fy'] ?? 'NaN';
+                $p3_data->measures_previous_fy_id =  $previous_id;
+                $p3_data->save();
+            }
+
+            foreach ($request->emp4 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->retire_no_emp_current_fy = $val['retire_no_emp_current_fy'] ?? '0'; 
+                $p3_data->retire_no_work_current_fy = $val['retire_no_work_current_fy'] ?? '0'; 
+                $p3_data->retire_deducted_current_fy = $val['retire_deducted_current_fy'] ?? 'NaN'; 
+                $p3_data->retire_previous_fy_id  =  $previous_id;
+                $p3_data->retire_no_emp_previous_fy = $val['retire_no_emp_previous_fy'] ?? '0'; 
+                $p3_data->retire_no_work_previous_fy = $val['retire_no_work_previous_fy'] ?? '0'; 
+                $p3_data->retire_deducted_previous_fy = $val['retire_deducted_previous_fy'] ?? 'NaN'; 
+                $p3_data->save();
+            }
+
+            foreach ($request->emp5 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->entity_accessible = $val['entity_accessible'] ?? 'NaN'; 
+                $p3_data->save();
+            }
+
+            foreach ($request->emp6 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->entity_rights = $val['entity_rights'] ?? 'NaN'; 
+                $p3_data->save();
+            }
+
+            foreach ($request->emp7 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->return_work1 = $val['return_work1'] ?? 'NaN';
+                $p3_data->retention_rate1 = $val['retention_rate1'] ?? 'NaN'; 
+                $p3_data->return_work2 = $val['return_work2'] ?? 'NaN'; 
+                $p3_data->retention_rate2 = $val['retention_rate2'] ?? 'NaN';  
+                $p3_data->save();
+            }
+
+            foreach ($request->emp8 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->mechanism_details = $val['mechanism_details'] ?? 'NaN'; 
+                $p3_data->save();
+            }
+
+            foreach ($request->emp9 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->union_tot_emp_current_fy = $val['union_tot_emp_current_fy'] ?? '0';
+                $p3_data->union_no_emp_current_fy = $val['union_no_emp_current_fy'] ?? '0'; 
+                $p3_data->union_emp_percent_current_fy = $val['union_emp_percent_current_fy'] ?? '0'; 
+                $p3_data->union_previous_fy_id = $previous_id;
+                $p3_data->union_tot_emp_previous_fy = $val['union_tot_emp_previous_fy'] ?? '0';  
+                $p3_data->union_no_emp_previous_fy = $val['union_no_emp_previous_fy'] ?? '0';  
+                $p3_data->union_emp_percent_previous_fy = $val['union_emp_percent_previous_fy'] ?? '0';  
+                $p3_data->save();
+            }
+
+            foreach ($request->emp10 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->training_tot_current_fy = $val['training_tot_current_fy'] ?? '0';
+                $p3_data->training_health_no_current_fy = $val['training_health_no_current_fy'] ?? '0'; 
+                $p3_data->training_health_percent_current_fy = $val['training_health_percent_current_fy'] ?? '0'; 
+                $p3_data->training_skill_no_current_fy = $val['training_skill_no_current_fy'] ?? '0';
+                $p3_data->training_skill_percent_current_fy = $val['training_skill_percent_current_fy'] ?? '0';
+                $p3_data->training_previous_fy_id = $previous_id;
+                $p3_data->training_tot_previous_fy = $val['training_tot_previous_fy'] ?? '0';
+                $p3_data->training_health_no_previous_fy = $val['training_health_no_previous_fy'] ?? '0';  
+                $p3_data->training_health_percent_previous_fy = $val['training_health_percent_previous_fy'] ?? '0';  
+                $p3_data->training_skill_no_previous_fy = $val['training_skill_no_previous_fy'] ?? '0';  
+                $p3_data->training_skill_percent_previous_fy = $val['training_skill_percent_previous_fy'] ?? '0'; 
+                $p3_data->save();
+            }
+
+            foreach ($request->emp11 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->performance_tot_current_fy = $val['performance_tot_current_fy'] ?? '0';
+                $p3_data->performance_no_current_fy = $val['performance_no_current_fy'] ?? '0'; 
+                $p3_data->performance_percent_current_fy = $val['performance_percent_current_fy'] ?? '0'; 
+                $p3_data->performance_previous_fy_id = $previous_id;
+                $p3_data->performance_no_previous_fy = $val['performance_no_previous_fy'] ?? '0';
+                $p3_data->performance_percent_previous_fy = $val['performance_percent_previous_fy'] ?? '0';  
+                $p3_data->save();
+            }
+
+            foreach ($request->emp12 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->occupational_health = $val['occupational_health'] ?? 'NaN'; 
+                $p3_data->save();
+            }
+
+            foreach ($request->emp13 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->access_risk = $val['access_risk'] ?? 'NaN'; 
+                $p3_data->save();
+            }
+
+            foreach ($request->emp14 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->hazards_risk = $val['hazards_risk'] ?? 'NaN'; 
+                $p3_data->save();
+            }
+
+            foreach ($request->emp15 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->health_service = $val['health_service'] ?? 'NaN'; 
+                $p3_data->save();
+            }
+
+            foreach ($request->emp16 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->incident_current_fy = $val['incident_current_fy'] ?? 'NaN';
+                $p3_data->incident_previous_fy_id = $previous_id; 
+                $p3_data->incident_previous_fy = $val['incident_previous_fy'] ?? 'NaN';
+                $p3_data->save();
+            }
+
+            foreach ($request->emp17 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->entity_measures = $val['entity_measures'] ?? 'NaN'; 
+                $p3_data->save();
+            }
+
+            foreach ($request->emp18 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->comp_filed_current_fy = $val['comp_filed_current_fy'] ?? 'NaN';
+                $p3_data->comp_pending_current_fy = $val['comp_pending_current_fy'] ?? 'NaN';
+                $p3_data->comp_remarks_current_fy = $val['comp_remarks_current_fy'] ?? 'NaN';
+                $p3_data->comp_previous_fy_id = $previous_id; 
+                $p3_data->comp_field_previous_fy = $val['comp_field_previous_fy'] ?? 'NaN';
+                $p3_data->comp_pending_previous_fy = $val['comp_pending_previous_fy'] ?? 'NaN';
+                $p3_data->comp_remarks_previous_fy = $val['comp_remarks_previous_fy'] ?? 'NaN';
+                $p3_data->save();
+            }
+
+            foreach ($request->emp19 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->plant_percentage = $val['plant_percentage'] ?? 'NaN'; 
+                $p3_data->save();
+            }
+
+            foreach ($request->emp20 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->corrective_action = $val['corrective_action'] ?? 'NaN'; 
+                $p3_data->save();
+            }
+
+            foreach ($request->emp21 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->entity_extend = $val['entity_extend'] ?? 'NaN'; 
+                $p3_data->save();
+            }
+
+            foreach ($request->emp22 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->entity_ensure = $val['entity_ensure'] ?? 'NaN'; 
+                $p3_data->save();
+            }
+
+            foreach ($request->emp23 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->affected_emp_current_fy = $val['affected_emp_current_fy'] ?? '0';
+                $p3_data->affected_emp_previous_fy_id = $previous_id; 
+                $p3_data->affected_emp_previous_fy = $val['affected_emp_previous_fy'] ?? '0';
+                $p3_data->family_mem_current_fy = $val['family_mem_current_fy'] ?? '0';
+                $p3_data->family_mem_previous_fy_id = $previous_id; 
+                $p3_data->family_mem_previous_fy = $val['family_mem_previous_fy'] ?? 'NaN';
+                $p3_data->save();
+            }
+
+            foreach ($request->emp24 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->retirement_emp = $val['retirement_emp'] ?? 'NaN'; 
+                $p3_data->save();
+            }
+
+            foreach ($request->emp25 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->assessment_value = $val['assessment_value'] ?? 'NaN'; 
+                $p3_data->save();
+            }
+
+            foreach ($request->emp26 as $val) {
+                $p3_data = new BrsrSectionP3QuestionValue;
+                $p3_data->com_id = $request->com_id;
+                $p3_data->brsr_mast_id = $brsr_mast->id;
+                $p3_data->fy_id = $request->fy_id;
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->work_condition = $val['work_condition'] ?? 'NaN'; 
+                $p3_data->save();
+            }
+        });
+    
+        alert()->success('Record Inserted', 'Success!')->persistent('Close');
+        return redirect()->route('user.brsr.sectionP3edit', encrypt($brsr_mast->id));
+    }
+
+    public function sectionp3update(Request $request)
+    {
+       
+        
+        $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+
+            $previous_id = (int) $request->fy_id - 1;
+
+            foreach ($request->emp1 as $val) {
+                $p3_data =  BrsrSectionP3QuestionValue::find($val['row_id']);
+                $p3_data->emp_total = $val['emp_total'] ?? '0'; 
+                $p3_data->emp_health_no = $val['emp_health_no'] ?? '0';
+                $p3_data->emp_health_percent = $val['emp_health_percent'] ?? '0';
+                $p3_data->emp_accident_no = $val['emp_accident_no'] ?? '0'; 
+                $p3_data->emp_accident_percent = $val['emp_accident_percent'] ?? '0';
+                $p3_data->emp_maternity_no = $val['emp_maternity_no'] ?? '0';
+                $p3_data->emp_maternity_percent = $val['emp_maternity_percent'] ?? '0';
+                $p3_data->emp_paternity_no = $val['emp_paternity_no'] ?? '0';
+                $p3_data->emp_paternity_percent = $val['emp_paternity_percent'] ?? '0'; 
+                $p3_data->emp_daycare_no = $val['emp_daycare_no'] ?? '0';
+                $p3_data->emp_daycare_percent = $val['emp_daycare_percent'] ?? '0';
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp2 as $val) {
+                $p3_data = BrsrSectionP3QuestionValue::find($val['row_id']);
+                $p3_data->work_total = $val['work_total'] ?? '0'; 
+                $p3_data->work_health_no = $val['work_health_no'] ?? '0';
+                $p3_data->work_health_percent = $val['work_health_percent'] ?? '0';
+                $p3_data->emp_accident_no = $val['work_accident_no'] ?? '0'; 
+                $p3_data->work_accident_percent = $val['work_accident_percent'] ?? '0';
+                $p3_data->work_maternity_no = $val['work_maternity_no'] ?? '0';
+                $p3_data->work_maternity_percent = $val['work_maternity_percent'] ?? '0';
+                $p3_data->work_paternity_no = $val['work_paternity_no'] ?? '0';
+                $p3_data->work_paternity_percent = $val['work_paternity_percent'] ?? '0'; 
+                $p3_data->work_daycare_no = $val['work_daycare_no'] ?? '0';
+                $p3_data->work_daycare_percent = $val['work_daycare_percent'] ?? '0';
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp3 as $val) {
+                $p3_data = BrsrSectionP3QuestionValue::find($val['row_id']);
+                $p3_data->measures_current_fy = $val['measures_current_fy'] ?? 'NaN'; 
+                $p3_data->measures_previous_fy = $val['measures_previous_fy'] ?? 'NaN';
+                $p3_data->measures_previous_fy_id =  $previous_id;
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp4 as $val) {
+                $p3_data =  BrsrSectionP3QuestionValue::find($val['row_id']);
+                $p3_data->retire_no_emp_current_fy = $val['retire_no_emp_current_fy'] ?? '0'; 
+                $p3_data->retire_no_work_current_fy = $val['retire_no_work_current_fy'] ?? '0'; 
+                $p3_data->retire_deducted_current_fy = $val['retire_deducted_current_fy'] ?? 'NaN'; 
+                $p3_data->retire_previous_fy_id  =  $previous_id;
+                $p3_data->retire_no_emp_previous_fy = $val['retire_no_emp_previous_fy'] ?? '0'; 
+                $p3_data->retire_no_work_previous_fy = $val['retire_no_work_previous_fy'] ?? '0'; 
+                $p3_data->retire_deducted_previous_fy = $val['retire_deducted_previous_fy'] ?? 'NaN'; 
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp5 as $val) {
+                $p3_data =  BrsrSectionP3QuestionValue::find($val['row_id']);
+                $p3_data->entity_accessible = $val['entity_accessible'] ?? 'NaN'; 
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp6 as $val) {
+                $p3_data =  BrsrSectionP3QuestionValue::find($val['row_id']);
+                $p3_data->entity_rights = $val['entity_rights'] ?? 'NaN';
+                $p3_data->updated_at = Carbon::now(); 
+                $p3_data->save();
+            }
+
+            foreach ($request->emp7 as $val) {
+                $p3_data =  BrsrSectionP3QuestionValue::find($val['row_id']);
+                $p3_data->return_work1 = $val['return_work1'] ?? 'NaN';
+                $p3_data->retention_rate1 = $val['retention_rate1'] ?? 'NaN'; 
+                $p3_data->return_work2 = $val['return_work2'] ?? 'NaN'; 
+                $p3_data->retention_rate2 = $val['retention_rate2'] ?? 'NaN';
+                $p3_data->updated_at = Carbon::now();  
+                $p3_data->save();
+            }
+
+            foreach ($request->emp8 as $val) {
+                $p3_data =  BrsrSectionP3QuestionValue::find($val['row_id']);
+                $p3_data->mechanism_details = $val['mechanism_details'] ?? 'NaN'; 
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp9 as $val) {
+                $p3_data =  BrsrSectionP3QuestionValue::find($val['row_id']);
+                $p3_data->union_tot_emp_current_fy = $val['union_tot_emp_current_fy'] ?? '0';
+                $p3_data->union_no_emp_current_fy = $val['union_no_emp_current_fy'] ?? '0'; 
+                $p3_data->union_emp_percent_current_fy = $val['union_emp_percent_current_fy'] ?? '0'; 
+                $p3_data->union_previous_fy_id = $previous_id;
+                $p3_data->union_tot_emp_previous_fy = $val['union_tot_emp_previous_fy'] ?? '0';  
+                $p3_data->union_no_emp_previous_fy = $val['union_no_emp_previous_fy'] ?? '0';  
+                $p3_data->union_emp_percent_previous_fy = $val['union_emp_percent_previous_fy'] ?? '0';  
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp10 as $val) {
+                $p3_data =  BrsrSectionP3QuestionValue::find($val['row_id']);
+                $p3_data->training_tot_current_fy = $val['training_tot_current_fy'] ?? '0';
+                $p3_data->training_health_no_current_fy = $val['training_health_no_current_fy'] ?? '0'; 
+                $p3_data->training_health_percent_current_fy = $val['training_health_percent_current_fy'] ?? '0'; 
+                $p3_data->training_skill_no_current_fy = $val['training_skill_no_current_fy'] ?? '0';
+                $p3_data->training_skill_percent_current_fy = $val['training_skill_percent_current_fy'] ?? '0';
+                $p3_data->training_previous_fy_id = $previous_id;
+                $p3_data->training_tot_previous_fy = $val['training_tot_previous_fy'] ?? '0';
+                $p3_data->training_health_no_previous_fy = $val['training_health_no_previous_fy'] ?? '0';  
+                $p3_data->training_health_percent_previous_fy = $val['training_health_percent_previous_fy'] ?? '0';  
+                $p3_data->training_skill_no_previous_fy = $val['training_skill_no_previous_fy'] ?? '0';  
+                $p3_data->training_skill_percent_previous_fy = $val['training_skill_percent_previous_fy'] ?? '0'; 
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp11 as $val) {
+                $p3_data =  BrsrSectionP3QuestionValue::find($val['row_id']);
+                $p3_data->performance_tot_current_fy = $val['performance_tot_current_fy'] ?? '0';
+                $p3_data->performance_no_current_fy = $val['performance_no_current_fy'] ?? '0'; 
+                $p3_data->performance_percent_current_fy = $val['performance_percent_current_fy'] ?? '0'; 
+                $p3_data->performance_previous_fy_id = $previous_id;
+                $p3_data->performance_no_previous_fy = $val['performance_no_previous_fy'] ?? '0';
+                $p3_data->performance_percent_previous_fy = $val['performance_percent_previous_fy'] ?? '0'; 
+                $p3_data->updated_at = Carbon::now(); 
+                $p3_data->save();
+            }
+
+            foreach ($request->emp12 as $val) {
+                $p3_data = BrsrSectionP3QuestionValue::find($val['row_id']);
+                $p3_data->occupational_health = $val['occupational_health'] ?? 'NaN'; 
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp13 as $val) {
+                $p3_data = BrsrSectionP3QuestionValue::find($val['row_id']);
+              
+                $p3_data->access_risk = $val['access_risk'] ?? 'NaN'; 
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp14 as $val) {
+                $p3_data =  BrsrSectionP3QuestionValue::find($val['row_id']);
+             
+                $p3_data->hazards_risk = $val['hazards_risk'] ?? 'NaN'; 
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp15 as $val) {
+                $p3_data = BrsrSectionP3QuestionValue::find($val['row_id']);
+             
+                $p3_data->health_service = $val['health_service'] ?? 'NaN'; 
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp16 as $val) {
+                $p3_data =  BrsrSectionP3QuestionValue::find($val['row_id']);
+             
+                $p3_data->incident_current_fy = $val['incident_current_fy'] ?? 'NaN';
+                $p3_data->incident_previous_fy_id = $previous_id; 
+                $p3_data->incident_previous_fy = $val['incident_previous_fy'] ?? 'NaN';
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp17 as $val) {
+                $p3_data =  BrsrSectionP3QuestionValue::find($val['row_id']);
+              
+                $p3_data->entity_measures = $val['entity_measures'] ?? 'NaN'; 
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp18 as $val) {
+                $p3_data = BrsrSectionP3QuestionValue::find($val['row_id']);
+              
+                $p3_data->comp_filed_current_fy = $val['comp_filed_current_fy'] ?? 'NaN';
+                $p3_data->comp_pending_current_fy = $val['comp_pending_current_fy'] ?? 'NaN';
+                $p3_data->comp_remarks_current_fy = $val['comp_remarks_current_fy'] ?? 'NaN';
+                $p3_data->comp_previous_fy_id = $previous_id; 
+                $p3_data->comp_field_previous_fy = $val['comp_field_previous_fy'] ?? 'NaN';
+                $p3_data->comp_pending_previous_fy = $val['comp_pending_previous_fy'] ?? 'NaN';
+                $p3_data->comp_remarks_previous_fy = $val['comp_remarks_previous_fy'] ?? 'NaN';
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp19 as $val) {
+                $p3_data = BrsrSectionP3QuestionValue::find($val['row_id']);
+               
+                $p3_data->plant_percentage = $val['plant_percentage'] ?? 'NaN'; 
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp20 as $val) {
+                $p3_data =  BrsrSectionP3QuestionValue::find($val['row_id']);
+               
+                $p3_data->corrective_action = $val['corrective_action'] ?? 'NaN'; 
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp21 as $val) {
+                $p3_data = BrsrSectionP3QuestionValue::find($val['row_id']);
+              
+                $p3_data->entity_extend = $val['entity_extend'] ?? 'NaN'; 
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp22 as $val) {
+                $p3_data =  BrsrSectionP3QuestionValue::find($val['row_id']);
+               
+                $p3_data->entity_ensure = $val['entity_ensure'] ?? 'NaN'; 
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp23 as $val) {
+                $p3_data =  BrsrSectionP3QuestionValue::find($val['row_id']);
+                
+                $p3_data->affected_emp_current_fy = $val['affected_emp_current_fy'] ?? '0';
+                $p3_data->affected_emp_previous_fy_id = $previous_id; 
+                $p3_data->affected_emp_previous_fy = $val['affected_emp_previous_fy'] ?? '0';
+                $p3_data->family_mem_current_fy = $val['family_mem_current_fy'] ?? '0';
+                $p3_data->family_mem_previous_fy_id = $previous_id; 
+                $p3_data->family_mem_previous_fy = $val['family_mem_previous_fy'] ?? 'NaN';
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp24 as $val) {
+                $p3_data = BrsrSectionP3QuestionValue::find($val['row_id']);
+             
+                $p3_data->retirement_emp = $val['retirement_emp'] ?? 'NaN'; 
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp25 as $val) {
+                $p3_data =  BrsrSectionP3QuestionValue::find($val['row_id']);
+                
+                $p3_data->assessment_value = $val['assessment_value'] ?? 'NaN'; 
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+
+            foreach ($request->emp26 as $val) {
+                $p3_data = BrsrSectionP3QuestionValue::find($val['row_id']);
+           
+                $p3_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p3_data->work_condition = $val['work_condition'] ?? 'NaN'; 
+                $p3_data->updated_at = Carbon::now();
+                $p3_data->save();
+            }
+        });
+    
+        alert()->success('Data Updated Successfully', 'Success!')->persistent('Close');
+        return redirect()->back(); 
+    }
+
+
     public function sectionp5store(Request $request)
     {
        
@@ -2601,6 +3438,477 @@ $previous_capex = (isset($Results['X5']) && is_numeric($Results['X5']))
         alert()->success('Record Inserted', 'Success!')->persistent('Close');
         return redirect()->route('user.brsr.sectionP5edit', encrypt($brsr_mast->id));
     }
+
+    public function sectionp6store(Request $request)
+    {
+       
+        
+        $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+
+            $previous_id = (int) $request->fy_id - 1;
+
+            foreach ($request->tot as $val) {
+                $p6_data = new BrsrSectionP6QuestionValue;
+                $p6_data->com_id = $request->com_id;
+                $p6_data->brsr_mast_id = $brsr_mast->id;
+                $p6_data->fy_id = $request->fy_id;
+                $p6_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p6_data->tot_energy_current_fy = $val['tot_energy_current_fy'] ?? '0'; 
+                $p6_data->tot_energy_previous_fy_id = $previous_id;
+                $p6_data->tot_energy_previous_fy = $val['tot_energy_previous_fy'] ?? '0'; 
+                $p6_data->save();
+            }
+
+            foreach ($request->value1 as $val) {
+                $p6_data = new BrsrSectionP6QuestionValue;
+                $p6_data->com_id = $request->com_id;
+                $p6_data->brsr_mast_id = $brsr_mast->id;
+                $p6_data->fy_id = $request->fy_id;
+                $p6_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p6_data->entity_sites = $val['entity_sites'] ?? 'NaN'; 
+                $p6_data->save();
+            }
+
+            foreach ($request->value2 as $val) {
+                $p6_data = new BrsrSectionP6QuestionValue;
+                $p6_data->com_id = $request->com_id;
+                $p6_data->brsr_mast_id = $brsr_mast->id;
+                $p6_data->fy_id = $request->fy_id;
+                $p6_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p6_data->disclosure_current_fy = $val['disclosure_current_fy'] ?? '0'; 
+                $p6_data->disclosure_previous_fy_id = $previous_id;
+                $p6_data->disclosure_previous_fy = $val['disclosure_previous_fy'] ?? '0'; 
+                $p6_data->save();
+            }
+
+            foreach ($request->value3 as $val) {
+                $p6_data = new BrsrSectionP6QuestionValue;
+                $p6_data->com_id = $request->com_id;
+                $p6_data->brsr_mast_id = $brsr_mast->id;
+                $p6_data->fy_id = $request->fy_id;
+                $p6_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p6_data->water_discharge_current_fy = $val['water_discharge_current_fy'] ?? '0'; 
+                $p6_data->water_discharge_previous_fy_id = $previous_id;
+                $p6_data->water_discharge_previous_fy = $val['water_discharge_previous_fy'] ?? '0';
+                $p6_data->save();
+            }
+
+            foreach ($request->value4 as $val) {
+                $p6_data = new BrsrSectionP6QuestionValue;
+                $p6_data->com_id = $request->com_id;
+                $p6_data->brsr_mast_id = $brsr_mast->id;
+                $p6_data->fy_id = $request->fy_id;
+                $p6_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p6_data->zero_liquid = $val['zero_liquid'] ?? 'NaN'; 
+                $p6_data->save();
+            }
+
+            foreach ($request->value5 as $val) {
+                $p6_data = new BrsrSectionP6QuestionValue;
+                $p6_data->com_id = $request->com_id;
+                $p6_data->brsr_mast_id = $brsr_mast->id;
+                $p6_data->fy_id = $request->fy_id;
+                $p6_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p6_data->air_emission_unit = $val['air_emission_unit'] ?? 'NaN'; 
+                $p6_data->air_emission_current_fy = $val['air_emission_current_fy'] ?? '0';
+                $p6_data->air_emission_previous_fy_id = $previous_id;
+                $p6_data->air_emission_previous_fy = $val['air_emission_previous_fy'] ?? '0';
+                $p6_data->save();
+            }
+
+            foreach ($request->value6 as $val) {
+                $p6_data = new BrsrSectionP6QuestionValue;
+                $p6_data->com_id = $request->com_id;
+                $p6_data->brsr_mast_id = $brsr_mast->id;
+                $p6_data->fy_id = $request->fy_id;
+                $p6_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p6_data->gas_emission_unit = $val['gas_emission_unit'] ?? 'NaN'; 
+                $p6_data->gas_emission_current_fy = $val['gas_emission_current_fy'] ?? '0';
+                $p6_data->gas_emission_previous_fy_id = $previous_id;
+                $p6_data->gas_emission_previous_fy = $val['gas_emission_previous_fy'] ?? '0';
+                $p6_data->save();
+            }
+
+            foreach ($request->value7 as $val) {
+                $p6_data = new BrsrSectionP6QuestionValue;
+                $p6_data->com_id = $request->com_id;
+                $p6_data->brsr_mast_id = $brsr_mast->id;
+                $p6_data->fy_id = $request->fy_id;
+                $p6_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p6_data->ghg_emission = $val['ghg_emission'] ?? 'NaN'; 
+                $p6_data->save();
+            }
+
+            foreach ($request->value8 as $val) {
+                $p6_data = new BrsrSectionP6QuestionValue;
+                $p6_data->com_id = $request->com_id;
+                $p6_data->brsr_mast_id = $brsr_mast->id;
+                $p6_data->fy_id = $request->fy_id;
+                $p6_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p6_data->gas_emission_unit = $val['gas_emission_unit'] ?? 'NaN'; 
+                $p6_data->waste_management_current_fy = $val['waste_management_current_fy'] ?? '0';
+                $p6_data->waste_management_previous_fy_id = $previous_id;
+                $p6_data->waste_management_previous_fy = $val['waste_management_previous_fy'] ?? '0';
+                $p6_data->save();
+            }
+
+            foreach ($request->value9 as $val) {
+                $p6_data = new BrsrSectionP6QuestionValue;
+                $p6_data->com_id = $request->com_id;
+                $p6_data->brsr_mast_id = $brsr_mast->id;
+                $p6_data->fy_id = $request->fy_id;
+                $p6_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p6_data->waste_management_practices = $val['waste_management_practices'] ?? 'NaN'; 
+                $p6_data->save();
+            }
+
+            if (isset($request->additionals)) {
+                foreach ($request->additionals as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP6AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->operation_name = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->operation_type = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->env_condition = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals';
+                    $prod_serv_data->save();
+                }
+            }
+
+            if (isset($request->additionals1)) {
+                foreach ($request->additionals1 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP6AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->project_name = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->eia_no = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->date_value = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->external_agency = isset($data['text_d']) ? $data['text_d'] : 'NaN';
+                    $prod_serv_data->public_domain = isset($data['text_e']) ? $data['text_e'] : 'NaN';
+                    $prod_serv_data->web_link = isset($data['text_f']) ? $data['text_f'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals1';
+                    $prod_serv_data->save();
+                }
+            }
+
+            if (isset($request->additionals2)) {
+                foreach ($request->additionals2 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP6AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->law = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->non_comp_details = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->fine_penality= isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->corrective_action = isset($data['text_d']) ? $data['text_d'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals2';
+                    $prod_serv_data->save();
+                }
+            }
+
+            foreach ($request->value10 as $val) {
+                $p6_data = new BrsrSectionP6QuestionValue;
+                $p6_data->com_id = $request->com_id;
+                $p6_data->brsr_mast_id = $brsr_mast->id;
+                $p6_data->fy_id = $request->fy_id;
+                $p6_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p6_data->area_water_stress = $val['area_water_stress'] ?? 'NaN'; 
+                $p6_data->save();
+            }
+
+            foreach ($request->value11 as $val) {
+                $p6_data = new BrsrSectionP6QuestionValue;
+                $p6_data->com_id = $request->com_id;
+                $p6_data->brsr_mast_id = $brsr_mast->id;
+                $p6_data->fy_id = $request->fy_id;
+                $p6_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p6_data->consumption_current_fy = $val['consumption_current_fy'] ?? '0';
+                $p6_data->consumption_previous_fy_id = $previous_id;
+                $p6_data->consumption_previous_fy = $val['consumption_previous_fy'] ?? '0';
+                $p6_data->save();
+            }
+
+            foreach ($request->value12 as $val) {
+                $p6_data = new BrsrSectionP6QuestionValue;
+                $p6_data->com_id = $request->com_id;
+                $p6_data->brsr_mast_id = $brsr_mast->id;
+                $p6_data->fy_id = $request->fy_id;
+                $p6_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p6_data->scope3_unit = $val['scope3_unit'] ?? 'NaN'; 
+                $p6_data->scope3_current_fy = $val['scope3_current_fy'] ?? '0';
+                $p6_data->scope3_previous_fy_id = $previous_id;
+                $p6_data->scope3_previous_fy = $val['scope3_previous_fy'] ?? '0';
+                $p6_data->save();
+            }
+
+            foreach ($request->value13 as $val) {
+                $p6_data = new BrsrSectionP6QuestionValue;
+                $p6_data->com_id = $request->com_id;
+                $p6_data->brsr_mast_id = $brsr_mast->id;
+                $p6_data->fy_id = $request->fy_id;
+                $p6_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p6_data->direct_indirect_impact = $val['direct_indirect_impact'] ?? 'NaN'; 
+                $p6_data->save();
+            }
+
+            if (isset($request->additionals3)) {
+                foreach ($request->additionals3 as $key => $data) {
+                    $prod_serv_data = new BrsrSectionP6AdditionalQuestionValue;
+                    $prod_serv_data->com_id = $request->com_id;
+                    $prod_serv_data->brsr_mast_id = $brsr_mast->id;
+                    $prod_serv_data->fy_id = $request->fy_id;
+                    $prod_serv_data->initative = isset($data['text_a']) ? $data['text_a'] : 'NaN';
+                    $prod_serv_data->initative_details = isset($data['text_b']) ? $data['text_b'] : 'NaN';
+                    $prod_serv_data->initative_outcome  = isset($data['text_c']) ? $data['text_c'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals3';
+                    $prod_serv_data->save();
+                }
+            }
+
+            foreach ($request->value14 as $val) {
+                $p6_data = new BrsrSectionP6QuestionValue;
+                $p6_data->com_id = $request->com_id;
+                $p6_data->brsr_mast_id = $brsr_mast->id;
+                $p6_data->fy_id = $request->fy_id;
+                $p6_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p6_data->business_continuity = $val['business_continuity'] ?? 'NaN'; 
+                $p6_data->save();
+            }
+
+            foreach ($request->value15 as $val) {
+                $p6_data = new BrsrSectionP6QuestionValue;
+                $p6_data->com_id = $request->com_id;
+                $p6_data->brsr_mast_id = $brsr_mast->id;
+                $p6_data->fy_id = $request->fy_id;
+                $p6_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p6_data->adverse_impact = $val['adverse_impact'] ?? 'NaN'; 
+                $p6_data->save();
+            }
+
+            foreach ($request->value16 as $val) {
+                $p6_data = new BrsrSectionP6QuestionValue;
+                $p6_data->com_id = $request->com_id;
+                $p6_data->brsr_mast_id = $brsr_mast->id;
+                $p6_data->fy_id = $request->fy_id;
+                $p6_data->ques_id = $val['ques_id'] ?? 'NaN';  
+                $p6_data->value_chain_partners = $val['value_chain_partners'] ?? 'NaN'; 
+                $p6_data->save();
+            }
+        });
+    
+        alert()->success('Record Inserted', 'Success!')->persistent('Close');
+        return redirect()->route('user.brsr.sectionP6edit', encrypt($brsr_mast->id));
+    }
+
+    public function sectionp6update(Request $request)
+    {
+       
+        $brsr_mast = BrsrMast::where('com_id', $request->com_id)->where('fy_id', $request->fy_id)->first();
+        
+        DB::transaction(function () use ($request, $brsr_mast) {
+
+            $previous_id = (int) $request->fy_id - 1;
+
+            foreach ($request->tot as $val) {
+                $p6_data = BrsrSectionP6QuestionValue::find($val['row_id']);
+                $p6_data->tot_energy_current_fy = $val['tot_energy_current_fy'] ?? '0'; 
+                $p6_data->tot_energy_previous_fy_id = $previous_id;
+                $p6_data->tot_energy_previous_fy = $val['tot_energy_previous_fy'] ?? '0'; 
+                $p6_data->updated_at = Carbon::now();
+                $p6_data->save();
+            }
+
+            foreach ($request->value1 as $val) {
+                $p6_data = BrsrSectionP6QuestionValue::find($val['row_id']);
+                $p6_data->entity_sites = $val['entity_sites'] ?? 'NaN'; 
+                $p6_data->updated_at = Carbon::now();
+                $p6_data->save();
+            }
+
+            foreach ($request->value2 as $val) {
+                $p6_data = BrsrSectionP6QuestionValue::find($val['row_id']);
+                $p6_data->disclosure_current_fy = $val['disclosure_current_fy'] ?? '0'; 
+                $p6_data->disclosure_previous_fy_id = $previous_id;
+                $p6_data->disclosure_previous_fy = $val['disclosure_previous_fy'] ?? '0'; 
+                $p6_data->updated_at = Carbon::now();
+                $p6_data->save();
+            }
+
+            foreach ($request->value3 as $val) {
+                $p6_data =  BrsrSectionP6QuestionValue::find($val['row_id']);
+                $p6_data->water_discharge_current_fy = $val['water_discharge_current_fy'] ?? '0'; 
+                $p6_data->water_discharge_previous_fy_id = $previous_id;
+                $p6_data->water_discharge_previous_fy = $val['water_discharge_previous_fy'] ?? '0';
+                $p6_data->updated_at = Carbon::now();
+                $p6_data->save();
+            }
+
+            foreach ($request->value4 as $val) {
+                $p6_data = BrsrSectionP6QuestionValue::find($val['row_id']);
+                $p6_data->zero_liquid = $val['zero_liquid'] ?? 'NaN'; 
+                $p6_data->updated_at = Carbon::now();
+                $p6_data->save();
+            }
+
+            foreach ($request->value5 as $val) {
+                $p6_data =  BrsrSectionP6QuestionValue::find($val['row_id']);
+                $p6_data->air_emission_unit = $val['air_emission_unit'] ?? 'NaN'; 
+                $p6_data->air_emission_current_fy = $val['air_emission_current_fy'] ?? '0';
+                $p6_data->air_emission_previous_fy_id = $previous_id;
+                $p6_data->air_emission_previous_fy = $val['air_emission_previous_fy'] ?? '0';
+                $p6_data->updated_at = Carbon::now();
+                $p6_data->save();
+            }
+
+            foreach ($request->value6 as $val) {
+                $p6_data = BrsrSectionP6QuestionValue::find($val['row_id']);
+                $p6_data->gas_emission_unit = $val['gas_emission_unit'] ?? 'NaN'; 
+                $p6_data->gas_emission_current_fy = $val['gas_emission_current_fy'] ?? '0';
+                $p6_data->gas_emission_previous_fy_id = $previous_id;
+                $p6_data->gas_emission_previous_fy = $val['gas_emission_previous_fy'] ?? '0';
+                $p6_data->updated_at = Carbon::now();
+                $p6_data->save();
+            }
+
+            foreach ($request->value7 as $val) {
+                $p6_data = BrsrSectionP6QuestionValue::find($val['row_id']);
+                $p6_data->ghg_emission = $val['ghg_emission'] ?? 'NaN'; 
+                $p6_data->updated_at = Carbon::now();
+                $p6_data->save();
+            }
+
+            foreach ($request->value8 as $val) {
+                $p6_data =  BrsrSectionP6QuestionValue::find($val['row_id']);
+                $p6_data->gas_emission_unit = $val['gas_emission_unit'] ?? 'NaN'; 
+                $p6_data->waste_management_current_fy = $val['waste_management_current_fy'] ?? '0';
+                $p6_data->waste_management_previous_fy_id = $previous_id;
+                $p6_data->waste_management_previous_fy = $val['waste_management_previous_fy'] ?? '0';
+                $p6_data->updated_at = Carbon::now();
+                $p6_data->save();
+            }
+
+            foreach ($request->value9 as $val) {
+                $p6_data =  BrsrSectionP6QuestionValue::find($val['row_id']);
+                $p6_data->waste_management_practices = $val['waste_management_practices'] ?? 'NaN';
+                $p6_data->updated_at = Carbon::now(); 
+                $p6_data->save();
+            }
+
+            if (isset($request->additionals)) {
+                foreach ($request->additionals as $key => $data) {
+                    $prod_serv_data = BrsrSectionP6AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->operation_name = isset($data['operation_name']) ? $data['operation_name'] : 'NaN';
+                    $prod_serv_data->operation_type = isset($data['operation_type']) ? $data['operation_type'] : 'NaN';
+                    $prod_serv_data->env_condition = isset($data['env_condition']) ? $data['env_condition'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals';
+                    $prod_serv_data->updated_at = Carbon::now();
+                    $prod_serv_data->save();
+                }
+            }
+
+            if (isset($request->additionals1)) {
+                foreach ($request->additionals1 as $key => $data) {
+                    $prod_serv_data = BrsrSectionP6AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->project_name = isset($data['project_name']) ? $data['project_name'] : 'NaN';
+                    $prod_serv_data->eia_no = isset($data['eia_no']) ? $data['eia_no'] : 'NaN';
+                    $prod_serv_data->date_value = isset($data['date_value']) ? $data['date_value'] : 'NaN';
+                    $prod_serv_data->external_agency = isset($data['external_agency']) ? $data['external_agency'] : 'NaN';
+                    $prod_serv_data->public_domain = isset($data['public_domain']) ? $data['public_domain'] : 'NaN';
+                    $prod_serv_data->web_link = isset($data['web_link']) ? $data['web_link'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals1';
+                    $prod_serv_data->updated_at = Carbon::now();
+                    $prod_serv_data->save();
+                }
+            }
+
+            if (isset($request->additionals2)) {
+                foreach ($request->additionals2 as $key => $data) {
+                    $prod_serv_data = BrsrSectionP6AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->law = isset($data['law ']) ? $data['law'] : 'NaN';
+                    $prod_serv_data->non_comp_details = isset($data['non_comp_details']) ? $data['non_comp_details'] : 'NaN';
+                    $prod_serv_data->fine_penality= isset($data['fine_penality']) ? $data['fine_penality'] : 'NaN';
+                    $prod_serv_data->corrective_action = isset($data['corrective_action']) ? $data['corrective_action'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals2';
+                    $prod_serv_data->updated_at = Carbon::now();
+                    $prod_serv_data->save();
+                }
+            }
+
+            foreach ($request->value10 as $val) {
+                $p6_data = BrsrSectionP6QuestionValue::find($val['row_id']);
+                $p6_data->area_water_stress = $val['area_water_stress'] ?? 'NaN'; 
+                $p6_data->updated_at = Carbon::now();
+                $p6_data->save();
+            }
+
+            foreach ($request->value11 as $val) {
+                $p6_data = BrsrSectionP6QuestionValue::find($val['row_id']);
+                $p6_data->consumption_current_fy = $val['consumption_current_fy'] ?? '0';
+                $p6_data->consumption_previous_fy_id = $previous_id;
+                $p6_data->consumption_previous_fy = $val['consumption_previous_fy'] ?? '0';
+                $p6_data->updated_at = Carbon::now();
+                $p6_data->save();
+            }
+
+            foreach ($request->value12 as $val) {
+                $p6_data = BrsrSectionP6QuestionValue::find($val['row_id']);
+                $p6_data->scope3_unit = $val['scope3_unit'] ?? 'NaN'; 
+                $p6_data->scope3_current_fy = $val['scope3_current_fy'] ?? '0';
+                $p6_data->scope3_previous_fy_id = $previous_id;
+                $p6_data->scope3_previous_fy = $val['scope3_previous_fy'] ?? '0';
+                $p6_data->updated_at = Carbon::now();
+                $p6_data->save();
+            }
+
+            foreach ($request->value13 as $val) {
+                $p6_data = BrsrSectionP6QuestionValue::find($val['row_id']);
+                $p6_data->direct_indirect_impact = $val['direct_indirect_impact'] ?? 'NaN'; 
+                $p6_data->updated_at = Carbon::now();
+                $p6_data->save();
+            }
+
+            if (isset($request->additionals3)) {
+                foreach ($request->additionals3 as $key => $data) {
+                    $prod_serv_data = BrsrSectionP6AdditionalQuestionValue::find($data['row_id']);
+                    $prod_serv_data->initative = isset($data['initative']) ? $data['initative'] : 'NaN';
+                    $prod_serv_data->initative_details = isset($data['initative_details']) ? $data['initative_details'] : 'NaN';
+                    $prod_serv_data->initative_outcome  = isset($data['initative_outcome']) ? $data['initative_outcome'] : 'NaN';
+                    $prod_serv_data->flag = 'additionals3';
+                    $prod_serv_data->updated_at = Carbon::now();
+                    $prod_serv_data->save();
+                }
+            }
+
+            foreach ($request->value14 as $val) {
+                $p6_data = BrsrSectionP6QuestionValue::find($val['row_id']);
+                $p6_data->business_continuity = $val['business_continuity'] ?? 'NaN'; 
+                $p6_data->updated_at = Carbon::now();
+                $p6_data->save();
+            }
+
+            foreach ($request->value15 as $val) {
+                $p6_data = BrsrSectionP6QuestionValue::find($val['row_id']);
+                $p6_data->adverse_impact = $val['adverse_impact'] ?? 'NaN'; 
+                $p6_data->updated_at = Carbon::now();
+                $p6_data->save();
+            }
+
+            foreach ($request->value16 as $val) {
+                $p6_data = BrsrSectionP6QuestionValue::find($val['row_id']);
+                $p6_data->value_chain_partners = $val['value_chain_partners'] ?? 'NaN'; 
+                $p6_data->updated_at = Carbon::now();
+                $p6_data->save();
+            }
+        });
+    
+        alert()->success('Data Updated Successfully', 'Success!')->persistent('Close');
+        return redirect()->back();  
+    }
+
 
     public function sectionp5update(Request $request)
     {

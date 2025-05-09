@@ -237,15 +237,15 @@
                 <tr>
                  <input type="hidden" value="{{ $brsr_operations_value->where('id',$operation->id)->first()->id }}" name="operation[{{ $rowCount }}][row_id]">
                     <td><input type="text" class="form-control form-control-sm" name="operation[{{ $rowCount }}][text_a]" value="National" readonly></td>
-                    <td><input type="number" class="form-control form-control-sm" name="operation[{{ $rowCount }}][text_b]" value="{{ $operation->national_plant_count }}" oninput="calculateTotal({{ $rowCount }})" required></td>
-                     <td><input type="number" class="form-control form-control-sm" name="operation[{{ $rowCount }}][text_c]" value="{{ $operation->national_office_count }}" oninput="calculateTotal({{ $rowCount }})" required ></td>
+                    <td><input type="number" class="form-control form-control-sm" name="operation[{{ $rowCount }}][text_b]" min="0" value="{{ $operation->national_plant_count }}" oninput="calculateTotal({{ $rowCount }})" required></td>
+                     <td><input type="number" class="form-control form-control-sm" name="operation[{{ $rowCount }}][text_c]" min="0" value="{{ $operation->national_office_count }}" oninput="calculateTotal({{ $rowCount }})" required ></td>
                     <td><input type="number" class="form-control form-control-sm" name="operation[{{ $rowCount }}][text_d]" id="total_{{ $rowCount }}" value="{{ $operation->national_total_count }}" readonly></td>
                 </tr>
                 <tr>
                 
                   <td><input type="text" class="form-control form-control-sm" name="operation[{{ $rowCount + 1 }}][text_e]" value="International" readonly></td>
-                  <td><input type="number" class="form-control form-control-sm" name="operation[{{ $rowCount }}][text_f]" value="{{ $operation->international_plant_count }}" oninput="calculateTotals({{ $rowCount }})" required></td>
-                  <td><input type="number" class="form-control form-control-sm" name="operation[{{ $rowCount }}][text_g]" value="{{ $operation->international_office_count }}" oninput="calculateTotals({{ $rowCount  }})" required></td>
+                  <td><input type="number" class="form-control form-control-sm" name="operation[{{ $rowCount }}][text_f]" min="0" value="{{ $operation->international_plant_count }}" oninput="calculateTotals({{ $rowCount }})" required></td>
+                  <td><input type="number" class="form-control form-control-sm" name="operation[{{ $rowCount }}][text_g]" min="0" value="{{ $operation->international_office_count }}" oninput="calculateTotals({{ $rowCount  }})" required></td>
                   <td><input type="number" class="form-control form-control-sm" name="operation[{{ $rowCount  }}][text_h]" id="totals_{{ $rowCount  }}" value="{{ $operation->international_total_count }}" readonly></td>
                 </tr>
                    
@@ -980,7 +980,8 @@
         const femaleCount = parseInt(document.querySelector(`.emp_${rowIndex}.m_emp`).value) || 0;
         const totalCount = parseInt(document.querySelector(`.emp_${rowIndex}.t_emp`).value) || 0;
         const Percent = totalCount > 0 ? (femaleCount / totalCount) * 100 : 0;
-        document.querySelector(`#male_percent_${rowIndex}`).value = Percent.toFixed(2) + '%';
+        percent = Math.min(Percent, 100);
+        document.querySelector(`#male_percent_${rowIndex}`).value = percent.toFixed(2) + '%';
     }
      
     

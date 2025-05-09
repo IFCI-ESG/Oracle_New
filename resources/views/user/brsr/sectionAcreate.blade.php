@@ -228,14 +228,14 @@
             <tbody id="operations_data_rows">
                 <tr>
                     <td><input type="text" class="form-control form-control-sm" name="operation[1][text_a]" value="National" readonly></td>
-                    <td><input type="number" class="form-control form-control-sm" name="operation[1][text_b]" oninput="calculateTotal(1)" value="0" required></td>
-                    <td><input type="number" class="form-control form-control-sm" name="operation[1][text_c]" oninput="calculateTotal(1)" value="0" required></td>
+                    <td><input type="number" class="form-control form-control-sm" name="operation[1][text_b]" min="0" oninput="calculateTotal(1)" value="0" required></td>
+                    <td><input type="number" class="form-control form-control-sm" name="operation[1][text_c]" min="0" oninput="calculateTotal(1)" value="0" required></td>
                     <td><input type="number" class="form-control form-control-sm" name="operation[1][text_d]" id="total_1" value="0" readonly></td>
                 </tr>
                 <tr>
                     <td><input type="text" class="form-control form-control-sm" name="operation[1][text_e]" value="International" readonly></td>
-                    <td><input type="number" class="form-control form-control-sm" name="operation[1][text_f]" oninput="calculateTotals(2)" value="0" required></td>
-                    <td><input type="number" class="form-control form-control-sm" name="operation[1][text_g]" oninput="calculateTotals(2)" value="0" required></td>
+                    <td><input type="number" class="form-control form-control-sm" name="operation[1][text_f]" min="0" oninput="calculateTotals(2)" value="0" required></td>
+                    <td><input type="number" class="form-control form-control-sm" name="operation[1][text_g]" min="0" oninput="calculateTotals(2)" value="0" required></td>
                     <td><input type="number" class="form-control form-control-sm" name="operation[1][text_h]" id="total_2" value="0" readonly></td>
                 </tr>
             </tbody>
@@ -724,8 +724,7 @@
     </textarea>
 </td>
 
-                  
-                  <td class="text-center">
+        <td class="text-center">
                     <textarea 
                    style="text-align: left;  overflow: hidden; resize: none;"  
         class="form-control form-control-sm emp_{{$a}} m_emp auto-grow" 
@@ -1020,7 +1019,8 @@
         const femaleCount = parseInt(document.querySelector(`.emp_${rowIndex}.m_emp`).value) || 0;
         const totalCount = parseInt(document.querySelector(`.emp_${rowIndex}.t_emp`).value) || 0;
         const Percent = totalCount > 0 ? (femaleCount / totalCount) * 100 : 0;
-        document.querySelector(`#part_percent_${rowIndex}`).value = Percent.toFixed(2) + '%';
+        percent = Math.min(Percent, 100);
+        document.querySelector(`#part_percent_${rowIndex}`).value = percent.toFixed(2) + '%';
     }
      
     function updateTotalForRow3() {
