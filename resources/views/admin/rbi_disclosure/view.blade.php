@@ -34,22 +34,13 @@
     @endif
            <div class="row justify-content-center mt-2">
             <div class="col-md-12">
-                <form action="{{ route('admin.rbi_disclosure.update') }}" id="rbi_disclosure" role="form" method="post"
-                    class='form-horizontal prevent_multiple_submit' files=true enctype='multipart/form-data'
-                    accept-charset="utf-8">
+              
                     @csrf
                     <input type="hidden" name="fy_id" value="{{ $fy_id }}">
                     <input type="hidden" name="pillar_id" value="{{ $pillar_id }}">
 
                     <div class="card card-success card-outline card-tabs mb-5">
-                        {{-- <div class="card border-primary card-header mb-0 shadow  card-success card-outline p-2" style="font-size: 1rem">
-                            <b class="card-success p-1 shadow">Thematic</b>
-                        </div> --}}
-
                         <div class="card border-primary">
-                            {{-- <div class="card-body textcolor" style="font-size: 1rem">
-                                <b>{{$pillar_ques->first()->pillar_name}}</b>
-                            </div> --}}
                             <div class="card-body pt-2">
                                 <table class="table table-bordered table-sm mb-0" id="employee_data">
                                     <thead>
@@ -74,7 +65,7 @@
                                             </tr>
                             
                                             @foreach ($disclosure_questions as $key => $p_ques)
-                                            {{-- {{ dd($p_ques) }} --}}
+                                        
                                                 <tr>
                                                     <td class="text-center">{{ $key+1 }}</td>
                                                     <td>{{ $p_ques->ques }}</td>
@@ -83,17 +74,30 @@
                                                         <input type="hidden" name="part[{{ $a }}][ques_id]" value="{{ $p_ques->ques_id }}">
                             
                                                         @if ($p_ques->data_type == 'text')
-                                                            <input type="text" name="part[{{$a}}][value]" class="form-control form-control-sm" value="{{ $p_ques->value }}">
+                                                            <!-- <input type="text" name="part[{{$a}}][value]" class="form-control form-control-sm" value="{{ $p_ques->value }}" readonly> -->
+
+                                                            {{ $p_ques->value }}
                                                         @elseif ($p_ques->data_type == 'numeric')
-                                                            <input type="number" name="part[{{$a}}][value]" class="form-control form-control-sm" value="{{ $p_ques->value }}">
+                                                            <!-- <input type="number" name="part[{{$a}}][value]" class="form-control form-control-sm" value="{{ $p_ques->value }}" readonly> -->
+
+                                                            {{ $p_ques->value }}
                                                         @elseif ($p_ques->data_type == 'Y/N')
-                                                            <select class="form-control form-control-sm" name="part[{{$a}}][option]" id="select_{{ $a }}" onchange="calc(this)">
-                                                                <option value="" selected disabled>Please Select</option>
+                                                          <!--   <select class="form-control form-control-sm" name="part[{{$a}}][option]" id="select_{{ $a }}" onchange="calc(this)" disabled>
+                                                                <option value="" selected >Please Select</option>
                                                                 <option value="Y" {{$p_ques->option == 'Y' ? 'selected' : '' }}>Yes</option>
                                                                 <option value="N" {{$p_ques->option == 'N' || $p_ques->option == '' ? 'selected' : '' }}>No</option>
-                                                            </select> <br>
-                                                            <input type="text" name="part[{{$a}}][value]" value="{{ $p_ques->value }}" id="detail_{{ $a }}" class="form-control form-control-sm" 
-                                                                @if($p_ques->option == 'N' || $p_ques->option == '') style="display: none;" @endif>
+                                                            </select>  -->
+
+                                                            @if($p_ques->option == 'N' || $p_ques->option == '')
+                                                            No
+                                                            @else
+                                                            Yes,
+                                                            @endif
+                                                            <br>
+
+                                                            {{ $p_ques->value }}
+                                                          <!--   <input type="text" readonly name="part[{{$a}}][value]" value="{{ $p_ques->value }}" id="detail_{{ $a }}" class="form-control form-control-sm" 
+                                                                @if($p_ques->option == 'N' || $p_ques->option == '') style="display: none;" @endif> -->
                                                         @endif
                                                     </td>
                                                 </tr>
@@ -113,21 +117,29 @@
                                 <a href="{{ route('admin.rbi_disclosure',encrypt($fy_id)) }}"
                                 class="btn btn-secondary btn-sm float-left p-2 w-25"> <i class="fas fa-arrow-left"></i> Back </a>
                             </div>
-
+<!-- 
                             <div class="col-md-6 offset-md-0">
                                 <button type="submit" id="submit" class="btn btn-primary d-block ms-auto activebtnbg w-25 p-2 btn-sm form-control form-control-sm"><i
                                         class="fas fa-save"></i>
                                         Update</button>
-                            </div>
+                            </div> -->
                         </div>
                         <!-- /.card -->
                     </div>
-                </form>
+              
             </div>
         </div>
     </div>
-        <script type="text/javascript">
-        
+@endsection
+@push('scripts')
+    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {!! JsValidator::formRequest('App\Http\Requests\User\RbiDisclosureRequest', '#rbi_disclosure') !!} --}}
+    @include('partials.js.prevent_multiple_submit')
+    <script>
+        $(document).ready(function() {
+
+        });
+
         function calc(e)
         {
             var Id = $(e).attr('id');
@@ -142,8 +154,9 @@
             }
         }
 
+
     </script>
-@endsection
+@endpush
 
 
 

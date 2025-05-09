@@ -13,9 +13,10 @@ use App\Models\BankFinancialDetails;
 use App\Models\RbiPillarValue;
 use App\Models\RbiDisclosureMast;
 use Validator;
-
 use Illuminate\Support\Facades\File;
 use SimpleXMLElement;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class RbiDisclosureController extends Controller
 {
@@ -131,15 +132,15 @@ class RbiDisclosureController extends Controller
         $bank_id = decrypt($bank_id);
         $pillar_id = decrypt($pillar_id);
         $fy_id = decrypt($fy_id);
-        // dd($bank_id,$pillar_id);
-
-       $pillar_val = DB::table('rbi_pillar_ques_master as rpqm')
+        $pillar_val = DB::table('rbi_pillar_ques_master as rpqm')
                             ->leftJoin('rbi_pillar_value as rpv', function($join) use ($bank_id) {
                                 $join->on('rpqm.id', '=', 'rpv.ques_id')
                                     ->where('rpv.bank_id', '=', $bank_id); // Ensures filtering only for a specific company
                             })
                             ->join('rbi_pillar_master as rpm', 'rpm.id', '=', 'rpqm.pillar_id')
+                            ->join('rbi_disclosure_mast as rdm', 'rdm.id', '=', 'rpv.rbi_mast_id')
                             ->where('rpqm.pillar_id', $pillar_id)
+                            ->where('rdm.fy_id', $fy_id)
                             ->orderby('rpqm.id')
                             ->get([
                                 'rpv.*', 
@@ -149,8 +150,6 @@ class RbiDisclosureController extends Controller
                                 'rpm.name as pillar_name', 
                                 'rpqm.data_type'
                             ]);
-    
-            // dd($pillar_val);
 
         return view('admin.rbi_disclosure.edit', compact('pillar_val','fy_id','pillar_id'));
     }
@@ -202,110 +201,108 @@ class RbiDisclosureController extends Controller
 
 
 
-    public function submit(Request $request)
+    public function final_submit($fy_id)
     {
-        // dd($request);
+       $fy_id = decrypt($fy_id);
+
             $user=Auth::user();
         try{
-
-            if(!$request->undertaking)
+            DB::transaction(function () use ($fy_id, $user)
             {
-                alert()->warning('Please Check Undertaking', 'Warning')->persistent('Close');
-                return redirect()->back();
-            }
-// dd($request->undertaking,"d");
-            DB::transaction(function () use ($request, $user)
-            {
-                $input_mast = InputSheetMast::where('id', $request->input_id)->first();
+                $input_mast  = RbiDisclosureMast::where('bank_id', Auth::user()->id)->where('fy_id',$fy_id)->first();
                     $input_mast->status = 'S';
-                    $input_mast->is_checked = isset($request->undertaking) ? 1 : 0;
                     $input_mast->submitted_at = Carbon::now();
-                $input_mast->save();
+                    $input_mast->save();
             });
-            alert()->Success('Input Sheet Submitted Successfully', 'Success')->persistent('Close');
-            return redirect()->route('admin.fy');    
-
-
+            alert()->Success('Submitted Successfully', 'Success')->persistent('Close');
+            return redirect()->route('admin.rbi_disclosure');    
         }catch (\Exception $e)
         {
+            dd($e->getMessage());
             alert()->Warning('Something Went Wrong', 'Warning!')->persistent('Close');
             return redirect()->back();
         }
     }
 
-
-    public function view($bank_id,$class_type,$com_id,$fy_id)
+    public function view($bank_id,$pillar_id,$fy_id)
     {
-        $class_type = decrypt($class_type);
         $bank_id = decrypt($bank_id);
-        $com_id = decrypt($com_id);
+        $pillar_id = decrypt($pillar_id);
         $fy_id = decrypt($fy_id);
+        $pillar_val = DB::table('rbi_pillar_ques_master as rpqm')
+                            ->leftJoin('rbi_pillar_value as rpv', function($join) use ($bank_id) {
+                                $join->on('rpqm.id', '=', 'rpv.ques_id')
+                                    ->where('rpv.bank_id', '=', $bank_id); // Ensures filtering only for a specific company
+                            })
+                            ->join('rbi_pillar_master as rpm', 'rpm.id', '=', 'rpqm.pillar_id')
+                            ->where('rpqm.pillar_id', $pillar_id)
+                            ->orderby('rpqm.id')
+                            ->get([
+                                'rpv.*', 
+                                'rpqm.types_of_disclosure', 
+                                'rpqm.ques',
+                                'rpqm.id as ques_id', 
+                                'rpm.name as pillar_name', 
+                                'rpqm.data_type'
+                            ]);
 
-        $user = User::where('id',$com_id)->first();
-        // dd($user);
-        $sector = DB::table('sector_master')->where('id',$user->sector_id)->first();
+        return view('admin.rbi_disclosure.view', compact('pillar_val','fy_id','pillar_id'));
+    }
 
+   public function generatePdf($fy_id)
+    {
+        $fy_id = decrypt($fy_id);
 
         $fys = DB::table('fy_masters')->where('id',$fy_id)->first();
 
-        $busi_mast = BusinessActivityMast::where('sector_id', $user->sector_id)->orderby('id')->get();
+       // $rbi_mast = RbiDisclosureMast::where('bank_id', Auth::user()->id)->where('fy_id', $fy_id)->first();
 
-        $busi_value = DB::table('business_activity_value as bav')
-                            ->join('business_activity_master as bam','bam.id','bav.activity_id')
-                            ->where('is_checked', true)
-                            ->where('bav.com_id',$user->id)
-                            ->where('bav.fy_id',$fy_id)
-                            ->orderby('bav.id')
-                            ->get(['bav.*','bam.activity']);
-
-        $seg_mast = DB::table('segmentmaster as sgm')
-                            ->join('sectorsegmentmapping as ssm','ssm.segment_id','sgm.id')
-                            ->join('scopemaster as sm','sm.id','sgm.scopeid')
-                            ->where('ssm.ques_type_id',$user->comp_type_id)
-                            ->where('ssm.sector_id',$user->sector_id)
-                            ->orderby('sgm.ordernumber')
-                            ->get(['sgm.*','sm.name as scope_name']);
-            // dd($seg_mast);
-        $ques_value = DB::table('question_value as qv')
-                            ->join('question_master as qm','qm.id','=','qv.ques_id')
-                            ->join('sectorsegmentmapping as ssm','ssm.id','qm.sector_segment_map_id')
-                            ->where('ssm.ques_type_id',$user->comp_type_id)
-                            ->where('qv.com_id',$user->id)
-                            ->get(['qv.*','ssm.segment_id']);
-            // dd($ques_value);
-
-        $ques_mast = DB::table('question_master as qm')
-                            ->join('sectorsegmentmapping as ssm','ssm.id','qm.sector_segment_map_id')
-                            ->where('ssm.ques_type_id',$user->comp_type_id)
-                            ->where('ssm.sector_id',$user->sector_id)
-                            ->orderby('qm.id')->get();
+        $pillar_val = DB::table('rbi_pillar_ques_master as rpqm')
+                            ->leftJoin('rbi_pillar_value as rpv', function($join)  {
+                                $join->on('rpqm.id', '=', 'rpv.ques_id')
+                                    ->where('rpv.bank_id', '=', Auth::user()->id);
+                            })
+                            ->join('rbi_pillar_master as rpm', 'rpm.id', '=', 'rpqm.pillar_id')
+                            ->join('rbi_disclosure_mast as rdm', 'rdm.id', '=', 'rpv.rbi_mast_id')
+                            ->where('rdm.fy_id', $fy_id)
+                            ->orderby('rpqm.id')
+                            ->get([
+                                'rpv.*', 
+                                'rpqm.types_of_disclosure', 
+                                'rpqm.ques',
+                                'rpqm.id as ques_id', 
+                                'rpm.name as pillar_name', 
+                                'rpqm.data_type'
+                            ]);
 
 
-        $ques_value = DB::table('question_value')->where('com_id',$user->id)->where('fy_id',$fy_id)->get();
+$output = [];
 
-        $data_quality = DB::table('data_quality_master as dqm')->get();
+foreach ($pillar_val as $item) {
+    $pillar = $item->pillar_name;
+    $disclosure = $item->types_of_disclosure;
 
-        $data_qual_value = DB::table('data_quality_value as dqv')
-                                ->join('data_quality_master as dqm','dqm.id','=','dqv.data_quality_id')
-                                ->where('com_id',$user->id)
-                                ->where('fy_id',$fy_id)
-                                ->get(['dqv.*','dqm.name']);
+    if (!isset($output[$pillar])) {
+        $output[$pillar] = [];
+    }
 
-        $bank_details = DB::table('bank_financial_details as bfd')
-                                ->join('users as u','u.id','bfd.bank_id')
-                                ->join('class_type_master as ctm','ctm.id','bfd.class_type_id')
-                                ->where('bfd.com_id', $user->id)
-                                ->where('bfd.bank_id', $bank_id)
-                                ->where('bfd.class_type_id', $class_type)
-                                ->first(['bfd.*','u.name as bank_name','ctm.name as loan_type']);
+    if (!isset($output[$pillar][$disclosure])) {
+        $output[$pillar][$disclosure] = [];
+    }
 
-        // dd($ques_mast,$ques_value);
+    $output[$pillar][$disclosure][] = $item;
+}
 
-        // $subques_mast = DB::table('subques_master')->where('sector_id',$user->sector_id)->orderby('id')->get();
+// dd($output);
+ // return view('admin.rbi_disclosure.rbi_disclouser_pdf', compact('output','fys'));
+$data=['output'=>$output,'fys'=>$fys];
+    $pdf = Pdf::loadView('admin.rbi_disclosure.rbi_disclouser_pdf', $data);
 
-        return view('admin.questionnaire_view', compact('ques_mast','fy_id','user','ques_value','sector','fys','seg_mast','busi_mast','busi_value','data_quality','data_qual_value','bank_details'));
+    return $pdf->download('rbi_disclosure.pdf');
+      
 
     }
+
 
 }
 

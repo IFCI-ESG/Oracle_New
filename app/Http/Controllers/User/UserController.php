@@ -187,7 +187,7 @@ class UserController extends Controller
               $user->password_changed = 1;
               $user->save();
               Auth::Logout($user);
-              return redirect('/login')->with('success', 'Password updated. Please log in.');
+              return redirect('admin/login')->with('success', 'Password updated. Please log in.');
           }
 
 

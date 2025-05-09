@@ -298,5 +298,4 @@ class HomeController extends Controller
         return view('landing.explore');
     }
 
-
 }
